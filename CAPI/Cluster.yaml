@@ -18,5 +18,5 @@ spec:
       overlay:
         metadata:
           labels:
-            +(cluster.x-k8s.io/watch-filter): "{{ releases[?\"metadata.name\" == metadata.labels.\"release.giantswarm.io/version\"].spec.components[] | [?\"name\" == 'cluster-api-core'].version | [0]}}"
-            cluster.x-k8s.io/watch-filter: "{{ releases[?\"metadata.name\" == metadata.labels.\"release.giantswarm.io/version\"].spec.components[] | [?\"name\" == 'cluster-api-core'].version | [0]}}"
+            +(cluster.x-k8s.io/watch-filter): "{{ releases[?\"metadata.name\" == request.object.metadata.labels.\"release.giantswarm.io/version\"].spec.components[] | [?\"name\" == 'cluster-api-core'].version | [0]}}"
+            cluster.x-k8s.io/watch-filter: "{{ releases[?\"metadata.name\" ==  request.object.metadata.labels.\"release.giantswarm.io/version\"].spec.components[] | [?\"name\" == 'cluster-api-core'].version | [0]}}"

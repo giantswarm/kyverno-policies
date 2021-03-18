@@ -8,7 +8,7 @@ spec:
     match:
       resources:
         kinds:
-        - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
+        - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
     context:
     - name: clusterVersion
       apiCall:
