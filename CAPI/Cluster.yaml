@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: cluster
+  name: cluster-v20.0.1-v1alpha3
 spec:
   rules:
   - name: cluster-label
@@ -14,9 +14,13 @@ spec:
       apiCall:
         urlPath: "/apis/release.giantswarm.io/v1alpha1/releases"
         jmesPath: "items[*]"
+    preconditions:
+    - key: "{{ request.object.metadata.labels.\"release.giantswarm.io/version\" }}"
+      operator: Equals
+      value: "20.0.1-v1alpha3"
     mutate:
-      overlay:
+      patchStrategicMerge:
         metadata:
           labels:
-            +(cluster.x-k8s.io/watch-filter): "{{ releases[?\"metadata.name\" == request.object.metadata.labels.\"release.giantswarm.io/version\"].spec.components[] | [?\"name\" == 'cluster-api-core'].version | [0]}}"
-            cluster.x-k8s.io/watch-filter: "{{ releases[?\"metadata.name\" ==  request.object.metadata.labels.\"release.giantswarm.io/version\"].spec.components[] | [?\"name\" == 'cluster-api-core'].version | [0]}}"
+            +(cluster.x-k8s.io/watch-filter): "{{ releases[?metadata.name == 'v20.0.1-v1alpha3'].spec.components[] | [?name == 'cluster-api-core'].version | [0]}}"
+            cluster.x-k8s.io/watch-filter: "{{ releases[?metadata.name == 'v20.0.1-v1alpha3'].spec.components[] | [?name == 'cluster-api-core'].version | [0]}}"
