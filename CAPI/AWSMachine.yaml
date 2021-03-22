@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: awsmachine-v20.0.1-v1alpha3
+  name: awsmachine
 spec:
   rules:
   - name: awsmachine-label

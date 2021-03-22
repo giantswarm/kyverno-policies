@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: kubeadmconfig-v20.0.1-v1alpha3
+  name: kubeadmconfig
 spec:
   rules:
   - name: kubeadmconfig-label

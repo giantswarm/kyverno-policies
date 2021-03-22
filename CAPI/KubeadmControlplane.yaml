@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: kubeadmcontrolplane-v20.0.1-v1alpha3
+  name: kubeadmcontrolplane
 spec:
   rules:
   - name: kubeadmcontrolplane-label

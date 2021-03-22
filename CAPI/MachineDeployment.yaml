@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: machinedeployment-v20.0.1-v1alpha3
+  name: machinedeployment
 spec:
   rules:
   - name: machinedeployment-label
