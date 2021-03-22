@@ -10,10 +10,10 @@ spec:
         kinds:
         - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
     context:
-    - name: clusterVersion
+    - name: clusters
       apiCall:
         urlPath: "/apis/cluster.x-k8s.io/v1alpha3/namespaces/{{ request.object.metadata.namespace }}/clusters"
-        jmesPath: "items[?metadata.name == '{{ request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\" }}'].metadata.labels.\"release.giantswarm.io/version\""
+        jmesPath: "items[*]"
     - name: releases
       apiCall:
         urlPath: "/apis/release.giantswarm.io/v1alpha1/releases"
@@ -22,5 +22,5 @@ spec:
       patchStrategicMerge:
         metadata:
           labels:
-            +(cluster.x-k8s.io/watch-filter): "{{ releases[?metadata.name == 'v{{ clusterVersion }}'].spec.components[] | [?name == 'cluster-api-bootstrap-provider-kubeadm'].version | [0]}}"
-            cluster.x-k8s.io/watch-filter: "{{ releases[?metadata.name == 'v{{ clusterVersion }}'].spec.components[] | [?name == 'cluster-api-bootstrap-provider-kubeadm'].version | [0]}}"
+            +(cluster.x-k8s.io/watch-filter): "{{ releases[?metadata.name == 'v{{ clusters[?metadata.name == '{{request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"}}'].metadata.labels.\"release.giantswarm.io/version\"  | [0] }}'].spec.components[] | [?name == 'cluster-api-bootstrap-provider-kubeadm'].version | [0]}}"
+            cluster.x-k8s.io/watch-filter: "{{ releases[?metadata.name == 'v{{ clusters[?metadata.name == '{{request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"}}'].metadata.labels.\"release.giantswarm.io/version\"  | [0] }}'].spec.components[] | [?name == 'cluster-api-bootstrap-provider-kubeadm'].version | [0]}}"
