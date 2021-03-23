@@ -20,3 +20,5 @@ spec:
           labels:
             +(cluster.x-k8s.io/watch-filter): "{{ releases[?metadata.name == 'v{{ request.object.metadata.labels.\"release.giantswarm.io/version\" }}'].spec.components[] | [?name == 'cluster-api-core'].version | [0]}}"
             cluster.x-k8s.io/watch-filter: "{{ releases[?metadata.name == 'v{{ request.object.metadata.labels.\"release.giantswarm.io/version\" }}'].spec.components[] | [?name == 'cluster-api-core'].version | [0]}}"
+            +(cluster-operator.giantswarm.io/version): "{{ releases[?metadata.name == 'v{{ request.object.metadata.labels.\"release.giantswarm.io/version\" }}'].spec.components[] | [?name == 'cluster-operator'].version | [0]}}"
+            cluster-operator.giantswarm.io/version: "{{ releases[?metadata.name == 'v{{ request.object.metadata.labels.\"release.giantswarm.io/version\" }}'].spec.components[] | [?name == 'cluster-operator'].version | [0]}}"
