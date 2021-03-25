@@ -40,8 +40,8 @@ workflows:
       # KVM
       - architect/push-to-app-catalog:
           name: push-policies-kvm-to-policies-catalog
-          app_catalog: policies-test-catalog
-          app_catalog_test: policies-test-catalog
+          app_catalog: control-plane-test-catalog
+          app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-kvm
           context: "architect"
@@ -64,8 +64,8 @@ workflows:
       # AWS
       - architect/push-to-app-catalog:
           name: push-policies-aws-to-policies-catalog
-          app_catalog: policies-test-catalog
-          app_catalog_test: policies-test-catalog
+          app_catalog: control-plane-test-catalog
+          app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-aws
           context: "architect"
@@ -90,8 +90,8 @@ workflows:
       # Azure
       - architect/push-to-app-catalog:
           name: push-policies-azure-to-policies-catalog
-          app_catalog: policies-test-catalog
-          app_catalog_test: policies-test-catalog
+          app_catalog: control-plane-test-catalog
+          app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-azure
           context: "architect"
