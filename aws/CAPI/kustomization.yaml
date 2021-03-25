@@ -1,0 +1,4 @@
+resources:
+- AWSCluster.yaml
+- AWSMachine.yaml
+- AWSMachineTemplate.yaml

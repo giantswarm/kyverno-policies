@@ -1,0 +1,4 @@
+resources:
+- AzureCluster.yaml
+- AzureMachine.yaml
+- AzureMachineDeployment.yaml

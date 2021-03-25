@@ -1,0 +1,120 @@
+
+version: 2.1
+
+orbs:
+  architect: giantswarm/architect@2.4.2
+
+jobs:
+  build:
+    docker:
+      - image: quay.io/giantswarm/architect
+    steps:
+      - checkout
+      - run:
+          name: Install kustomize
+          command: |
+            CGO_ENABLED=0 go install sigs.k8s.io/kustomize/kustomize/v3
+      # - run:
+      #     name: Install releaseNotesURLTransformer kustomize plugin
+      #     command: |
+      #       CGO_ENABLED=0 go get github.com/giantswarm/kustomize-plugin-releasenotesurlannotationtransformer@v0.2.0
+      #       mkdir -p "$PLUGIN_PATH"
+      #       cp /go/bin/kustomize-plugin-releasenotesurlannotationtransformer "$PLUGIN_PATH/releaseNotesURLAnnotationTransformer"
+      #     environment:
+      #       PLUGIN_PATH: "./kustomize/plugin/giantswarm.io/v1/releasenotesurlannotationtransformer"
+      - run:
+          name: Kustomize helm charts
+          command: |
+            export XDG_CONFIG_HOME=$(pwd)
+            for i in aws azure common kvm vmware; do mkdir -p helm/policies-$i/templates; kustomize build --enable_alpha_plugins ./$i > helm/policies-$i/templates/policies.yaml; done
+      - persist_to_workspace:
+          root: .
+          paths:
+            - helm
+  # validate:
+  #   docker:
+  #     - image: quay.io/giantswarm/architect
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Validate policies
+  #         command: CGO_ENABLED=0 go test ./...
+
+workflows:
+  workflow:
+    jobs:
+      - validate
+      - build
+      # KVM
+      - architect/push-to-app-catalog:
+          name: push-policies-kvm-to-policies-catalog
+          app_catalog: policies-test-catalog
+          app_catalog_test: policies-test-catalog
+          attach_workspace: true
+          chart: policies-kvm
+          explicit_allow_chart_name_mismatch: true
+          on_tag: false
+          requires:
+            - build
+            - validate
+      # - architect/push-to-app-collection:
+      #     name: push-policies-to-kvm-app-collection
+      #     app_catalog: policies
+      #     app_name: policies-kvm
+      #     app_collection_repo: kvm-app-collection
+      #     requires:
+      #       - push-policies-kvm-to-policies-catalog
+      #     filters:
+      #       # Trigger the job on merge to master.
+      #       branches:
+      #         only: master
+      # AWS
+      - architect/push-to-app-catalog:
+          name: push-policies-aws-to-policies-catalog
+          app_catalog: policies-test-catalog
+          app_catalog_test: policies-test-catalog
+          attach_workspace: true
+          chart: policies-aws
+          explicit_allow_chart_name_mismatch: true
+          on_tag: false
+          requires:
+            - build
+            - validate
+            - push-policies-kvm-to-policies-catalog
+      # - architect/push-to-app-collection:
+      #     name: push-policies-to-aws-app-collection
+      #     app_catalog: policies
+      #     app_name: policies-aws
+      #     app_collection_repo: aws-app-collection
+      #     requires:
+      #       - push-policies-aws-to-policies-catalog
+      #       # - push-policies-to-kvm-app-collection
+      #     filters:
+      #       # Trigger the job on merge to master.
+      #       branches:
+      #         only: master
+      # Azure
+      - architect/push-to-app-catalog:
+          name: push-policies-azure-to-policies-catalog
+          app_catalog: policies-test-catalog
+          app_catalog_test: policies-test-catalog
+          attach_workspace: true
+          chart: policies-azure
+          explicit_allow_chart_name_mismatch: true
+          on_tag: false
+          requires:
+            - build
+            - validate
+            - push-policies-aws-to-policies-catalog
+      # - architect/push-to-app-collection:
+      #     name: push-policies-to-azure-app-collection
+      #     app_catalog: policies
+      #     app_name: policies-azure
+      #     app_collection_repo: azure-app-collection
+      #     requires:
+      #       - push-policies-azure-to-policies-catalog
+      #       # - push-policies-to-aws-app-collection
+      #     filters:
+      #       # Trigger the job on merge to master.
+      #       branches:
+      #         only: master

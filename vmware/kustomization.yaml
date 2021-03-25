@@ -1,0 +1,5 @@
+resources:
+- VSphereCluster.yaml
+- VSphereMachine.yaml
+- VSphereMachineTemplate.yaml
+- VSphereVM.yaml

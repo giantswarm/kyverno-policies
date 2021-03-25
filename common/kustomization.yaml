@@ -1,0 +1,7 @@
+resources:
+- Cluster.yaml
+- ClusterResourceSet.yaml
+- ClusterResourceSetBinding.yaml
+- KubeadmConfig.yaml
+- KubeadmConfigTemplate.yaml
+- KubeadmControlplane.yaml
