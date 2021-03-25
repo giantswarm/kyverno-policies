@@ -43,7 +43,7 @@ jobs:
 workflows:
   workflow:
     jobs:
-      - validate
+      # - validate
       - build
       # KVM
       - architect/push-to-app-catalog:
@@ -56,7 +56,7 @@ workflows:
           on_tag: false
           requires:
             - build
-            - validate
+            # - validate
       # - architect/push-to-app-collection:
       #     name: push-policies-to-kvm-app-collection
       #     app_catalog: policies
@@ -79,7 +79,7 @@ workflows:
           on_tag: false
           requires:
             - build
-            - validate
+            # - validate
             - push-policies-kvm-to-policies-catalog
       # - architect/push-to-app-collection:
       #     name: push-policies-to-aws-app-collection
@@ -104,7 +104,7 @@ workflows:
           on_tag: false
           requires:
             - build
-            - validate
+            # - validate
             - push-policies-aws-to-policies-catalog
       # - architect/push-to-app-collection:
       #     name: push-policies-to-azure-app-collection
