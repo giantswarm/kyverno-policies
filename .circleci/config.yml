@@ -37,9 +37,21 @@ workflows:
     jobs:
       # - validate
       - build
+      # Common
+      - architect/push-to-app-catalog:
+          name: push-policies-common-to-catalog
+          app_catalog: control-plane-test-catalog
+          app_catalog_test: control-plane-test-catalog
+          attach_workspace: true
+          chart: policies-common
+          context: "architect"
+          explicit_allow_chart_name_mismatch: true
+          on_tag: false
+          requires:
+            - build
       # KVM
       - architect/push-to-app-catalog:
-          name: push-policies-kvm-to-policies-catalog
+          name: push-policies-kvm-to-catalog
           app_catalog: control-plane-test-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
@@ -49,6 +61,7 @@ workflows:
           on_tag: false
           requires:
             - build
+            - push-policies-common-to-catalog
             # - validate
       # - architect/push-to-app-collection:
       #     name: push-policies-to-kvm-app-collection
@@ -56,14 +69,14 @@ workflows:
       #     app_name: policies-kvm
       #     app_collection_repo: kvm-app-collection
       #     requires:
-      #       - push-policies-kvm-to-policies-catalog
+      #       - push-policies-kvm-to-catalog
       #     filters:
       #       # Trigger the job on merge to master.
       #       branches:
       #         only: master
       # AWS
       - architect/push-to-app-catalog:
-          name: push-policies-aws-to-policies-catalog
+          name: push-policies-aws-to-catalog
           app_catalog: control-plane-test-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
@@ -74,14 +87,14 @@ workflows:
           requires:
             - build
             # - validate
-            - push-policies-kvm-to-policies-catalog
+            - push-policies-kvm-to-catalog
       # - architect/push-to-app-collection:
       #     name: push-policies-to-aws-app-collection
       #     app_catalog: policies
       #     app_name: policies-aws
       #     app_collection_repo: aws-app-collection
       #     requires:
-      #       - push-policies-aws-to-policies-catalog
+      #       - push-policies-aws-to-catalog
       #       # - push-policies-to-kvm-app-collection
       #     filters:
       #       # Trigger the job on merge to master.
@@ -89,7 +102,7 @@ workflows:
       #         only: master
       # Azure
       - architect/push-to-app-catalog:
-          name: push-policies-azure-to-policies-catalog
+          name: push-policies-azure-to-catalog
           app_catalog: control-plane-test-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
@@ -100,16 +113,18 @@ workflows:
           requires:
             - build
             # - validate
-            - push-policies-aws-to-policies-catalog
+            - push-policies-aws-to-catalog
       # - architect/push-to-app-collection:
       #     name: push-policies-to-azure-app-collection
       #     app_catalog: policies
       #     app_name: policies-azure
       #     app_collection_repo: azure-app-collection
       #     requires:
-      #       - push-policies-azure-to-policies-catalog
+      #       - push-policies-azure-to-catalog
       #       # - push-policies-to-aws-app-collection
       #     filters:
       #       # Trigger the job on merge to master.
       #       branches:
       #         only: master
+
+      # TODO: Push common to common app collection
