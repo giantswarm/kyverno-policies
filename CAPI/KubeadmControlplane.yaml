@@ -27,12 +27,13 @@ spec:
         spec:
           kubeadmConfigSpec:
             clusterConfiguration:
-              apiServer:
-                extraArgs:
-                  bind-address: 0.0.0.0
               controllerManager:
                 extraArgs:
                   bind-address: 0.0.0.0
               scheduler:
                 extraArgs:
-                  bind-address: 0.0.0.0
+                  bind-address: 0.0.0.0    
+            initConfiguration:
+              nodeRegistration:
+                kubeletExtraArgs:
+                  healthz-bind-address: 0.0.0.0

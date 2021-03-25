@@ -4,7 +4,7 @@ metadata:
   name: kubeadmconfig
 spec:
   rules:
-  - name: kubeadmconfig-defaults
+  - name: kubeadmconfig-label
     match:
       resources:
         kinds:
@@ -24,9 +24,3 @@ spec:
           labels:
             +(cluster.x-k8s.io/watch-filter): "{{ releases[?metadata.name == 'v{{ clusters[?metadata.name == '{{request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"}}'].metadata.labels.\"release.giantswarm.io/version\"  | [0] }}'].spec.components[] | [?name == 'cluster-api-bootstrap-provider-kubeadm'].version | [0]}}"
             cluster.x-k8s.io/watch-filter: "{{ releases[?metadata.name == 'v{{ clusters[?metadata.name == '{{request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"}}'].metadata.labels.\"release.giantswarm.io/version\"  | [0] }}'].spec.components[] | [?name == 'cluster-api-bootstrap-provider-kubeadm'].version | [0]}}"
-        spec:
-          kubeadmConfigSpec:
-            initConfiguration:
-              nodeRegistration:
-                kubeletExtraArgs:
-                  healthz-bind-address: 0.0.0.0
