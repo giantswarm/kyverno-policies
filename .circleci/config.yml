@@ -44,6 +44,7 @@ workflows:
           app_catalog_test: policies-test-catalog
           attach_workspace: true
           chart: policies-kvm
+          context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
           requires:
@@ -67,6 +68,7 @@ workflows:
           app_catalog_test: policies-test-catalog
           attach_workspace: true
           chart: policies-aws
+          context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
           requires:
@@ -92,6 +94,7 @@ workflows:
           app_catalog_test: policies-test-catalog
           attach_workspace: true
           chart: policies-azure
+          context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
           requires:
