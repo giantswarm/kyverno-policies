@@ -18,7 +18,7 @@ jobs:
           name: Kustomize helm charts
           command: |
             export XDG_CONFIG_HOME=$(pwd)
-            for i in aws azure common kvm vmware; do mkdir -p helm/policies-$i/templates; kustomize build --enable_alpha_plugins ./$i > helm/policies-$i/templates/policies.yaml; done
+            for i in aws azure common kvm vmware; do mkdir -p helm/policies-$i/templates; kustomize build ./$i > helm/policies-$i/templates/policies.yaml; done
       - persist_to_workspace:
           root: .
           paths:
