@@ -4,25 +4,25 @@ version: 2.1
 orbs:
   architect: giantswarm/architect@2.4.2
 
-jobs:
-  build:
-    docker:
-      - image: quay.io/giantswarm/architect
-    steps:
-      - checkout
-      - run:
-          name: Install kustomize
-          command: |
-            CGO_ENABLED=0 go install sigs.k8s.io/kustomize/kustomize/v3
-      - run:
-          name: Kustomize helm charts
-          command: |
-            export XDG_CONFIG_HOME=$(pwd)
-            for i in aws azure common kvm vmware; do mkdir -p helm/policies-$i/templates; kustomize build ./$i > helm/policies-$i/templates/policies.yaml; done
-      - persist_to_workspace:
-          root: .
-          paths:
-            - helm
+# jobs:
+#   build:
+#     docker:
+#       - image: quay.io/giantswarm/architect
+#     steps:
+#       - checkout
+#       - run:
+#           name: Install kustomize
+#           command: |
+#             CGO_ENABLED=0 go install sigs.k8s.io/kustomize/kustomize/v3
+#       - run:
+#           name: Kustomize helm charts
+#           command: |
+#             export XDG_CONFIG_HOME=$(pwd)
+#             for i in aws azure common kvm vmware; do mkdir -p helm/policies-$i/templates; kustomize build ./$i > helm/policies-$i/templates/policies.yaml; done
+#       - persist_to_workspace:
+#           root: .
+#           paths:
+#             - helm
   # validate:
   #   docker:
   #     - image: quay.io/giantswarm/architect
@@ -36,7 +36,7 @@ workflows:
   workflow:
     jobs:
       # - validate
-      - build
+      # - build
       # Common
       - architect/push-to-app-catalog:
           name: push-policies-common-to-catalog
@@ -47,8 +47,8 @@ workflows:
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
-          requires:
-            - build
+          # requires:
+          #   - build
       # KVM
       - architect/push-to-app-catalog:
           name: push-policies-kvm-to-catalog
@@ -60,7 +60,7 @@ workflows:
           explicit_allow_chart_name_mismatch: true
           on_tag: false
           requires:
-            - build
+            # - build
             - push-policies-common-to-catalog
             # - validate
       # - architect/push-to-app-collection:
@@ -85,7 +85,7 @@ workflows:
           explicit_allow_chart_name_mismatch: true
           on_tag: false
           requires:
-            - build
+            # - build
             # - validate
             - push-policies-kvm-to-catalog
       # - architect/push-to-app-collection:
@@ -111,7 +111,7 @@ workflows:
           explicit_allow_chart_name_mismatch: true
           on_tag: false
           requires:
-            - build
+            # - build
             # - validate
             - push-policies-aws-to-catalog
       # - architect/push-to-app-collection:
