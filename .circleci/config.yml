@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  architect: giantswarm/architect@2.4.2
+  architect: giantswarm/architect@2.5.0
 
 # jobs:
 #   build:
@@ -47,6 +47,7 @@ workflows:
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
+          skip_helm_chart_linting: true
           # requires:
           #   - build
       # KVM
@@ -59,6 +60,7 @@ workflows:
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
+          skip_helm_chart_linting: true
           requires:
             # - build
             - push-policies-common-to-catalog
@@ -84,6 +86,7 @@ workflows:
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
+          skip_helm_chart_linting: true
           requires:
             # - build
             # - validate
@@ -110,6 +113,7 @@ workflows:
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
+          skip_helm_chart_linting: true
           requires:
             # - build
             # - validate
