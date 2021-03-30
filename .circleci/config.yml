@@ -4,39 +4,9 @@ version: 2.1
 orbs:
   architect: giantswarm/architect@2.5.0
 
-# jobs:
-#   build:
-#     docker:
-#       - image: quay.io/giantswarm/architect
-#     steps:
-#       - checkout
-#       - run:
-#           name: Install kustomize
-#           command: |
-#             CGO_ENABLED=0 go install sigs.k8s.io/kustomize/kustomize/v3
-#       - run:
-#           name: Kustomize helm charts
-#           command: |
-#             export XDG_CONFIG_HOME=$(pwd)
-#             for i in aws azure common kvm vmware; do mkdir -p helm/policies-$i/templates; kustomize build ./$i > helm/policies-$i/templates/policies.yaml; done
-#       - persist_to_workspace:
-#           root: .
-#           paths:
-#             - helm
-  # validate:
-  #   docker:
-  #     - image: quay.io/giantswarm/architect
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Validate policies
-  #         command: CGO_ENABLED=0 go test ./...
-
 workflows:
   workflow:
     jobs:
-      # - validate
-      # - build
       # Common
       - architect/push-to-app-catalog:
           name: push-policies-common-to-catalog
@@ -48,8 +18,6 @@ workflows:
           explicit_allow_chart_name_mismatch: true
           on_tag: false
           skip_helm_chart_linting: true
-          # requires:
-          #   - build
       # KVM
       - architect/push-to-app-catalog:
           name: push-policies-kvm-to-catalog
@@ -62,20 +30,7 @@ workflows:
           on_tag: false
           skip_helm_chart_linting: true
           requires:
-            # - build
             - push-policies-common-to-catalog
-            # - validate
-      # - architect/push-to-app-collection:
-      #     name: push-policies-to-kvm-app-collection
-      #     app_catalog: policies
-      #     app_name: policies-kvm
-      #     app_collection_repo: kvm-app-collection
-      #     requires:
-      #       - push-policies-kvm-to-catalog
-      #     filters:
-      #       # Trigger the job on merge to master.
-      #       branches:
-      #         only: master
       # AWS
       - architect/push-to-app-catalog:
           name: push-policies-aws-to-catalog
@@ -88,21 +43,7 @@ workflows:
           on_tag: false
           skip_helm_chart_linting: true
           requires:
-            # - build
-            # - validate
             - push-policies-kvm-to-catalog
-      # - architect/push-to-app-collection:
-      #     name: push-policies-to-aws-app-collection
-      #     app_catalog: policies
-      #     app_name: policies-aws
-      #     app_collection_repo: aws-app-collection
-      #     requires:
-      #       - push-policies-aws-to-catalog
-      #       # - push-policies-to-kvm-app-collection
-      #     filters:
-      #       # Trigger the job on merge to master.
-      #       branches:
-      #         only: master
       # Azure
       - architect/push-to-app-catalog:
           name: push-policies-azure-to-catalog
@@ -115,20 +56,4 @@ workflows:
           on_tag: false
           skip_helm_chart_linting: true
           requires:
-            # - build
-            # - validate
             - push-policies-aws-to-catalog
-      # - architect/push-to-app-collection:
-      #     name: push-policies-to-azure-app-collection
-      #     app_catalog: policies
-      #     app_name: policies-azure
-      #     app_collection_repo: azure-app-collection
-      #     requires:
-      #       - push-policies-azure-to-catalog
-      #       # - push-policies-to-aws-app-collection
-      #     filters:
-      #       # Trigger the job on merge to master.
-      #       branches:
-      #         only: master
-
-      # TODO: Push common to common app collection
