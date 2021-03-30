@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  architect: giantswarm/architect@dev:add-skip-lint-option  # b6c5d7a
+  architect: giantswarm/architect@2.5.0
 
 # jobs:
 #   build:
