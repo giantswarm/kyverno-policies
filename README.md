@@ -1,1 +1,1 @@
-# clusterpolicies
+# kyverno-policies
