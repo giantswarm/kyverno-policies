@@ -3,4 +3,4 @@ name: policies-common
 version: [[ .Version ]]
 appVersion: master
 description: Giant Swarm policies for all clusters.
-home: https://github.com/giantswarm/clusterpolicies
+home: https://github.com/giantswarm/kyverno-policies

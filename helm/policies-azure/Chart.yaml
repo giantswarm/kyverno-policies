@@ -3,4 +3,4 @@ name: policies-azure
 version: [[ .Version ]]
 appVersion: master
 description: Giant Swarm policies for azure.
-home: https://github.com/giantswarm/clusterpolicies
+home: https://github.com/giantswarm/kyverno-policies

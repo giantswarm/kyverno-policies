@@ -3,4 +3,4 @@ name: policies-kvm
 version: [[ .Version ]]
 appVersion: master
 description: Giant Swarm policies for kvm.
-home: https://github.com/giantswarm/clusterpolicies
+home: https://github.com/giantswarm/kyverno-policies

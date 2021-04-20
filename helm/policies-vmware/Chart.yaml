@@ -3,4 +3,4 @@ name: policies-vmware
 version: [[ .Version ]]
 appVersion: master
 description: Giant Swarm policies for vmware.
-home: https://github.com/giantswarm/clusterpolicies
+home: https://github.com/giantswarm/kyverno-policies
