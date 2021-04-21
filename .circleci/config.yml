@@ -34,6 +34,14 @@ jobs:
           name: Install Kyverno
           command: |
             ./kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/definitions/release/install.yaml > /dev/null
+      - run:
+          name: Install Giantswarm CRDs
+          command: |
+            ./kubectl create -f https://raw.githubusercontent.com/giantswarm/apiextensions/b9a6bed05850045530eaf8ba7fd01941de6c8525/helm/crds-common/templates/giantswarm.yaml > /dev/null
+      - run:
+          name: Install CAPI Cluster CRD
+          command: |
+            ./kubectl create -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api/master/config/crd/bases/cluster.x-k8s.io_clusters.yaml > /dev/null
       - architect/run-tests-with-abs:
           chart_dir: "./helm/policies-common"
           app-build-suite_version: "v0.2.2"
