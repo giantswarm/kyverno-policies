@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Create cluster
           command: |
-            ./kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION --name apiextensions 2> /dev/null
+            ./kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION --name apiextensions
       - run:
           name: Wait for the cluster node to be ready
           command: |
