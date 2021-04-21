@@ -25,11 +25,11 @@ jobs:
           name: Create cluster
           command: |
             ./kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION --name kyverno-cluster  2> /dev/null
-            ./kind get kubeconfig > ./kube.config
       - run:
           name: Wait for the cluster node to be ready
           command: |
             ./kubectl wait nodes/kyverno-cluster-control-plane --for=condition=ready --timeout=5m > /dev/null
+            ./kind get kubeconfig > ./kube.config
       - run:
           name: Install Kyverno
           command: |
