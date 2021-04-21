@@ -29,7 +29,7 @@ jobs:
           name: Wait for the cluster node to be ready
           command: |
             ./kubectl wait nodes/kyverno-cluster-control-plane --for=condition=ready --timeout=5m > /dev/null
-            ./kind get kubeconfig > ./kube.config
+            ./kind get kubeconfig --name kyverno-cluster > ./kube.config
       - run:
           name: Install Kyverno
           command: |
