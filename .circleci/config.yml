@@ -24,11 +24,12 @@ jobs:
       - run:
           name: Create cluster
           command: |
-            ./kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION --name apiextensions
+            ./kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION --name kyverno-cluster  2> /dev/null
+            ./kind get kubeconfig > ./kube.config
       - run:
           name: Wait for the cluster node to be ready
           command: |
-            ./kubectl wait nodes/apiextensions-control-plane --for=condition=ready --timeout=5m > /dev/null
+            ./kubectl wait nodes/kyverno-cluster-control-plane --for=condition=ready --timeout=5m > /dev/null
       - run:
           name: Install Kyverno
           command: |
@@ -42,7 +43,7 @@ jobs:
           chart_dir: "./helm/policies-common"
           app-build-suite_version: "v0.2.2"
           app-build-suite_container_tag: "0.2.2"
-          additional_app-build-suite_flags: "--smoke-tests-cluster-type external --external-cluster-kubeconfig-path $KUBECONFIG --external-cluster-type kind --external-cluster-version $KUBERNETES_VERSION"
+          additional_app-build-suite_flags: "--smoke-tests-cluster-type external --external-cluster-kubeconfig-path kube.config --external-cluster-type kind --external-cluster-version $KUBERNETES_VERSION"
 
 
 workflows:
