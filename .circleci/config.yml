@@ -10,7 +10,7 @@ jobs:
     machine: true
     environment:
       KIND_VERSION: v0.10.0
-      KUBERNETES_VERSION: v1.19.10
+      KUBERNETES_VERSION: v1.19.7
     steps:
       - checkout
       - run:
