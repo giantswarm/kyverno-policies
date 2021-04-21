@@ -34,16 +34,11 @@ jobs:
           name: Install Kyverno
           command: |
             ./kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/definitions/release/install.yaml > /dev/null
-      - run:
-          name: "Download dabs.sh script"
-          command: |
-            wget "https://raw.githubusercontent.com/giantswarm/app-build-suite/v0.2.2/dabs.sh"
-            chmod +x dabs.sh
       - architect/run-tests-with-abs:
           chart_dir: "./helm/policies-common"
           app-build-suite_version: "v0.2.2"
           app-build-suite_container_tag: "0.2.2"
-          additional_app-build-suite_flags: "--smoke-tests-cluster-type external --functional-tests-cluster-type external --external-cluster-kubeconfig-path kube.config --external-cluster-type kind --external-cluster-version $KUBERNETES_VERSION --destination build"
+          additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
 
 
 workflows:

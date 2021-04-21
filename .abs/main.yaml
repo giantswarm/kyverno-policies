@@ -1,0 +1,6 @@
+replace-chart-version-with-git: true
+smoke-tests-cluster-type: external
+functional-tests-cluster-type: external
+external-cluster-kubeconfig-path: kube.config
+external-cluster-type: kind
+destination: build
