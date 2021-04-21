@@ -43,7 +43,7 @@ jobs:
           chart_dir: "./helm/policies-common"
           app-build-suite_version: "v0.2.2"
           app-build-suite_container_tag: "0.2.2"
-          additional_app-build-suite_flags: "--smoke-tests-cluster-type external --external-cluster-kubeconfig-path kube.config --external-cluster-type kind --external-cluster-version $KUBERNETES_VERSION"
+          additional_app-build-suite_flags: "--smoke-tests-cluster-type external --functional-tests-cluster-type external --external-cluster-kubeconfig-path kube.config --external-cluster-type kind --external-cluster-version $KUBERNETES_VERSION --destination build"
 
 
 workflows:
