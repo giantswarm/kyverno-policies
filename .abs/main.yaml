@@ -7,3 +7,4 @@ destination: build
 generate-metadata: true
 catalog-base-url: https://giantswarm.github.io/control-plane-test-catalog/
 external-cluster-version: v1.19.7
+skip-steps: test_functional
