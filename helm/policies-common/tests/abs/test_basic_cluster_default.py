@@ -20,31 +20,17 @@ def ensure_release(kubectl):
           creationTimestamp: null
           name: v20.0.0-v1alpha3
         spec:
-          apps:
-          - name: calico
-            version: 0.2.0
-            componentVersion: 3.18.0
           components:
           - name: cluster-api-bootstrap-provider-kubeadm
-            catalog: control-plane-test-catalog
-            reference: 0.0.1
-            releaseOperatorDeploy: true
             version: 0.0.1
           - name: cluster-api-control-plane
-            catalog: control-plane-test-catalog
-            reference: 0.0.1
-            releaseOperatorDeploy: true
             version: 0.0.1
           - name: cluster-api-core
-            catalog: control-plane-test-catalog
-            reference: 0.0.2
-            releaseOperatorDeploy: true
             version: 0.0.2
           - name: cluster-api-provider-aws
-            catalog: control-plane-test-catalog
-            reference: 0.0.1
-            releaseOperatorDeploy: true
             version: 0.0.1
+          - name: cluster-operator
+            version: 3.6.2
           date: "2021-03-22T14:50:41Z"
           state: active
         status:
