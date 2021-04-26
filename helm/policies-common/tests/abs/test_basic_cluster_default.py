@@ -20,6 +20,12 @@ def ensure_release(kubectl):
           creationTimestamp: null
           name: v20.0.0-v1alpha3
         spec:
+          apps:
+          - name: calico
+            version: 0.2.0
+            componentVersion: 3.18.0
+          - name: cert-exporter
+            version: 1.6.0
           components:
           - name: cluster-api-bootstrap-provider-kubeadm
             version: 0.0.1
