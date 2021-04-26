@@ -74,6 +74,12 @@ def ensure_cluster(kubectl, cluster_name):
 
 @pytest.mark.smoke
 def test_cluster_policy(kubernetes_cluster) -> None:
+    cluster_name = "test-cluster"
+    obj = {}
 
     ensure_release(kubernetes_cluster.kubectl)
-    ensure_cluster(kubernetes_cluster.kubectl, "test-cluster")
+    ensure_cluster(kubernetes_cluster.kubectl, cluster_name)
+
+    kubectl(f"get cluster {cluster_name} -o yaml", input=None, output=obj)
+
+    LOGGER.info(f"Returned {obj}")
