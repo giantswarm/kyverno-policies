@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: inject-proxy-env
+spec:
+  rules:
+    - name: inject-proxy-env
+      match:
+        resources:
+          kinds:
+          - Pod
+      mutate:
+        overlay:
+          spec:
+            containers:
+              - env:
+                - name: HTTP_PROXY
+                  value: "{{ .Values.proxy.http }}"
+                - name: HTTPS_PROXY
+                  value: "{{ .Values.proxy.https }}"
+                - name: NO_PROXY
+                  value: "{{ .Values.proxy.blocklist }}"
