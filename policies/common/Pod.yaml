@@ -1,5 +1,5 @@
-{{- with .Values.Installation.V1.Proxy }}
-{{- if .Enabled }}
+[[- with .Values.Installation.V1.Proxy ]]
+[[- if .Enabled ]]
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -16,17 +16,17 @@ spec:
           spec:
             containers:
               - env:
-                {{- if .Enabled }}
+                [[- if .Enabled ]]
                 - name: HTTP_PROXY
-                  value: "{{ .HTTP }}"
-                {{- end }}
-                {{- if .HTTPS }}
+                  value: [[ .HTTP ]]
+                [[- end ]]
+                [[- if .HTTPS ]]
                 - name: HTTPS_PROXY
-                  value: {{ .HTTPS }}
-                {{- end }}
-                {{- if .NoProxy }}
+                  value: [[ .HTTPS ]]
+                [[- end ]]
+                [[- if .NoProxy ]]
                 - name: NO_PROXY
-                  value: {{ join "," .NoProxy }}
-                {{- end }}
-{{- end }}
-{{- end }}
+                  value: [[ join "," .NoProxy ]]
+                [[- end ]]
+[[- end ]]
+[[- end ]]
