@@ -1,3 +1,5 @@
 Installation:
   V1:
-    Proxy: {}
+    Secret:
+      Proxy:
+        Enabled: false
