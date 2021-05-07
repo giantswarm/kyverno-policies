@@ -1,4 +1,4 @@
-{{- with .Values.Installation.V1.Proxy }}
+{{- with .Values.Installation.V1.Secret.Proxy }}
 {{- if .Enabled }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
