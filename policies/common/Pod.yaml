@@ -10,23 +10,24 @@ spec:
       match:
         resources:
           kinds:
-          - Pod
+            - Pod
       mutate:
-        overlay:
+        patchStrategicMerge:
           spec:
             containers:
-              - env:
-                [[- if .Enabled ]]
-                - name: HTTP_PROXY
-                  value: [[ .HTTP ]]
-                [[- end ]]
-                [[- if .HTTPS ]]
-                - name: HTTPS_PROXY
-                  value: [[ .HTTPS ]]
-                [[- end ]]
-                [[- if .NoProxy ]]
-                - name: NO_PROXY
-                  value: [[ join "," .NoProxy ]]
-                [[- end ]]
+              - (name): "*"
+                env:
+                  [[- if .Enabled ]]
+                  - name: HTTP_PROXY
+                    value: [[ .HTTP ]]
+                  [[- end ]]
+                  [[- if .HTTPS ]]
+                  - name: HTTPS_PROXY
+                    value: [[ .HTTPS ]]
+                  [[- end ]]
+                  [[- if .NoProxy ]]
+                  - name: NO_PROXY
+                    value: [[ join "," .NoProxy ]]
+                  [[- end ]]
 [[- end ]]
 [[- end ]]
