@@ -17,7 +17,7 @@ spec:
             containers:
               - (name): "*"
                 env:
-                  {{- if .Enabled }}
+                  {{- if .HTTP }}
                   - name: HTTP_PROXY
                     value: {{ .HTTP }}
                   {{- end }}
