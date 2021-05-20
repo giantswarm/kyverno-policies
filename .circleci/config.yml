@@ -12,6 +12,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Make
+          command: |
+            apt-get update && apt-get install make
+      - run:
           name: Make verify
           command: |
             make verify
