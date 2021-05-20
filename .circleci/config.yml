@@ -6,6 +6,13 @@ orbs:
 
 
 jobs:
+  verify:
+    steps:
+      - checkout
+      - run:
+          name: Make verify
+          command: |
+            make verify
   test-policies:
     machine: true
     environment:
@@ -53,6 +60,7 @@ jobs:
 workflows:
   workflow:
     jobs:
+      - verify
       - test-policies
 
       # Common
