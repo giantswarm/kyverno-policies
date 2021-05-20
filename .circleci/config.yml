@@ -8,7 +8,7 @@ orbs:
 jobs:
   verify:
     docker:
-      - image: quay.io/giantswarm/architect
+      - image: cimg/base:2021.04
     steps:
       - checkout
       - run:
