@@ -23,7 +23,7 @@ replace_all () {
   replace "$filename" '\]\]' '}}'
 }
 
-for i in aws azure common kvm vmware; do
+for i in aws azure common vmware; do
   mkdir -p helm/policies-$i/templates
 
   cp -a policies/$i/. helm/policies-$i/templates

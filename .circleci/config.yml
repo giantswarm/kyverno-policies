@@ -6,6 +6,19 @@ orbs:
 
 
 jobs:
+  verify:
+    docker:
+      - image: cimg/base:2021.04
+    steps:
+      - checkout
+      - run:
+          name: Install Make
+          command: |
+            sudo apt-get update && sudo apt-get install make
+      - run:
+          name: Make verify
+          command: |
+            make verify
   test-policies:
     machine: true
     environment:
@@ -53,6 +66,7 @@ jobs:
 workflows:
   workflow:
     jobs:
+      - verify
       - test-policies
 
       # Common
@@ -62,19 +76,6 @@ workflows:
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-common
-          context: "architect"
-          explicit_allow_chart_name_mismatch: true
-          on_tag: false
-          skip_helm_chart_linting: true
-          requires:
-            - test-policies
-      # KVM
-      - architect/push-to-app-catalog:
-          name: push-policies-kvm-to-catalog
-          app_catalog: control-plane-test-catalog
-          app_catalog_test: control-plane-test-catalog
-          attach_workspace: true
-          chart: policies-kvm
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
