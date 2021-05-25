@@ -10,17 +10,18 @@ spec:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSClusterControllerIdentity
     context:
-    - name: clusters
+    - name: releaseVersion
       apiCall:
         urlPath: "/apis/cluster.x-k8s.io/v1alpha3/namespaces/{{ request.object.metadata.namespace }}/clusters"
-        jmesPath: "items[*]"
-    - name: releases
-      apiCall:
-        urlPath: "/apis/release.giantswarm.io/v1alpha1/releases"
-        jmesPath: "items[*]"
+        jmesPath: "items[?metadata.name == '{{request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"}}'].metadata.labels.\"release.giantswarm.io/version\" | [0]"
+    preconditions:
+      any:
+      - key: "{{ releaseVersion }}"
+        operator: Equals
+        value: "20.0.0"
     mutate:
       patchStrategicMerge:
         metadata:
           labels:
-            +(cluster.x-k8s.io/watch-filter): "{{ releases[?metadata.name == 'v{{ clusters[?metadata.name == '{{request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"}}'].metadata.labels.\"release.giantswarm.io/version\"  | [0] }}'].spec.components[] | [?name == 'cluster-api-provider-aws'].version | [0]}}"
-            cluster.x-k8s.io/watch-filter: "{{ releases[?metadata.name == 'v{{ clusters[?metadata.name == '{{request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"}}'].metadata.labels.\"release.giantswarm.io/version\"  | [0] }}'].spec.components[] |[?name == 'cluster-api-provider-aws'].version | [0]}}"
+            +(cluster.x-k8s.io/watch-filter): "capi"
+            cluster.x-k8s.io/watch-filter: "capi"
