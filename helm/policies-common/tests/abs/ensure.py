@@ -32,7 +32,7 @@ def release(kubectl, release_version, cluster_operator_version, capi_core_versio
           - name: cluster-api-control-plane
             version: 0.0.1
           - name: cluster-api-core
-            version: {capi_core_version}
+            version: 0.0.1
           - name: cluster-api-provider-aws
             version: 0.0.1
           - name: cluster-operator

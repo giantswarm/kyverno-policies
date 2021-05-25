@@ -16,8 +16,8 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.smoke
 def test_cluster_policy(kubernetes_cluster) -> None:
     cluster_name = "test-cluster"
-    release_version = "20.0.0-v1alpha3"
-    capi_core_version = "0.0.2"
+    release_version = "20.0.0"
+    capi_core_version = "capi"
     cluster_operator_version = "2.0.0"
 
     obj = {}
@@ -40,8 +40,8 @@ def test_cluster_policy(kubernetes_cluster) -> None:
 def test_machine_deployment_policy(kubernetes_cluster) -> None:
     machine_deployment_name = "test-md"
     cluster_name = "test-cluster-md"
-    release_version = "20.0.0-v1alpha4"
-    capi_core_version = "0.0.2"
+    release_version = "20.0.0"
+    capi_core_version = "capi"
     cluster_operator_version = "2.0.0"
 
     obj = {}

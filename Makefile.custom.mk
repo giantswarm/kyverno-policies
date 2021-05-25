@@ -6,3 +6,8 @@ generate:
 verify:
 	@$(MAKE) generate
 	git diff --exit-code
+
+.PHONY: local-setup
+local-setup:
+	@$(MAKE) generate
+	./setup.sh
