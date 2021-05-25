@@ -58,8 +58,6 @@ jobs:
             ./kubectl create -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api/master/config/crd/bases/cluster.x-k8s.io_machinedeployments.yaml > /dev/null
       - architect/run-tests-with-abs:
           chart_dir: "./helm/policies-common"
-          app-build-suite_version: "v0.2.2"
-          app-build-suite_container_tag: "0.2.2"
           additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
 
 
