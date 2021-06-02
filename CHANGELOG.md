@@ -7,4 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/tree/main
+## [0.0.1] - 2021-06-02
+
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/giantswarm/kyverno-policies/releases/tag/v0.0.1
