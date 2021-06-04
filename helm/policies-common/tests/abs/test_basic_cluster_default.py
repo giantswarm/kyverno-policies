@@ -18,12 +18,12 @@ def test_cluster_policy(kubernetes_cluster) -> None:
     cluster_name = "test-cluster"
     release_version = "20.0.0"
     capi_core_version = "capi"
-    cluster_operator_version = "2.0.0"
+    cluster_apps_operator_version = "2.0.0"
 
     obj = {}
 
     ensure.release(kubernetes_cluster.kubectl, release_version,
-                   cluster_operator_version, capi_core_version)
+                   cluster_apps_operator_version, capi_core_version)
     ensure.cluster(kubernetes_cluster.kubectl,
                    cluster_name, release_version)
 
@@ -32,7 +32,7 @@ def test_cluster_policy(kubernetes_cluster) -> None:
 
     cluster = yaml.safe_load(raw)
 
-    assert cluster['metadata']['labels']['cluster-operator.giantswarm.io/version'] == cluster_operator_version
+    assert cluster['metadata']['labels']['cluster-apps-operator.giantswarm.io/version'] == cluster_apps_operator_version
     assert cluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == capi_core_version
 
 
@@ -42,12 +42,12 @@ def test_machine_deployment_policy(kubernetes_cluster) -> None:
     cluster_name = "test-cluster-md"
     release_version = "20.0.0"
     capi_core_version = "capi"
-    cluster_operator_version = "2.0.0"
+    cluster_apps_operator_version = "2.0.0"
 
     obj = {}
 
     ensure.release(kubernetes_cluster.kubectl, release_version,
-                   cluster_operator_version, capi_core_version)
+                   cluster_apps_operator_version, capi_core_version)
     ensure.cluster(kubernetes_cluster.kubectl,
                    cluster_name, release_version)
     ensure.machine_deployment(kubernetes_cluster.kubectl, cluster_name,

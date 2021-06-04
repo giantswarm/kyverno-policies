@@ -12,7 +12,7 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-def release(kubectl, release_version, cluster_operator_version, capi_core_version):
+def release(kubectl, release_version, cluster_apps_operator_version, capi_core_version):
     r = dedent(f"""
         apiVersion: release.giantswarm.io/v1alpha1
         kind: Release
@@ -35,8 +35,8 @@ def release(kubectl, release_version, cluster_operator_version, capi_core_versio
             version: 0.0.1
           - name: cluster-api-provider-aws
             version: 0.0.1
-          - name: cluster-operator
-            version: {cluster_operator_version}
+          - name: cluster-apps-operator
+            version: {cluster_apps_operator_version}
           date: "2021-03-22T14:50:41Z"
           state: active
         status:
