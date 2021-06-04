@@ -26,5 +26,5 @@ spec:
           labels:
             +(cluster.x-k8s.io/watch-filter): "capi"
             cluster.x-k8s.io/watch-filter: "capi"
-            +(cluster-operator.giantswarm.io/version): "{{ `{{` }} release.spec.components | [?name == 'cluster-operator'].version | [0]{{ `}}` }}"
-            cluster-operator.giantswarm.io/version: "{{ `{{` }} release.spec.components | [?name == 'cluster-operator'].version | [0]{{ `}}` }}"
+            +(cluster-apps-operator.giantswarm.io/version): "{{ `{{` }} release.spec.components | [?name == 'cluster-apps-operator'].version | [0]{{ `}}` }}"
+            cluster-apps-operator.giantswarm.io/version: "{{ `{{` }} release.spec.components | [?name == 'cluster-apps-operator'].version | [0]{{ `}}` }}"
