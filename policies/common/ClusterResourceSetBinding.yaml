@@ -10,6 +10,7 @@ spec:
       resources:
         kinds:
         - addons.cluster.x-k8s.io/v1alpha3/ClusterResourceSetBinding
+        - addons.cluster.x-k8s.io/v1alpha4/ClusterResourceSetBinding
     context:
     - name: releaseVersion
       apiCall:

@@ -10,6 +10,7 @@ spec:
       resources:
         kinds:
         - cluster.x-k8s.io/v1alpha3/Machine
+        - cluster.x-k8s.io/v1alpha4/Machine
     context:
     - name: releaseVersion
       apiCall:

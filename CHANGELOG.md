@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make policies work with `v1alpha4`.
+
 ## [0.0.1] - 2021-06-02
 
 [Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.1...HEAD
