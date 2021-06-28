@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  architect: giantswarm/architect@dev:bump-app-build-suite
+  architect: giantswarm/architect@3.3.0
 
 
 jobs:
