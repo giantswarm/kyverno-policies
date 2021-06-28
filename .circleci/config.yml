@@ -79,7 +79,6 @@ workflows:
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
-          skip_helm_chart_linting: true
           requires:
             - test-policies
       # AWS
@@ -92,7 +91,6 @@ workflows:
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
-          skip_helm_chart_linting: true
           requires:
             - test-policies
       # Azure
@@ -105,6 +103,5 @@ workflows:
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
-          skip_helm_chart_linting: true
           requires:
             - test-policies
