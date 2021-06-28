@@ -26,4 +26,5 @@ spec:
             +(cluster.x-k8s.io/watch-filter): "capi"
             cluster.x-k8s.io/watch-filter: "capi"
         spec:
-          +(region): {{ .Values.Region }}
+          +(region): {{ .Values.region }}
+          +(sshKeyName): {{ .Values.sshKeyName }}
