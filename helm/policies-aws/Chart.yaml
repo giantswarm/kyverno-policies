@@ -1,9 +1,6 @@
-annotations:
-  application.giantswarm.io/metadata: https://giantswarm.github.io/control-plane-test-catalog/policies-aws-0.0.1-75a864411738d518e817ed72104b11bebd29824b.tgz-meta/main.yaml
-  application.giantswarm.io/readme: https://giantswarm.github.io/control-plane-test-catalog/policies-aws-0.0.1-75a864411738d518e817ed72104b11bebd29824b.tgz-meta/README.md
 apiVersion: v1
 appVersion: master
 description: Giant Swarm policies for aws.
 home: https://github.com/giantswarm/kyverno-policies
 name: policies-aws
-version: 0.0.1-75a864411738d518e817ed72104b11bebd29824b
+version: [[ .Version ]]
