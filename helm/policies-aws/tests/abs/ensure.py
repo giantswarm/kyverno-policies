@@ -76,7 +76,7 @@ def cluster(kubectl, cluster_name, release_version):
     kubectl("apply", input=c, output=None)
     LOGGER.info(f"Cluster {cluster_name} applied")
 
-def awscluster(kubectl, cluster_name):
+def emptyawscluster(kubectl, cluster_name):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -91,3 +91,20 @@ def awscluster(kubectl, cluster_name):
     kubectl("apply", input=c, output=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
+def awscluster(kubectl, cluster_name):
+    c = dedent(f"""
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AWSCluster
+        metadata:
+          name: {cluster_name}
+          namespace: default
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+        spec:
+          region: ""
+          sshKeyName: ""
+    """)
+
+    kubectl("apply", input=c, output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} applied")

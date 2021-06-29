@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: awscluster
 spec:
+  background: false
   rules:
   - name: awscluster-label
     match:
@@ -26,5 +27,30 @@ spec:
             +(cluster.x-k8s.io/watch-filter): "capi"
             cluster.x-k8s.io/watch-filter: "capi"
         spec:
+          # Create values if missing
           +(region): {{ .Values.region }}
           +(sshKeyName): {{ .Values.sshKeyName }}
+
+  - name: awscluster-default-empty-string
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSCluster
+    context:
+    - name: releaseVersion
+      apiCall:
+        urlPath: "/apis/cluster.x-k8s.io/v1alpha3/namespaces/{{ `{{` }} request.object.metadata.namespace {{ `}}` }}/clusters"
+        jmesPath: "items[?metadata.name == '{{ `{{` }}request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"{{ `}}` }}'].metadata.labels.\"release.giantswarm.io/version\" | [0]"
+    preconditions:
+      any:
+      - key: "{{ `{{` }} releaseVersion {{ `}}` }}"
+        operator: Equals
+        value: "20.0.0"
+    mutate:
+      patchStrategicMerge:
+        spec:
+        # Replace empty strings
+          region: |-
+            {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.region }}') {{ `}}` }}
+          sshKeyName: |-
+            {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.sshKeyName }}') {{ `}}` }}
