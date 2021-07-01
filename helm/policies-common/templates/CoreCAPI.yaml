@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: cluster
+  name: core-capi-policy
 spec:
   background: false
   rules:
