@@ -63,6 +63,26 @@ def test_aws_cluster_policy_empty(kubernetes_cluster) -> None:
 
     cleanup(kubernetes_cluster.kubectl)
 
+
+@pytest.mark.smoke
+def test_aws_cluster_policy_solo(kubernetes_cluster) -> None:
+    cluster_name = "test-cluster-3"
+    capa_version = "capi"
+
+    ensure.emptylabeledawscluster(kubernetes_cluster.kubectl,
+                   cluster_name, capa_version)
+
+    raw = kubernetes_cluster.kubectl(
+        f"get awscluster {cluster_name}", output="yaml")
+
+    awscluster = yaml.safe_load(raw)
+
+    assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == capa_version
+    assert awscluster['spec']['region'] == "eu-west-1"
+    assert awscluster['spec']['sshKeyName'] == "ssh-key"
+
+    cleanup(kubernetes_cluster.kubectl)
+
 def cleanup(kubectl) -> None:
   kubectl("delete awscluster --all", output=None)
   kubectl("delete cluster --all", output=None)
