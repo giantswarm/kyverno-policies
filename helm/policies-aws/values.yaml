@@ -1,2 +1,7 @@
 region: "eu-west-1"
 sshKeyName: "ssh-key"
+
+awsClusterRoleIdentity:
+  sourceIdentityRef:
+    name: default
+    kind: AWSClusterControllerIdentity

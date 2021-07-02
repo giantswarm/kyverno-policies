@@ -124,3 +124,24 @@ def awscluster(kubectl, cluster_name):
 
     kubectl("apply", input=c, output=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
+
+def awsclusterclusterroleidentity(kubectl, cluster_name, capa_version):
+    c = dedent(f"""
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AWSClusterRoleIdentity
+        metadata:
+          labels:
+            cluster.x-k8s.io/watch-filter: {capa_version}
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+          name: {cluster_name}
+          namespace: default
+        spec:
+          allowedNamespaces:
+            list:
+            - org-marcel
+          roleARN: ""
+    """)
+
+    kubectl("apply", input=c, output=None)
+    LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} applied")

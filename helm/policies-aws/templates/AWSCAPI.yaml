@@ -72,3 +72,38 @@ spec:
             {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.region }}') {{ `}}` }}
           sshKeyName: |-
             {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.sshKeyName }}') {{ `}}` }}
+
+  - name: awsclusterroleidentity-default
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSClusterRoleIdentity
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchesJson6902: |-
+        - op: add
+          path: "/spec/sourceIdentityRef/name"
+          value: {{ .Values.awsClusterRoleIdentity.sourceIdentityRef.name }}
+        - op: add
+          path: "/spec/sourceIdentityRef/kind"
+          value: {{ .Values.awsClusterRoleIdentity.sourceIdentityRef.kind }}
+
+  - name: awsclusterroleidentity-default-empty-string
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSClusterRoleIdentity
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          # Replace empty strings
+          sourceIdentityRef:
+            name: |-
+              {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.awsClusterRoleIdentity.sourceIdentityRef.name}}') {{ `}}` }}
+            kind: |-
+              {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.awsClusterRoleIdentity.sourceIdentityRef.kind }}') {{ `}}` }}

@@ -83,7 +83,28 @@ def test_aws_cluster_policy_solo(kubernetes_cluster) -> None:
 
     cleanup(kubernetes_cluster.kubectl)
 
+
+@pytest.mark.smoke
+def test_aws_cluster_role_identity_policy_solo(kubernetes_cluster) -> None:
+    cluster_name = "test-cluster-4"
+    capa_version = "capi"
+
+    ensure.awsclusterclusterroleidentity(kubernetes_cluster.kubectl,
+                   cluster_name, capa_version)
+
+    raw = kubernetes_cluster.kubectl(
+        f"get AWSClusterRoleIdentity {cluster_name}", output="yaml")
+
+    awsclusterroleidentity = yaml.safe_load(raw)
+
+    assert awsclusterroleidentity['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == capa_version
+    assert awsclusterroleidentity['spec']['sourceIdentityRef']['name'] == "default"
+    assert awsclusterroleidentity['spec']['sourceIdentityRef']['kind'] == "AWSClusterControllerIdentity"
+
+    cleanup(kubernetes_cluster.kubectl)
+
 def cleanup(kubectl) -> None:
   kubectl("delete awscluster --all", output=None)
   kubectl("delete cluster --all", output=None)
   kubectl("delete release --all", output=None)
+  kubectl("delete AWSClusterRoleIdentity --all", output=None)
