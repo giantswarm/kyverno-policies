@@ -1,14 +1,17 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: vspheremachine
+  name: vsphere-capi-policy
 spec:
   rules:
-  - name: vspheremachine-label
+  - name: vsphere-label
     match:
       resources:
         kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/VSphereCluster
         - infrastructure.cluster.x-k8s.io/v1alpha3/VSphereMachine
+        - infrastructure.cluster.x-k8s.io/v1alpha3/VSphereMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha3/VSphereVM
     context:
     - name: releaseVersion
       apiCall:
