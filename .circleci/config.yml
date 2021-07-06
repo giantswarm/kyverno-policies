@@ -47,6 +47,10 @@ jobs:
           app-build-suite_version: "v0.2.3"
           app-build-suite_container_tag: "0.2.3"
           additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
+      - run:
+          name: Print logs
+          command: |
+            kubectl logs -n kyverno -lapp=kyverno
 
 
 workflows:
