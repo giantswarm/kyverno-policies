@@ -49,6 +49,7 @@ jobs:
           additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
       - run:
           name: Export kind logs
+          when: always
           command: |
             kind export logs --name kyverno-cluster logs
       - store_artifacts:
