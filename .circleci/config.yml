@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Install Kyverno
           command: |
-            ./kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/definitions/release/install.yaml > /dev/null
+            ./kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/v1.4.1/definitions/install.yaml > /dev/null
       - run:
           name: Install Giantswarm CRDs
           command: |
