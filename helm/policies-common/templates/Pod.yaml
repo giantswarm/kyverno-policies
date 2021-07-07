@@ -1,3 +1,4 @@
+# THIS FILE IS GENERATED WITH 'make generate' - DO NOT EDIT MANUALLY
 {{- with .Values.Installation.V1 }}
 {{- if .Proxy.Enabled }}
 apiVersion: kyverno.io/v1
