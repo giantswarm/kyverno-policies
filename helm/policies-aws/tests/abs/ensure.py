@@ -11,8 +11,13 @@ from pytest_kube import forward_requests, wait_for_rollout, app_template
 import logging
 LOGGER = logging.getLogger(__name__)
 
+cluster_name = "test-cluster"
+release_version = "20.0.0"
+cluster_apps_operator_version = "2.0.0"
+capa_version = "capi"
 
-def release(kubectl, release_version, cluster_apps_operator_version):
+@pytest.fixture(scope="module")
+def release(kubernetes_cluster):
     r = dedent(f"""
         apiVersion: release.giantswarm.io/v1alpha1
         kind: Release
@@ -44,10 +49,16 @@ def release(kubectl, release_version, cluster_apps_operator_version):
           ready: false
     """)
 
-    kubectl("apply", input=r, output=None)
+    kubernetes_cluster.kubectl("apply", input=r, output=None)
     LOGGER.info(f"Release v{release_version} applied")
 
-def cluster(kubectl, cluster_name, release_version):
+    yield
+
+    kubernetes_cluster.kubectl(f"delete release v{release_version}", output=None)
+    LOGGER.info(f"Release v{release_version} deleted")
+
+@pytest.fixture
+def cluster(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: cluster.x-k8s.io/v1alpha3
         kind: Cluster
@@ -73,10 +84,16 @@ def cluster(kubectl, cluster_name, release_version):
             name: {cluster_name}
     """)
 
-    kubectl("apply", input=c, output=None)
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
     LOGGER.info(f"Cluster {cluster_name} applied")
 
-def emptyawscluster(kubectl, cluster_name):
+    yield
+
+    kubernetes_cluster.kubectl(f"delete cluster {cluster_name}", output=None)
+    LOGGER.info(f"Cluster {cluster_name} deleted")
+
+@pytest.fixture
+def emptyawscluster(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -88,10 +105,21 @@ def emptyawscluster(kubectl, cluster_name):
             cluster.x-k8s.io/cluster-name: {cluster_name}
     """)
 
-    kubectl("apply", input=c, output=None)
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-def emptylabeledawscluster(kubectl, cluster_name, capa_version):
+    raw = kubernetes_cluster.kubectl(
+        f"get awscluster {cluster_name}", output="yaml")
+
+    awscluster = yaml.safe_load(raw)
+
+    yield awscluster
+
+    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} deleted")
+
+@pytest.fixture
+def emptylabeledawscluster(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -104,10 +132,21 @@ def emptylabeledawscluster(kubectl, cluster_name, capa_version):
             cluster.x-k8s.io/watch-filter: {capa_version}
     """)
 
-    kubectl("apply", input=c, output=None)
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-def awscluster(kubectl, cluster_name):
+    raw = kubernetes_cluster.kubectl(
+        f"get awscluster {cluster_name}", output="yaml")
+
+    awscluster = yaml.safe_load(raw)
+
+    yield awscluster
+
+    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} deleted")
+
+@pytest.fixture
+def awscluster(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -122,10 +161,21 @@ def awscluster(kubectl, cluster_name):
           sshKeyName: ""
     """)
 
-    kubectl("apply", input=c, output=None)
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-def awsclusterclusterroleidentity(kubectl, cluster_name, capa_version):
+    raw = kubernetes_cluster.kubectl(
+        f"get awscluster {cluster_name}", output="yaml")
+
+    awscluster = yaml.safe_load(raw)
+
+    yield awscluster
+
+    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} deleted")
+
+@pytest.fixture
+def awsclusterroleidentity(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSClusterRoleIdentity
@@ -143,5 +193,15 @@ def awsclusterclusterroleidentity(kubectl, cluster_name, capa_version):
           roleARN: ""
     """)
 
-    kubectl("apply", input=c, output=None)
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
     LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get AWSClusterRoleIdentity {cluster_name}", output="yaml")
+
+    awsclusterroleidentity = yaml.safe_load(raw)
+
+    yield awsclusterroleidentity
+
+    kubernetes_cluster.kubectl(f"delete AWSClusterRoleIdentity {cluster_name}", output=None)
+    LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} deleted")
