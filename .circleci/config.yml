@@ -22,42 +22,26 @@ jobs:
   test-policies:
     machine: true
     environment:
-      KIND_VERSION: v0.10.0
-      KUBERNETES_VERSION: v1.19.7
+      KIND_VERSION: v0.11.1
+      KUBERNETES_VERSION: v1.21.1
     steps:
       - checkout
       - run:
           name: Download kind
           command: |
-            curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64
+            curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/bin
       - run:
           name: Download kubectl
           command: |
-            curl -sLO https://storage.googleapis.com/kubernetes-release/release/$KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kind kubectl
+            curl -sLO https://storage.googleapis.com/kubernetes-release/release/$KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl  && sudo mv kubectl /usr/bin
       - run:
-          name: Create cluster
+          name: Install Make
           command: |
-            ./kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION --name kyverno-cluster  2> /dev/null
+            sudo apt-get update && sudo apt-get install make
       - run:
-          name: Wait for the cluster node to be ready
+          name: Setup
           command: |
-            ./kubectl wait nodes/kyverno-cluster-control-plane --for=condition=ready --timeout=5m > /dev/null
-            ./kind get kubeconfig --name kyverno-cluster > ./kube.config
-      - run:
-          name: Install Kyverno
-          command: |
-            ./kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/v1.4.1/definitions/install.yaml > /dev/null
-      - run:
-          name: Install Giantswarm CRDs
-          command: |
-            ./kubectl create -f https://raw.githubusercontent.com/giantswarm/apiextensions/b9a6bed05850045530eaf8ba7fd01941de6c8525/helm/crds-common/templates/giantswarm.yaml > /dev/null
-      - run:
-          name: Install CAPI Cluster CRD
-          command: |
-            ./kubectl create -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api/release-0.3/config/crd/bases/cluster.x-k8s.io_clusters.yaml > /dev/null
-            ./kubectl create -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api/release-0.3/config/crd/bases/cluster.x-k8s.io_machinedeployments.yaml > /dev/null
-            ./kubectl create -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api-provider-aws/main/config/crd/bases/infrastructure.cluster.x-k8s.io_awsclusters.yaml > /dev/null
-            ./kubectl create -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api-provider-aws/main/config/crd/bases/infrastructure.cluster.x-k8s.io_awsclusterroleidentities.yaml > /dev/null
+            make setup
       - architect/run-tests-with-abs:
           chart_dir: "./helm/policies-common"
           app-build-suite_version: "v0.2.3"
@@ -68,6 +52,13 @@ jobs:
           app-build-suite_version: "v0.2.3"
           app-build-suite_container_tag: "0.2.3"
           additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
+      - run:
+          name: Export kind logs
+          when: always
+          command: |
+            kind export logs --name kyverno-cluster logs
+      - store_artifacts:
+          path: logs
 
 
 workflows:

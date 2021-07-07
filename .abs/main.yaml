@@ -6,5 +6,5 @@ external-cluster-type: kind
 destination: build
 generate-metadata: true
 catalog-base-url: https://giantswarm.github.io/control-plane-test-catalog/
-external-cluster-version: v1.19.7
+external-cluster-version: v1.21.1
 skip-steps: test_functional
