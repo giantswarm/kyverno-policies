@@ -5,6 +5,7 @@ metadata:
 spec:
   background: false
   rules:
+  # aws-label mutates all CAPA CRs to have the watch-label filter if their Cluster has version 20.0.0.
   - name: aws-label
     match:
       resources:
@@ -41,6 +42,7 @@ spec:
             +(cluster.x-k8s.io/watch-filter): "capi"
             cluster.x-k8s.io/watch-filter: "capi"
 
+  # awscluster-default adds default values to fields in a AWSCluster CR if it has the watch-filter label and the values are completely missing.
   - name: awscluster-default
     match:
       resources:
@@ -56,6 +58,7 @@ spec:
           +(region): [[ .Values.region ]]
           +(sshKeyName): [[ .Values.sshKeyName ]]
 
+  # awscluster-default-empty-string adds default values to fields in a AWSCluster CR if it has the watch-filter label and the values are empty strings.
   - name: awscluster-default-empty-string
     match:
       resources:
@@ -73,6 +76,7 @@ spec:
           sshKeyName: |-
             {{ regex_replace_all('^$', '{{@}}', '[[ .Values.sshKeyName ]]') }}
 
+  # awsclusterroleidentity-default adds default values to fields in a AWSClusterRoleIdentity CR if it has the watch-filter label and the values are completely missing.
   - name: awsclusterroleidentity-default
     match:
       resources:
@@ -90,6 +94,7 @@ spec:
           path: "/spec/sourceIdentityRef/kind"
           value: [[ .Values.awsClusterRoleIdentity.sourceIdentityRef.kind ]]
 
+  # awsclusterroleidentity-default-empty-string adds default values to fields in a AWSClusterRoleIdentity CR if it has the watch-filter label and the values are empty strings.
   - name: awsclusterroleidentity-default-empty-string
     match:
       resources:
