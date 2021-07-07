@@ -1,4 +1,5 @@
 dabs.sh
 kube.config
 build/
+logs/
 *test_results_smoke.xml

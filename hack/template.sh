@@ -24,13 +24,13 @@ replace_all () {
 }
 
 for i in aws azure common vmware; do
-  mkdir -p helm/policies-$i/templates
+  mkdir -p $(pwd)/helm/policies-$i/templates
 
-  cp -a policies/$i/. helm/policies-$i/templates
+  cp -a $(pwd)/policies/$i/. $(pwd)/helm/policies-$i/templates
 
   # based on https://github.com/koalaman/shellcheck/wiki/SC2044
   while IFS= read -r -d '' filename
   do
     replace_all "$filename"
-  done <   <(find helm/policies-"$i"/templates -name '*.yaml' -print0)
+  done <   <(find "$(pwd)"/helm/policies-"$i"/templates -name '*.yaml' -print0)
 done
