@@ -7,6 +7,8 @@ open_brackets_escaped='{{ `{{` }}'
 # shellcheck disable=SC2016
 close_brackets_escaped='{{ `}}` }}'
 
+disclaimer="# THIS FILE IS GENERATED WITH 'make generate' - DO NOT EDIT MANUALLY"
+
 replace () {
   local filename=$1
   local from=$2
@@ -21,6 +23,10 @@ replace_all () {
   replace "$filename" $placeholder "$open_brackets_escaped"
   replace "$filename" '\[\[' '{{'
   replace "$filename" '\]\]' '}}'
+
+  echo $disclaimer | cat - $filename > $filename.modified
+
+  mv $filename.modified $filename
 }
 
 for i in aws azure common vmware; do
