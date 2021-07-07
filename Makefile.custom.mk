@@ -1,3 +1,8 @@
+SHELL:=/usr/bin/env bash
+
+# If not already set through env
+KUBERNETES_VERSION ?= v1.21.1
+
 .PHONY: generate
 generate:
 	./hack/template.sh
@@ -14,4 +19,4 @@ clean:
 .PHONY: setup
 setup:
 	@$(MAKE) generate
-	./hack/setup-local.sh
+	./hack/setup-local.sh $(KUBERNETES_VERSION)
