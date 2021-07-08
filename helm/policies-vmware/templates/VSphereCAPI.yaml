@@ -1,3 +1,4 @@
+# THIS FILE IS GENERATED WITH 'make generate' - DO NOT EDIT MANUALLY
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
