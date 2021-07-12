@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.2] - 2021-07-12
 
+### Added
+
+- Add defaulting for `aws` values.
+- Add integration tests for `aws`.
+
+### Changed
+
+- Reduced number of policy files.
+- Restructured CI setup to use Makefile.
+
 ## [0.0.1] - 2021-06-02
 
 [Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.2...HEAD
