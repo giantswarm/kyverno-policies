@@ -5,5 +5,5 @@ description: Giant Swarm policies for all clusters.
 home: https://github.com/giantswarm/kyverno-policies
 annotations:
   application.giantswarm.io/team: "ludacris"
-  config.giantswarm.io/version: use-config-vars
+  config.giantswarm.io/version: add-default-workload-account
 version: [[ .Version ]]
