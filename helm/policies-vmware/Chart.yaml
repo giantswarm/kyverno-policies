@@ -5,5 +5,5 @@ description: Giant Swarm policies for vmware.
 home: https://github.com/giantswarm/kyverno-policies
 annotations:
   application.giantswarm.io/team: "ludacris"
-  config.giantswarm.io/version: use-config-vars
+  config.giantswarm.io/version: 1.x.x
 version: [[ .Version ]]
