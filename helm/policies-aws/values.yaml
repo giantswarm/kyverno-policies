@@ -6,3 +6,6 @@ awsClusterRoleIdentity:
   sourceIdentityRef:
     name: default
     kind: AWSClusterControllerIdentity
+
+awsControlPlane:
+  instanceType: t3.large
