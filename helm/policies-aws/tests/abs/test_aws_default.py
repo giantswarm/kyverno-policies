@@ -68,5 +68,6 @@ def test_aws_cluster_role_identity_policy_solo(awsclusterroleidentity) -> None:
     :param awsclusterroleidentity: AWSClusterRoleIdentity CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
     """
     assert awsclusterroleidentity['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.capa_version
+    assert awsclusterroleidentity['spec']['roleARN'] == "default-arn"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['name'] == "default"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['kind'] == "AWSClusterControllerIdentity"

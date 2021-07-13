@@ -2,7 +2,7 @@ region: "eu-west-1"
 sshKeyName: "ssh-key"
 
 awsClusterRoleIdentity:
-  roleARN: ""
+  roleARN: "default-arn"
   sourceIdentityRef:
     name: default
     kind: AWSClusterControllerIdentity
