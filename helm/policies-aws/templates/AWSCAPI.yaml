@@ -89,6 +89,9 @@ spec:
     mutate:
       patchesJson6902: |-
         - op: add
+          path: "/spec/roleARN"
+          value: {{ .Values.awsClusterRoleIdentity.roleARN }}
+        - op: add
           path: "/spec/sourceIdentityRef/name"
           value: {{ .Values.awsClusterRoleIdentity.sourceIdentityRef.name }}
         - op: add
@@ -108,6 +111,8 @@ spec:
       patchStrategicMerge:
         spec:
           # Replace empty strings
+          roleARN: |-
+            {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.awsClusterRoleIdentity.roleARN}}') {{ `}}` }}
           sourceIdentityRef:
             name: |-
               {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.awsClusterRoleIdentity.sourceIdentityRef.name}}') {{ `}}` }}
