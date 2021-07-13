@@ -5,5 +5,5 @@ home: https://github.com/giantswarm/kyverno-policies
 name: policies-aws
 annotations:
   application.giantswarm.io/team: "ludacris"
-  config.giantswarm.io/version: add-default-workload-account
+  config.giantswarm.io/version: 1.x.x
 version: [[ .Version ]]
