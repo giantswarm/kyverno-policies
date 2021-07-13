@@ -112,3 +112,20 @@ spec:
               {{ regex_replace_all('^$', '{{@}}', '[[ .Values.awsClusterRoleIdentity.sourceIdentityRef.name]]') }}
             kind: |-
               {{ regex_replace_all('^$', '{{@}}', '[[ .Values.awsClusterRoleIdentity.sourceIdentityRef.kind ]]') }}
+  # awsmachinetemplate-default-empty-string adds default values to fields in a AWSMachineTemplate CR if it has the watch-filter label and the values are empty strings.
+  # its used to default instanceType for a control plane machine in case its empty
+  - name: awsmachinetemplate-default-empty-string
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSMachineTemplate
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          template:
+            spec:
+              instanceType: |-
+                {{ regex_replace_all('^$', '{{@}}', '[[ .Values.awsControlPlane.instanceType ]]') }}
