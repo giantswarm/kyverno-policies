@@ -12,6 +12,7 @@ from ensure import awscluster
 from ensure import emptyawscluster
 from ensure import emptylabeledawscluster
 from ensure import awsclusterroleidentity
+from ensure import awsmachinetemplate
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -71,3 +72,13 @@ def test_aws_cluster_role_identity_policy_solo(awsclusterroleidentity) -> None:
     assert awsclusterroleidentity['spec']['roleARN'] == "default-arn"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['name'] == "default"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['kind'] == "AWSClusterControllerIdentity"
+
+@pytest.mark.smoke
+def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
+    """
+    test_aws_machine_template_policy_solo tests defaulting of an AWSMachineTemplate where all required values are missing and no other CRs are given.
+
+    :param awsmachinetemplate: AWSMachineTemplate CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
+    """
+    assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.capa_version
+    assert awsmachinetemplate['spec']['template']['spec']['instanceType'] == "t3.large"
