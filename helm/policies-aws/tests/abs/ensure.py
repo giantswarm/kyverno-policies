@@ -205,3 +205,35 @@ def awsclusterroleidentity(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete AWSClusterRoleIdentity {cluster_name}", output=None)
     LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} deleted")
+
+@pytest.fixture
+def awsmachinetemplate(kubernetes_cluster):
+    c = dedent(f"""
+      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+      kind: AWSMachineTemplate
+      metadata:
+        labels:
+          cluster.x-k8s.io/cluster-name: {cluster_name}
+          cluster.x-k8s.io/watch-filter: {capa_version}
+          giantswarm.io/cluster: {cluster_name}
+        name: {cluster_name}
+        namespace: default
+      spec:
+        template:
+          spec:
+            iamInstanceProfile: control-plane-{cluster_name}
+            sshKeyName: ""
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"AWSMachineTemplate {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get AWSMachineTemplates {cluster_name}", output="yaml")
+
+    awsmachinetemplate = yaml.safe_load(raw)
+
+    yield awsmachinetemplate
+
+    kubernetes_cluster.kubectl(f"delete AWSMachineTemplate {cluster_name}", output=None)
+    LOGGER.info(f"AWSMachineTemplate {cluster_name} deleted")
