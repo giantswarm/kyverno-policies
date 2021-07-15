@@ -29,6 +29,39 @@ spec:
             +(cluster-apps-operator.giantswarm.io/version): "{{ release.spec.components | [?name == 'cluster-apps-operator'].version | [0]}}"
             cluster-apps-operator.giantswarm.io/version: "{{ release.spec.components | [?name == 'cluster-apps-operator'].version | [0]}}"
 
+  # cluster-default adds default values to fields in a Cluster CR if it has the watch-filter label and the values are completely missing.
+  - name: cluster-default
+    match:
+      resources:
+        kinds:
+        - cluster.x-k8s.io/v1alpha3/Cluster
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            # Create values if missing
+            +(cluster.giantswarm.io/description): [[ .Values.clusterDescription ]]
+
+  # cluster-default-empty-string adds default values to fields in a Cluster CR if it has the watch-filter label and the values are empty strings.
+  - name: cluster-default-empty-string
+    match:
+      resources:
+        kinds:
+        - cluster.x-k8s.io/v1alpha3/Cluster
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            # Replace empty strings
+            cluster.giantswarm.io/description: |-
+              {{ regex_replace_all('^$', '{{@}}', '[[ .Values.clusterDescription ]]') }}
+
   - name: core-label
     match:
       resources:
