@@ -81,7 +81,8 @@ spec:
                   kubeletExtraArgs:
                     healthz-bind-address: 0.0.0.0
                     node-labels: role=worker
-  - name: kubeadmconfig
+
+  - name: kubeadmconfig-defaults
     match:
       resources:
         kinds:
