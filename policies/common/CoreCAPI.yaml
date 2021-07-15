@@ -80,8 +80,7 @@ spec:
                 nodeRegistration:
                   kubeletExtraArgs:
                     healthz-bind-address: 0.0.0.0
-              postKubeadmCommands:
-                - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf label node {{ ds.meta_data.local_hostname }} node-role.kubernetes.io/worker=""'
+                    node-labels: role=worker
   - name: kubeadmconfig
     match:
       resources:
@@ -99,8 +98,7 @@ spec:
                 nodeRegistration:
                   kubeletExtraArgs:
                     healthz-bind-address: 0.0.0.0
-              postKubeadmCommands:
-                - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf label node {{ ds.meta_data.local_hostname }} node-role.kubernetes.io/worker=""'
+                    node-labels: role=worker
 
   - name: kubeadmcontrolplane-defaults
     match:
@@ -125,3 +123,4 @@ spec:
               nodeRegistration:
                 kubeletExtraArgs:
                   healthz-bind-address: 0.0.0.0
+                  node-labels: role=master
