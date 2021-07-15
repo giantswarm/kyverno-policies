@@ -81,6 +81,27 @@ spec:
                 nodeRegistration:
                   kubeletExtraArgs:
                     healthz-bind-address: 0.0.0.0
+              postKubeadmCommands:
+                - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf label node {{ `{{` }} ds.meta_data.local_hostname {{ `}}` }} node-role.kubernetes.io/worker=""'
+  - name: kubeadmconfig
+    match:
+      resources:
+        kinds:
+        - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          template:
+            spec:
+              joinConfiguration:
+                nodeRegistration:
+                  kubeletExtraArgs:
+                    healthz-bind-address: 0.0.0.0
+              postKubeadmCommands:
+                - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf label node {{ `{{` }} ds.meta_data.local_hostname {{ `}}` }} node-role.kubernetes.io/worker=""'
 
   - name: kubeadmcontrolplane-defaults
     match:
