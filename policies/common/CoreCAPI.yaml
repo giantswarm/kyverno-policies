@@ -126,13 +126,11 @@ spec:
     mutate:
       patchStrategicMerge:
         spec:
-          template:
-            spec:
-              joinConfiguration:
-                nodeRegistration:
-                  kubeletExtraArgs:
-                    healthz-bind-address: 0.0.0.0
-                    node-labels: role=worker
+          joinConfiguration:
+            nodeRegistration:
+              kubeletExtraArgs:
+                healthz-bind-address: 0.0.0.0
+                node-labels: role=worker
 
   - name: kubeadmcontrolplane-defaults
     match:
