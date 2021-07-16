@@ -52,6 +52,11 @@ jobs:
           app-build-suite_version: "v0.2.3"
           app-build-suite_container_tag: "0.2.3"
           additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
+      - architect/run-tests-with-abs:
+          chart_dir: "./helm/policies-azure"
+          app-build-suite_version: "v0.2.3"
+          app-build-suite_container_tag: "0.2.3"
+          additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
       - run:
           name: Export kind logs
           when: always
