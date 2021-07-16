@@ -91,10 +91,59 @@ def cluster(kubernetes_cluster):
     kubernetes_cluster.kubectl("apply", input=c, output=None)
     LOGGER.info(f"Cluster {cluster_name} applied")
 
-    yield
+    raw = kubernetes_cluster.kubectl(
+        f"get cluster {cluster_name}", output="yaml")
+
+    cluster = yaml.safe_load(raw)
+
+    yield cluster
 
     kubernetes_cluster.kubectl(f"delete cluster {cluster_name}", output=None)
     LOGGER.info(f"Cluster {cluster_name} deleted")
+
+@pytest.fixture
+def machinedeployment(kubernetes_cluster):
+    md = dedent(f"""
+        apiVersion: cluster.x-k8s.io/v1alpha3
+        kind: MachineDeployment
+        metadata:
+          name: {cluster_name}
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+        spec:
+          clusterName: {cluster_name}
+          replicas: 1
+          selector:
+            matchLabels:
+              clusterName: {cluster_name}
+          template:
+            spec:
+              bootstrap:
+                configRef:
+                  apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+                  kind: KubeadmConfigTemplate
+                  name: {cluster_name}
+              clusterName: {cluster_name}
+              infrastructureRef:
+                apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+                kind: AWSMachineTemplate
+                name: {cluster_name}
+              version: v1.19.7
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    LOGGER.info(f"MachineDeployment {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get machinedeployment {cluster_name}", output="yaml")
+
+    machinedeployment = yaml.safe_load(raw)
+
+    yield machinedeployment
+
+    kubernetes_cluster.kubectl(f"delete machinedeployment {cluster_name}", output=None)
+    LOGGER.info(f"MachineDeployment {cluster_name} deleted")
 
 # CAPA fixtures
 
