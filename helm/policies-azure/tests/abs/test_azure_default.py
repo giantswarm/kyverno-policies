@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../../../tests')
+
 import yaml
 from functools import partial
 import time

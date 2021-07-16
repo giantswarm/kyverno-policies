@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../../../tests')
+
 import yaml
 from functools import partial
 import time
@@ -9,8 +12,8 @@ from textwrap import dedent
 from ensure import release
 from ensure import cluster
 from ensure import awscluster
-from ensure import emptyawscluster
-from ensure import emptylabeledawscluster
+from ensure import awscluster_empty
+from ensure import awscluster_empty_labeled
 from ensure import awsclusterroleidentity
 from ensure import awsmachinetemplate
 
@@ -36,29 +39,29 @@ def test_aws_cluster_policy(release, cluster, awscluster) -> None:
 
 
 @pytest.mark.smoke
-def test_aws_cluster_policy_empty(release, cluster, emptyawscluster) -> None:
+def test_aws_cluster_policy_empty(release, cluster, awscluster_empty) -> None:
     """
     test_aws_cluster_policy_empty tests defaulting of an AWSCluster where all required values are missing.
 
     :param release: Release CR which is used by the Cluster.
     :param cluster: Cluster CR which uses the release and matches the AWSCluster.
-    :param emptyawscluster: Empty AWSCluster CR which matches the Cluster CR.
+    :param awscluster_empty: Empty AWSCluster CR which matches the Cluster CR.
     """
-    assert emptyawscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
-    assert emptyawscluster['spec']['region'] == "eu-west-1"
-    assert emptyawscluster['spec']['sshKeyName'] == "ssh-key"
+    assert awscluster_empty['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster_empty['spec']['region'] == "eu-west-1"
+    assert awscluster_empty['spec']['sshKeyName'] == "ssh-key"
 
 
 @pytest.mark.smoke
-def test_aws_cluster_policy_solo(emptylabeledawscluster) -> None:
+def test_aws_cluster_policy_solo(awscluster_empty_labeled) -> None:
     """
     test_aws_cluster_policy_solo tests defaulting of an AWSCluster where all required values are missing and no other CRs are given.
 
-    :param emptylabeledawscluster: AWSCluster CR which is empty but has the cluster.x-k8s.io/watch-filter label.
+    :param awscluster_empty_labeled: AWSCluster CR which is empty but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert emptylabeledawscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
-    assert emptylabeledawscluster['spec']['region'] == "eu-west-1"
-    assert emptylabeledawscluster['spec']['sshKeyName'] == "ssh-key"
+    assert awscluster_empty_labeled['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster_empty_labeled['spec']['region'] == "eu-west-1"
+    assert awscluster_empty_labeled['spec']['sshKeyName'] == "ssh-key"
 
 
 @pytest.mark.smoke

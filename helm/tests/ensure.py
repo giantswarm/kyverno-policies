@@ -16,6 +16,8 @@ release_version = "20.0.0"
 cluster_apps_operator_version = "2.0.0"
 watch_label = "capi"
 
+# Giant Swarm specific fixtures
+
 @pytest.fixture(scope="module")
 def release(kubernetes_cluster):
     r = dedent(f"""
@@ -57,6 +59,8 @@ def release(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete release v{release_version}", output=None)
     LOGGER.info(f"Release v{release_version} deleted")
 
+# CAPI Core fixtures
+
 @pytest.fixture
 def cluster(kubernetes_cluster):
     c = dedent(f"""
@@ -92,58 +96,7 @@ def cluster(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete cluster {cluster_name}", output=None)
     LOGGER.info(f"Cluster {cluster_name} deleted")
 
-@pytest.fixture
-def emptyawscluster(kubernetes_cluster):
-    c = dedent(f"""
-        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-        kind: AWSCluster
-        metadata:
-          name: {cluster_name}
-          namespace: default
-          labels:
-            giantswarm.io/cluster: {cluster_name}
-            cluster.x-k8s.io/cluster-name: {cluster_name}
-    """)
-
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
-    LOGGER.info(f"AWSCluster {cluster_name} applied")
-
-    raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
-
-    awscluster = yaml.safe_load(raw)
-
-    yield awscluster
-
-    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
-    LOGGER.info(f"AWSCluster {cluster_name} deleted")
-
-@pytest.fixture
-def emptylabeledawscluster(kubernetes_cluster):
-    c = dedent(f"""
-        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-        kind: AWSCluster
-        metadata:
-          name: {cluster_name}
-          namespace: default
-          labels:
-            giantswarm.io/cluster: {cluster_name}
-            cluster.x-k8s.io/cluster-name: {cluster_name}
-            cluster.x-k8s.io/watch-filter: {watch_label}
-    """)
-
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
-    LOGGER.info(f"AWSCluster {cluster_name} applied")
-
-    raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
-
-    awscluster = yaml.safe_load(raw)
-
-    yield awscluster
-
-    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
-    LOGGER.info(f"AWSCluster {cluster_name} deleted")
+# CAPA fixtures
 
 @pytest.fixture
 def awscluster(kubernetes_cluster):
@@ -173,6 +126,91 @@ def awscluster(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
+
+@pytest.fixture
+def awscluster_empty(kubernetes_cluster):
+    c = dedent(f"""
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AWSCluster
+        metadata:
+          name: {cluster_name}
+          namespace: default
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get awscluster {cluster_name}", output="yaml")
+
+    awscluster = yaml.safe_load(raw)
+
+    yield awscluster
+
+    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} deleted")
+
+@pytest.fixture
+def awscluster_empty_labeled(kubernetes_cluster):
+    c = dedent(f"""
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AWSCluster
+        metadata:
+          name: {cluster_name}
+          namespace: default
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: {watch_label}
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get awscluster {cluster_name}", output="yaml")
+
+    awscluster = yaml.safe_load(raw)
+
+    yield awscluster
+
+    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} deleted")
+
+@pytest.fixture
+def awsmachinetemplate(kubernetes_cluster):
+    c = dedent(f"""
+      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+      kind: AWSMachineTemplate
+      metadata:
+        labels:
+          cluster.x-k8s.io/cluster-name: {cluster_name}
+          cluster.x-k8s.io/watch-filter: {watch_label}
+          giantswarm.io/cluster: {cluster_name}
+        name: {cluster_name}
+        namespace: default
+      spec:
+        template:
+          spec:
+            iamInstanceProfile: control-plane-{cluster_name}
+            sshKeyName: ""
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"AWSMachineTemplate {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get AWSMachineTemplates {cluster_name}", output="yaml")
+
+    awsmachinetemplate = yaml.safe_load(raw)
+
+    yield awsmachinetemplate
+
+    kubernetes_cluster.kubectl(f"delete AWSMachineTemplate {cluster_name}", output=None)
+    LOGGER.info(f"AWSMachineTemplate {cluster_name} deleted")
 
 @pytest.fixture
 def awsclusterroleidentity(kubernetes_cluster):
@@ -206,34 +244,30 @@ def awsclusterroleidentity(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete AWSClusterRoleIdentity {cluster_name}", output=None)
     LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} deleted")
 
+# CAPZ fixtures
+
 @pytest.fixture
-def awsmachinetemplate(kubernetes_cluster):
+def azurecluster(kubernetes_cluster):
     c = dedent(f"""
-      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-      kind: AWSMachineTemplate
-      metadata:
-        labels:
-          cluster.x-k8s.io/cluster-name: {cluster_name}
-          cluster.x-k8s.io/watch-filter: {watch_label}
-          giantswarm.io/cluster: {cluster_name}
-        name: {cluster_name}
-        namespace: default
-      spec:
-        template:
-          spec:
-            iamInstanceProfile: control-plane-{cluster_name}
-            sshKeyName: ""
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AzureCluster
+        metadata:
+          name: {cluster_name}
+          namespace: default
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
-    LOGGER.info(f"AWSMachineTemplate {cluster_name} applied")
+    LOGGER.info(f"AzureCluster {cluster_name} applied")
 
     raw = kubernetes_cluster.kubectl(
-        f"get AWSMachineTemplates {cluster_name}", output="yaml")
+        f"get azurecluster {cluster_name}", output="yaml")
 
-    awsmachinetemplate = yaml.safe_load(raw)
+    azurecluster = yaml.safe_load(raw)
 
-    yield awsmachinetemplate
+    yield azurecluster
 
-    kubernetes_cluster.kubectl(f"delete AWSMachineTemplate {cluster_name}", output=None)
-    LOGGER.info(f"AWSMachineTemplate {cluster_name} deleted")
+    kubernetes_cluster.kubectl(f"delete azurecluster {cluster_name}", output=None)
+    LOGGER.info(f"AzureCluster {cluster_name} deleted")
