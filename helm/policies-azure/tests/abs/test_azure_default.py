@@ -26,4 +26,4 @@ def test_azure_cluster_policy(release, cluster, azurecluster) -> None:
     :param cluster: Cluster CR which uses the release and matches the AzureCluster.
     :param azurecluster: AzureCluster CR with empty strings which matches the Cluster CR.
     """
-    assert azurecluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.capa_version
+    assert azurecluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label

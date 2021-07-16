@@ -30,7 +30,7 @@ def test_aws_cluster_policy(release, cluster, awscluster) -> None:
     :param cluster: Cluster CR which uses the release and matches the AWSCluster.
     :param awscluster: AWSCluster CR with empty strings which matches the Cluster CR.
     """
-    assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.capa_version
+    assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awscluster['spec']['region'] == "eu-west-1"
     assert awscluster['spec']['sshKeyName'] == "ssh-key"
 
@@ -44,7 +44,7 @@ def test_aws_cluster_policy_empty(release, cluster, emptyawscluster) -> None:
     :param cluster: Cluster CR which uses the release and matches the AWSCluster.
     :param emptyawscluster: Empty AWSCluster CR which matches the Cluster CR.
     """
-    assert emptyawscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.capa_version
+    assert emptyawscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert emptyawscluster['spec']['region'] == "eu-west-1"
     assert emptyawscluster['spec']['sshKeyName'] == "ssh-key"
 
@@ -56,7 +56,7 @@ def test_aws_cluster_policy_solo(emptylabeledawscluster) -> None:
 
     :param emptylabeledawscluster: AWSCluster CR which is empty but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert emptylabeledawscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.capa_version
+    assert emptylabeledawscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert emptylabeledawscluster['spec']['region'] == "eu-west-1"
     assert emptylabeledawscluster['spec']['sshKeyName'] == "ssh-key"
 
@@ -68,7 +68,7 @@ def test_aws_cluster_role_identity_policy_solo(awsclusterroleidentity) -> None:
 
     :param awsclusterroleidentity: AWSClusterRoleIdentity CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert awsclusterroleidentity['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.capa_version
+    assert awsclusterroleidentity['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awsclusterroleidentity['spec']['roleARN'] == "default-arn"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['name'] == "default"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['kind'] == "AWSClusterControllerIdentity"
@@ -80,5 +80,5 @@ def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
 
     :param awsmachinetemplate: AWSMachineTemplate CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.capa_version
+    assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awsmachinetemplate['spec']['template']['spec']['instanceType'] == "t3.large"
