@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 cluster_name = "test-cluster"
 release_version = "20.0.0"
 cluster_apps_operator_version = "2.0.0"
-capa_version = "capi"
+watch_label = "capi"
 
 @pytest.fixture(scope="module")
 def release(kubernetes_cluster):
@@ -129,7 +129,7 @@ def emptylabeledawscluster(kubernetes_cluster):
           labels:
             giantswarm.io/cluster: {cluster_name}
             cluster.x-k8s.io/cluster-name: {cluster_name}
-            cluster.x-k8s.io/watch-filter: {capa_version}
+            cluster.x-k8s.io/watch-filter: {watch_label}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
@@ -181,7 +181,7 @@ def awsclusterroleidentity(kubernetes_cluster):
         kind: AWSClusterRoleIdentity
         metadata:
           labels:
-            cluster.x-k8s.io/watch-filter: {capa_version}
+            cluster.x-k8s.io/watch-filter: {watch_label}
             giantswarm.io/cluster: {cluster_name}
             cluster.x-k8s.io/cluster-name: {cluster_name}
           name: {cluster_name}
@@ -214,7 +214,7 @@ def awsmachinetemplate(kubernetes_cluster):
       metadata:
         labels:
           cluster.x-k8s.io/cluster-name: {cluster_name}
-          cluster.x-k8s.io/watch-filter: {capa_version}
+          cluster.x-k8s.io/watch-filter: {watch_label}
           giantswarm.io/cluster: {cluster_name}
         name: {cluster_name}
         namespace: default

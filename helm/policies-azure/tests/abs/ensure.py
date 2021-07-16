@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 cluster_name = "test-cluster"
 release_version = "20.0.0"
 cluster_apps_operator_version = "2.0.0"
-capa_version = "capi"
+watch_label = "capi"
 
 @pytest.fixture(scope="module")
 def release(kubernetes_cluster):
