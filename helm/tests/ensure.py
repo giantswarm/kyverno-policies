@@ -145,6 +145,32 @@ def machinedeployment(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete machinedeployment {cluster_name}", output=None)
     LOGGER.info(f"MachineDeployment {cluster_name} deleted")
 
+@pytest.fixture
+def kubeadmconfig(kubernetes_cluster):
+    md = dedent(f"""
+        apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+        kind: KubeadmConfig
+        metadata:
+          name: {cluster_name}
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: {watch_label}
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output="yaml")
+
+    kubeadmconfig = yaml.safe_load(raw)
+
+    yield kubeadmconfig
+
+    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
+
 # CAPA fixtures
 
 @pytest.fixture

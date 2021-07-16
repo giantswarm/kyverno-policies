@@ -12,6 +12,7 @@ from textwrap import dedent
 from ensure import release
 from ensure import cluster
 from ensure import machinedeployment
+from ensure import kubeadmconfig
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -42,3 +43,15 @@ def test_machine_deployment_policy(release, cluster, machinedeployment) -> None:
     :param machinedeployment: MachineDeployment CR which is referenced by the Cluster.
     """
     assert machinedeployment['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+
+
+@pytest.mark.smoke
+def test_kubeadmconfig_policy(kubeadmconfig) -> None:
+    """
+    test_kubeadmconfig_policy tests defaulting of a KubeadmConfig where all required values are empty strings.
+
+    :param kubeadmconfig: KubeadmConfig CR which is empty.
+    """
+    assert kubeadmconfig['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
+    assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
