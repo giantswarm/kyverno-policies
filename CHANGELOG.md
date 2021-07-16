@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add default for cluster description.
+- Add defaulting to set custom labels on worker nodes.
 
 ## [0.0.4] - 2021-07-14
 

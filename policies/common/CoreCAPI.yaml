@@ -113,6 +113,26 @@ spec:
                 nodeRegistration:
                   kubeletExtraArgs:
                     healthz-bind-address: 0.0.0.0
+                    node-labels: role=worker
+
+  - name: kubeadmconfig-defaults
+    match:
+      resources:
+        kinds:
+        - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          template:
+            spec:
+              joinConfiguration:
+                nodeRegistration:
+                  kubeletExtraArgs:
+                    healthz-bind-address: 0.0.0.0
+                    node-labels: role=worker
 
   - name: kubeadmcontrolplane-defaults
     match:
