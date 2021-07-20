@@ -108,3 +108,16 @@ from ensure import cluster
 from ensure import awscluster
 ```
 And then we should be good to go!
+
+The output of our testcase then also shows the different setup and teardown stages in the logs:
+```
+test_aws_default.py::test_aws_cluster_policy
+------------------------------------- live log setup ----------------------------------------------------
+INFO     ensure:ensure.py:55 Release v20.0.0 applied
+INFO     ensure:ensure.py:92 Cluster test-cluster applied
+INFO     ensure:ensure.py:193 AWSCluster test-cluster applied
+PASSED                                                                                              [ 20%]
+------------------------------------ live log teardown ---------------------------------------------------
+INFO     ensure:ensure.py:203 AWSCluster test-cluster deleted
+INFO     ensure:ensure.py:102 Cluster test-cluster deleted
+```
