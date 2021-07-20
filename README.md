@@ -46,6 +46,7 @@ Each fixtures should be structured in a similar way:
 @pytest.fixture
 def myresource(kubernetes_cluster):
     # Yaml of whatever resource you want to create.
+    # The cluster_name variable is defined globally in ensure.py - so we always reuse the same names.
     c = dedent(f"""
         apiVersion: cluster.x-k8s.io/v1alpha3
         kind: MyResource
