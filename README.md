@@ -80,7 +80,7 @@ Here is an example:
 ```python
 # We have to mark the test as smoke for app-build-suite.
 @pytest.mark.smoke
-# We requests 3 resources from fixtures: A release CR, a cluster CR and a awscluster CR.
+# We request 3 resources from fixtures: a Release CR, a Cluster CR and an AWSCluster CR.
 # The input parameters are named the same as the fixture functions to make it work.
 def test_aws_cluster_policy(release, cluster, awscluster) -> None:
     """
