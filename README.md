@@ -32,3 +32,78 @@ To only generate the policies in the `helm` folder structure:
 ```bash
 make generate
 ```
+
+### Adding tests
+
+This repository uses the [app-build-suite](https://github.com/giantswarm/app-build-suite/) and the related testing setup.
+We have tried to make the test setup as simple as possible but some python knowledge is required.
+
+The tests use [python fixtures](https://docs.pytest.org/en/6.2.x/fixture.html) extensively to set up any resources we need in our tests.
+
+All fixtures can be found in [ensure.py](https://github.com/giantswarm/kyverno-policies/blob/main/helm/tests/ensure.py).
+Each fixtures should be structured in a similar way:
+```python
+@pytest.fixture
+def myresource(kubernetes_cluster):
+    # Yaml of whatever resource you want to create.
+    c = dedent(f"""
+        apiVersion: cluster.x-k8s.io/v1alpha3
+        kind: MyResource
+        metadata:
+          name: {cluster_name}
+        spec:
+          some:
+            spec: ""
+    """)
+
+    # Creating the resource for our test.
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"MyResource {cluster_name} applied")
+
+    # Get the resource back from Kubernetes after it has been applied / defaulted.
+    raw = kubernetes_cluster.kubectl(
+        f"get MyResource {cluster_name}", output="yaml")
+
+    myresource = yaml.safe_load(raw)
+
+    # yield returns the object to our test case.
+    yield myresource
+
+    # Do cleanup after our testcase has ended.
+    kubernetes_cluster.kubectl(f"delete MyResource {cluster_name}", output=None)
+    LOGGER.info(f"MyResource {cluster_name} deleted")
+```
+
+The testcases can now look very simple as we only need to assert that the resources were created as we expected.
+Here is an example:
+```python
+# We have to mark the test as smoke for app-build-suite.
+@pytest.mark.smoke
+# We requests 3 resources from fixtures: A release CR, a cluster CR and a awscluster CR.
+# The input parameters are named the same as the fixture functions to make it work.
+def test_aws_cluster_policy(release, cluster, awscluster) -> None:
+    """
+    test_aws_cluster_policy tests defaulting of an AWSCluster where all required values are empty strings.
+
+    :param release: Release CR which is used by the Cluster.
+    :param cluster: Cluster CR which uses the release and matches the AWSCluster.
+    :param awscluster: AWSCluster CR with empty strings which matches the Cluster CR.
+    """
+    # At this point the release CR, cluster CR and awscluster CR have all been created in our KIND setup.
+    # We now only need to assert that the awscluster CR looks like we expect it to!
+    assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster['spec']['region'] == "eu-west-1"
+    assert awscluster['spec']['sshKeyName'] == "ssh-key"
+    # We don't need to clean up anything as the fixture does that for us already!
+```
+To make this example work in a new file we need to also remember to import our fixtures correctly:
+```python
+# Importing the path to the ensure.py file.
+import sys
+sys.path.append('../../../tests')
+# Import the fixtures we need for our test cases!
+from ensure import release
+from ensure import cluster
+from ensure import awscluster
+```
+And then we should be good to go!
