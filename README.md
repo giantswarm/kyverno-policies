@@ -41,42 +41,46 @@ We have tried to make the test setup as simple as possible but some python knowl
 The tests use [python fixtures](https://docs.pytest.org/en/6.2.x/fixture.html) extensively to set up any resources we need in our tests.
 
 All fixtures can be found in [ensure.py](https://github.com/giantswarm/kyverno-policies/blob/main/helm/tests/ensure.py).
-Each fixtures should be structured in a similar way:
+Each fixtures should be structured in a similar way. Let's follow an example for `AWSCluster`:
 ```python
 @pytest.fixture
-def myresource(kubernetes_cluster):
+def awscluster(kubernetes_cluster):
     # Yaml of whatever resource you want to create.
     # The cluster_name variable is defined globally in ensure.py - so we always reuse the same names.
     c = dedent(f"""
-        apiVersion: cluster.x-k8s.io/v1alpha3
-        kind: MyResource
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AWSCluster
         metadata:
           name: {cluster_name}
+          namespace: default
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
         spec:
-          some:
-            spec: ""
+          region: ""
+          sshKeyName: ""
     """)
 
     # Creating the resource for our test.
     kubernetes_cluster.kubectl("apply", input=c, output=None)
-    LOGGER.info(f"MyResource {cluster_name} applied")
+    LOGGER.info(f"AWSCluster {cluster_name} applied")
 
     # Get the resource back from Kubernetes after it has been applied / defaulted.
     raw = kubernetes_cluster.kubectl(
-        f"get MyResource {cluster_name}", output="yaml")
+        f"get awscluster {cluster_name}", output="yaml")
 
-    myresource = yaml.safe_load(raw)
+    awscluster = yaml.safe_load(raw)
 
     # yield returns the object to our test case.
-    yield myresource
+    yield awscluster
 
     # Do cleanup after our testcase has ended.
-    kubernetes_cluster.kubectl(f"delete MyResource {cluster_name}", output=None)
-    LOGGER.info(f"MyResource {cluster_name} deleted")
+    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    LOGGER.info(f"AWSCluster {cluster_name} deleted")
 ```
 
 The testcases can now look very simple as we only need to assert that the resources were created as we expected.
-Here is an example:
+Here is an example for a AWSCluster policy:
 ```python
 # We have to mark the test as smoke for app-build-suite.
 @pytest.mark.smoke
