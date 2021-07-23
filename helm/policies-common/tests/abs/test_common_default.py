@@ -65,4 +65,4 @@ def test_bastion_bootstrap_secret(bastionbootstrapsecret) -> None:
 
     :param bastionbootstrapsecret: bootstrap secret which should be templated.
     """
-    assert bastionbootstrapsecret['stringData']['value'] == "{\"test\":\"c3NoLXJzYSBBQUFBQSBmYWtlQGdpYW50c3dhcm0=\"}"
+    assert bastionbootstrapsecret['stringData']['value'] == "test=c3NoLXJzYSBBQUFBQSBmYWtlQGdpYW50c3dhcm0="
