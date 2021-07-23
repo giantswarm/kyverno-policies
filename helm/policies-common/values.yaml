@@ -4,3 +4,5 @@ Installation:
       Enabled: false
 
 clusterDescription: "Unnamed Cluster"
+ssh:
+  ssoPublicKey: "ssh-rsa AAAAA fake@giantswarm"

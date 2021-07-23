@@ -1,0 +1,24 @@
+# THIS FILE IS GENERATED WITH 'make generate' - DO NOT EDIT MANUALLY
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: bastion-capi-policy
+spec:
+  background: false
+  rules:
+  # cluster-default-empty-string adds default values to fields in a Cluster CR if it has the watch-filter label and the values are empty strings.
+  - name: bastion-replace-bootstrap-secret-sshSSOPublicKey
+    match:
+      resources:
+        kinds:
+        - v1/Secret
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+            cluster.x-k8s.io/role: bastion
+    mutate:
+      patchStrategicMerge:
+        stringData:
+          # Replace sshSSOPublicKey placeholder with installation value
+          value: |-
+              {{ `{{` }} regex_replace_all('SSH_SSO_PUBLIC_KEY_PLACEHOLDER', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.ssh.ssoPublicKey | b64enc }}') {{ `}}` }}
