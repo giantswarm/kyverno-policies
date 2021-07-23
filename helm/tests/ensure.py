@@ -174,7 +174,7 @@ def kubeadmconfig(kubernetes_cluster):
 # CAPA bastion fixtures
 
 @pytest.fixture
-def bastionboostrapsecret(kubernetes_cluster):
+def bastionbootstrapsecret(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: v1
         kind: Secret
@@ -197,9 +197,9 @@ def bastionboostrapsecret(kubernetes_cluster):
     raw = kubernetes_cluster.kubectl(
         f"get secret {cluster_name}-bastion", output="yaml")
 
-    bastionboostrapsecret = yaml.safe_load(raw)
+    bastionbootstrapsecret = yaml.safe_load(raw)
 
-    yield bastionboostrapsecret
+    yield bastionbootstrapsecret
 
     kubernetes_cluster.kubectl(f"delete secret {cluster_name}-bastion", output=None)
     LOGGER.info(f"Bastion bootstrap secret {cluster_name}-bastion deleted")

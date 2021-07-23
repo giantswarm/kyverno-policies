@@ -13,7 +13,7 @@ from ensure import release
 from ensure import cluster
 from ensure import machinedeployment
 from ensure import kubeadmconfig
-from ensure import bastionboostrapsecret
+from ensure import bastionbootstrapsecret
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -61,8 +61,8 @@ def test_kubeadmconfig_policy(kubeadmconfig) -> None:
 @pytest.mark.smoke
 def test_bastion_bootstrap_secret(bastionbootstrapsecret) -> None:
     """
-    test_kubeadmconfig_policy tests defaulting of a KubeadmConfig where all required values are empty strings.
+    test_bastion_bootstrap_secret tests templating of bootstrap secret for bastion.
 
-    :param bastionbootstrapsecret: bootstrap secret which should be tempalated.
+    :param bastionbootstrapsecret: bootstrap secret which should be templated.
     """
     assert bastionbootstrapsecret['stringData']['value'] == "{\"test\":\"c3NoLXJzYSBBQUFBQSBmYWtlQGdpYW50c3dhcm0=\"}"
