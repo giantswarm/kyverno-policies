@@ -13,6 +13,7 @@ from ensure import release
 from ensure import cluster
 from ensure import machinedeployment
 from ensure import kubeadmconfig
+from ensure import bastionboostrapsecret
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -55,3 +56,13 @@ def test_kubeadmconfig_policy(kubeadmconfig) -> None:
     assert kubeadmconfig['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
+
+
+@pytest.mark.smoke
+def test_bastion_bootstrap_secret(bastionbootstrapsecret) -> None:
+    """
+    test_kubeadmconfig_policy tests defaulting of a KubeadmConfig where all required values are empty strings.
+
+    :param bastionbootstrapsecret: bootstrap secret which should be tempalated.
+    """
+    assert bastionbootstrapsecret['stringData']['value'] == "{\"test\":\"c3NoLXJzYSBBQUFBQSBmYWtlQGdpYW50c3dhcm0=\"}"
