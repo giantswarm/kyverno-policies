@@ -4,6 +4,7 @@ sys.path.append('../../../tests')
 import yaml
 from functools import partial
 import time
+import base64
 import random
 import string
 import ensure
@@ -65,4 +66,6 @@ def test_bastion_bootstrap_secret(bastionbootstrapsecret) -> None:
 
     :param bastionbootstrapsecret: bootstrap secret which should be templated.
     """
-    assert bastionbootstrapsecret['stringData']['value'] == "test=c3NoLXJzYSBBQUFBQSBmYWtlQGdpYW50c3dhcm0="
+    secret_value_encoded = base64.b64encode('test=c3NoLXJzYSBBQUFBQSBmYWtlQGdpYW50c3dhcm0=')
+
+    assert bastionbootstrapsecret['data']['value'] == secret_value_encoded
