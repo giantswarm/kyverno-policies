@@ -188,7 +188,7 @@ def bastionbootstrapsecret(kubernetes_cluster):
             cluster.x-k8s.io/role: bastion
         stringData:
           value: |-
-            test=SSH_SSO_PUBLIC_KEY_PLACEHOLDER
+            test=SSHSSOPUBLICKEYPLACEHOLDER
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)

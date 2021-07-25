@@ -20,4 +20,4 @@ spec:
         stringData:
           # Replace sshSSOPublicKey placeholder with installation value
           value: |-
-              {{ regex_replace_all('SSH_SSO_PUBLIC_KEY_PLACEHOLDER', '{{@}}', '[[ .Values.ssh.ssoPublicKey | b64enc ]]') }}
+              {{ regex_replace_all('SSHSSOPUBLICKEYPLACEHOLDER', '{{@}}', '[[ .Values.ssh.ssoPublicKey | b64enc ]]') }}
