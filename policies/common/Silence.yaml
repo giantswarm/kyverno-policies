@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: always-allow-heartbeat
+spec:
+  rules:
+    - name: always-allow-heartbeat
+      match:
+        resources:
+          kinds:
+            - monitoring.giantswarm.io/v1alpha1/Silence
+      mutate:
+        patchStrategicMerge:
+          spec:
+            matchers:
+              - name: "alertname"
+                value: "Heartbeat"
+                isEqual: "false"
+                isRegex: "false"
