@@ -11,6 +11,7 @@ from pytest_kube import forward_requests, wait_for_rollout, app_template
 import logging
 LOGGER = logging.getLogger(__name__)
 
+silence_name = "test-silence"
 cluster_name = "test-cluster"
 release_version = "20.0.0"
 cluster_apps_operator_version = "2.0.0"
@@ -346,3 +347,29 @@ def azurecluster(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete azurecluster {cluster_name}", output=None)
     LOGGER.info(f"AzureCluster {cluster_name} deleted")
+
+
+# Silence fixtures
+
+@pytest.fixture
+def silence(kubernetes_cluster):
+    c = dedent(f"""
+        apiVersion: monitoring.giantswarm.io/v1alpha1
+        kind: Silence
+        metadata:
+          name: {silence_name}
+          namespace: default
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"Silence {silence_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get silences {silence_name}", output="yaml")
+
+    silence = yaml.safe_load(raw)
+
+    yield silence
+
+    kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
+    LOGGER.info(f"Silence {silence_name} deleted")
