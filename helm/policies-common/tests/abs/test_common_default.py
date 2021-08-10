@@ -68,6 +68,7 @@ def test_silence_heartbeat_policy(silence) -> None:
 
     for i, v in enumerate(matchers):
         if v['name'] == "alertname":
-            assert v['value'] == "Heartbeat" & v['isRegex'] == false & v['isEqual'] == false
+            assert (v['value'] == "Heartbeat" and not v['isRegex'] and not v['isEqual'])
+            return
 
-    assert false
+    pytest.fail("Heartbeat matcher is missing")

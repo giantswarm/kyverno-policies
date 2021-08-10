@@ -359,6 +359,9 @@ def silence(kubernetes_cluster):
         metadata:
           name: {silence_name}
           namespace: default
+        spec:
+          matchers: []
+          targetTags: []
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)

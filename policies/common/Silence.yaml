@@ -8,12 +8,12 @@ spec:
       match:
         resources:
           kinds:
-            - monitoring.giantswarm.io/v1alpha1/Silence
+          - monitoring.giantswarm.io/v1alpha1/Silence
       mutate:
         patchStrategicMerge:
           spec:
             matchers:
               - name: "alertname"
                 value: "Heartbeat"
-                isEqual: "false"
-                isRegex: "false"
+                isEqual: false
+                isRegex: false
