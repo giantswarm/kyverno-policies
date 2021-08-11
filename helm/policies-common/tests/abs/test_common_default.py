@@ -13,6 +13,7 @@ from ensure import release
 from ensure import cluster
 from ensure import machinedeployment
 from ensure import kubeadmconfig
+from ensure import silence
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -55,3 +56,19 @@ def test_kubeadmconfig_policy(kubeadmconfig) -> None:
     assert kubeadmconfig['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
+
+@pytest.mark.smoke
+def test_silence_heartbeat_policy(silence) -> None:
+    """
+    test_silence_heartbeat_policy tests defaulting of an empty Silence to check for the negative Heartbeat matcher.
+
+    :param silence: Any Silence CR.
+    """
+    matchers = silence['spec']['matchers']
+
+    for i, v in enumerate(matchers):
+        if v['name'] == "alertname":
+            assert (v['value'] == "Heartbeat" and not v['isRegex'] and not v['isEqual'])
+            return
+
+    pytest.fail("Heartbeat matcher is missing")
