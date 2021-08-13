@@ -13,7 +13,6 @@ from ensure import release
 from ensure import cluster
 from ensure import machinedeployment
 from ensure import kubeadmconfig
-from ensure import silence
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
