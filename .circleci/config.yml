@@ -57,6 +57,11 @@ jobs:
           app-build-suite_version: "v0.2.3"
           app-build-suite_container_tag: "0.2.3"
           additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
+      - architect/run-tests-with-abs:
+          chart_dir: "./helm/policies-shared"
+          app-build-suite_version: "v0.2.3"
+          app-build-suite_container_tag: "0.2.3"
+          additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
       - run:
           name: Export kind logs
           when: always
@@ -103,6 +108,18 @@ workflows:
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-azure
+          context: "architect"
+          explicit_allow_chart_name_mismatch: true
+          on_tag: false
+          requires:
+            - test-policies
+      # Shared
+      - architect/push-to-app-catalog:
+          name: push-policies-shared-to-catalog
+          app_catalog: control-plane-test-catalog
+          app_catalog_test: control-plane-test-catalog
+          attach_workspace: true
+          chart: policies-shared
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           on_tag: false
