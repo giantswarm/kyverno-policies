@@ -14,4 +14,4 @@ kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.c
 # CAPZ CRDs
 kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api-provider-azure/master/config/crd/bases/infrastructure.cluster.x-k8s.io_azureclusters.yaml
 # Kyverno
-kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.com/kyverno/kyverno/main/definitions/release/install.yaml
+kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.com/kyverno/kyverno/v1.4.2/definitions/release/install.yaml
