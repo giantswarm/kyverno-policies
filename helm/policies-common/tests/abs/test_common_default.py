@@ -57,18 +57,3 @@ def test_kubeadmconfig_policy(kubeadmconfig) -> None:
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
 
-@pytest.mark.smoke
-def test_silence_heartbeat_policy(silence) -> None:
-    """
-    test_silence_heartbeat_policy tests defaulting of an empty Silence to check for the negative Heartbeat matcher.
-
-    :param silence: Any Silence CR.
-    """
-    matchers = silence['spec']['matchers']
-
-    for i, v in enumerate(matchers):
-        if v['name'] == "alertname":
-            assert (v['value'] == "Heartbeat" and not v['isRegex'] and not v['isEqual'])
-            return
-
-    pytest.fail("Heartbeat matcher is missing")
