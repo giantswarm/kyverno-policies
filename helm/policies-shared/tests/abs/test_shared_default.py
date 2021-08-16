@@ -45,4 +45,15 @@ def test_service_monitor_labelling_schema_policy(servicemonitor) -> None:
     endpoints = servicemonitor['spec']['endpoints']
     for endpoint in endpoints:
         relabelings = endpoint['relabelings']
-        assert len(relabelings) > 0, 'Invalid relabelings {}'.format(relabelings)
+        assert relabelings[0]['replacement'] == '' and relabelings[0]['targetLabel'] == 'cluster_id'                                      \
+          and relabelings[1]['replacement'] == 'management_cluster' and relabelings[1]['targetLabel'] == 'cluster_type'                   \
+          and relabelings[2]['replacement'] == '' and relabelings[2]['targetLabel'] == 'provider'                                         \
+          and relabelings[3]['replacement'] == '' and relabelings[3]['targetLabel'] == 'installation'                                     \
+          and relabelings[4]['sourceLabels'] == ['__meta_kubernetes_namespace'] and relabelings[4]['targetLabel'] == 'namespace'          \
+          and relabelings[5]['sourceLabels'] == ['__meta_kubernetes_pod_name'] and relabelings[5]['targetLabel'] == 'pod'                 \
+          and relabelings[6]['sourceLabels'] == ['__meta_kubernetes_pod_container_name'] and relabelings[6]['targetLabel'] == 'container' \
+          and relabelings[7]['sourceLabels'] == ['__meta_kubernetes_pod_node_name'] and relabelings[7]['targetLabel'] == 'node'           \
+          and relabelings[8]['sourceLabels'] == ['__meta_kubernetes_node_label_role'] and relabelings[8]['targetLabel'] == 'role'         \
+          and relabelings[9]['sourceLabels'] == ['__meta_kubernetes_node_label_role'] and relabelings[9]['targetLabel'] == 'role'         \
+          and relabelings[9]['regex'] == '' and relabelings[9]['replacement'] == 'worker'                                                 \
+        , 'Invalid relabelings {}'.format(relabelings)
