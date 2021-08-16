@@ -168,16 +168,3 @@ workflows:
             tags:
               only: /^v.*/
 
-      - architect/push-to-app-collection:
-          name: push-policies-shared-to-vmware-app-collection
-          context: architect
-          app_name: "policies-shared"
-          app_namespace: "giantswarm"
-          app_collection_repo: "vmware-app-collection"
-          requires:
-            - push-policies-shared-to-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
