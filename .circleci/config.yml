@@ -116,7 +116,7 @@ workflows:
       # Shared
       - architect/push-to-app-catalog:
           name: push-policies-shared-to-catalog
-          app_catalog: control-plane-test-catalog
+          app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-shared
@@ -125,3 +125,46 @@ workflows:
           on_tag: false
           requires:
             - test-policies
+
+      - architect/push-to-app-collection:
+          name: push-policies-shared-to-aws-app-collection
+          context: architect
+          app_name: "policies-shared"
+          app_namespace: "giantswarm"
+          app_collection_repo: "aws-app-collection"
+          requires:
+            - push-policies-shared-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          name: push-policies-shared-to-azure-app-collection
+          context: architect
+          app_name: "policies-shared"
+          app_namespace: "giantswarm"
+          app_collection_repo: "azure-app-collection"
+          requires:
+            - push-policies-shared-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          name: push-policies-shared-to-kvm-app-collection
+          context: architect
+          app_name: "policies-shared"
+          app_namespace: "giantswarm"
+          app_collection_repo: "kvm-app-collection"
+          requires:
+            - push-policies-shared-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
