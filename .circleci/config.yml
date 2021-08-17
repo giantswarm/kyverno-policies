@@ -86,7 +86,6 @@ workflows:
           chart: policies-common
           context: "architect"
           explicit_allow_chart_name_mismatch: true
-          on_tag: false
           requires:
             - test-policies
       # AWS
@@ -98,7 +97,6 @@ workflows:
           chart: policies-aws
           context: "architect"
           explicit_allow_chart_name_mismatch: true
-          on_tag: false
           requires:
             - test-policies
       # Azure
@@ -110,7 +108,6 @@ workflows:
           chart: policies-azure
           context: "architect"
           explicit_allow_chart_name_mismatch: true
-          on_tag: false
           requires:
             - test-policies
 
