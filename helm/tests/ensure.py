@@ -11,6 +11,7 @@ from pytest_kube import forward_requests, wait_for_rollout, app_template
 import logging
 LOGGER = logging.getLogger(__name__)
 
+service_monitor_name = "test-service-monitor"
 silence_name = "test-silence"
 cluster_name = "test-cluster"
 release_version = "20.0.0"
@@ -376,3 +377,35 @@ def silence(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
     LOGGER.info(f"Silence {silence_name} deleted")
+
+# Service Monitor fixtures
+
+@pytest.fixture
+def servicemonitor(kubernetes_cluster):
+    sm = dedent(f"""
+        apiVersion: monitoring.coreos.com/v1
+        kind: ServiceMonitor
+        metadata:
+          name: {service_monitor_name}
+          namespace: default
+        spec:
+          selector:
+            matchLabels:
+              app: my-app
+          endpoints:
+          - port: "web"
+          - port: "http"
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=sm, output=None)
+    LOGGER.info(f"ServiceMonitor {service_monitor_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get servicemonitors {service_monitor_name}", output="yaml")
+
+    serviceMonitor = yaml.safe_load(raw)
+
+    yield serviceMonitor
+
+    kubernetes_cluster.kubectl(f"delete servicemonitors {service_monitor_name}", output=None)
+    LOGGER.info(f"ServiceMonitor {service_monitor_name} deleted")

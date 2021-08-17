@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Service Monitor policy to configure the default labelling schema.
+
 ## [0.0.7] - 2021-08-11
 
 ### Added

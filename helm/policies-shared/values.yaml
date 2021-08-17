@@ -1,1 +1,5 @@
+managementCluster:
+  name: ""
 
+provider:
+  kind: ""
