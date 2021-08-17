@@ -113,6 +113,7 @@ workflows:
           on_tag: false
           requires:
             - test-policies
+
       # Shared
       - architect/push-to-app-catalog:
           name: push-policies-shared-to-catalog
@@ -122,7 +123,6 @@ workflows:
           chart: policies-shared
           context: "architect"
           explicit_allow_chart_name_mismatch: true
-          on_tag: false
           requires:
             - test-policies
 
