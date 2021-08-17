@@ -143,7 +143,6 @@ workflows:
           chart: policies-shared
           context: "architect"
           explicit_allow_chart_name_mismatch: true
-          on_tag: false
           requires:
             - test-policies
           # Needed to trigger job also on git tag.
