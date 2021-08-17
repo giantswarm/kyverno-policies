@@ -70,12 +70,20 @@ jobs:
       - store_artifacts:
           path: logs
 
-
 workflows:
   workflow:
     jobs:
-      - verify
-      - test-policies
+      - verify:
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
+
+      - test-policies:
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
 
       # Common
       - architect/push-to-app-catalog:
@@ -86,8 +94,13 @@ workflows:
           chart: policies-common
           context: "architect"
           explicit_allow_chart_name_mismatch: true
+          on_tag: false
           requires:
             - test-policies
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
       # AWS
       - architect/push-to-app-catalog:
           name: push-policies-aws-to-catalog
@@ -97,8 +110,13 @@ workflows:
           chart: policies-aws
           context: "architect"
           explicit_allow_chart_name_mismatch: true
+          on_tag: false
           requires:
             - test-policies
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
       # Azure
       - architect/push-to-app-catalog:
           name: push-policies-azure-to-catalog
@@ -108,8 +126,13 @@ workflows:
           chart: policies-azure
           context: "architect"
           explicit_allow_chart_name_mismatch: true
+          on_tag: false
           requires:
             - test-policies
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
 
       # Shared
       - architect/push-to-app-catalog:
@@ -120,8 +143,13 @@ workflows:
           chart: policies-shared
           context: "architect"
           explicit_allow_chart_name_mismatch: true
+          on_tag: false
           requires:
             - test-policies
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
 
       - architect/push-to-app-collection:
           name: push-policies-shared-to-aws-app-collection
