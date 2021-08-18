@@ -11,10 +11,7 @@ spec:
           kinds:
           - monitoring.giantswarm.io/v1alpha1/Silence
       mutate:
-        patchStrategicMerge:
-          spec:
-            matchers:
-              - name: "alertname"
-                value: "Heartbeat"
-                isEqual: false
-                isRegex: false
+        patchesJson6902: |-
+          - path: "/spec/matchers/-"
+            op: add
+            value: {"name": "alertname", "value": "Heartbeat", "isEqual": false, "isRegex": false}

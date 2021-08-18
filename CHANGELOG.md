@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Ensure the Silence Cluster policy do not replace matchers.
+
 ## [0.0.9] - 2021-08-17
 
 ### Fixed
