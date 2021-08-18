@@ -378,6 +378,37 @@ def silence(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
     LOGGER.info(f"Silence {silence_name} deleted")
 
+@pytest.fixture
+def silence_with_matchers(kubernetes_cluster):
+    c = dedent(f"""
+        apiVersion: monitoring.giantswarm.io/v1alpha1
+        kind: Silence
+        metadata:
+          name: {silence_name}
+          namespace: default
+        spec:
+          matchers:
+          - isEqual: false
+            isRegex: false
+            name: test
+            value: test
+          targetTags: []
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"Silence {silence_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get silences {silence_name}", output="yaml")
+
+    silence = yaml.safe_load(raw)
+
+    yield silence
+
+    kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
+    LOGGER.info(f"Silence {silence_name} deleted")
+
+
 # Service Monitor fixtures
 
 @pytest.fixture
@@ -394,7 +425,11 @@ def servicemonitor(kubernetes_cluster):
               app: my-app
           endpoints:
           - port: "web"
+            relabelings:
+              - targetLabel: app
           - port: "http"
+            relabelings:
+              - targetLabel: app
     """)
 
     kubernetes_cluster.kubectl("apply", input=sm, output=None)

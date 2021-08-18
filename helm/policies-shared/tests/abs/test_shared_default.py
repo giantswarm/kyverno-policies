@@ -10,6 +10,7 @@ import ensure
 from textwrap import dedent
 
 from ensure import silence
+from ensure import silence_with_matchers
 from ensure import servicemonitor
 
 import pytest
@@ -34,6 +35,17 @@ def test_silence_heartbeat_policy(silence) -> None:
 
     pytest.fail("Heartbeat matcher is missing")
 
+@pytest.mark.smoke
+def test_silence_heartbeat_policy_with_existing_matchers(silence_with_matchers) -> None:
+    """
+    test_silence_heartbeat_policy tests defaulting of a Silence container a matcher to check for the negative Heartbeat matcher.
+
+    :param silence_with_matchers: Any Silence CR container a matcher.
+    """
+    matchers = silence_with_matchers['spec']['matchers']
+
+    assert (matchers[0]['value'] == "test" and matchers[0]['name'] == "test" and not matchers[0]['isRegex'] and not matchers[0]['isEqual'])
+    assert (matchers[1]['value'] == "Heartbeat" and matchers[1]['name'] == "alertname" and not matchers[1]['isRegex'] and not matchers[1]['isEqual'])
 
 @pytest.mark.smoke
 def test_service_monitor_labelling_schema_policy(servicemonitor) -> None:
