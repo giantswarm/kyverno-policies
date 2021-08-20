@@ -11,7 +11,7 @@ spec:
           kinds:
           - monitoring.coreos.com/v1/ServiceMonitor
       mutate:
-        patchStrategicMerge:
+        patchesJson6902: |-
           spec:
             endpoints:
               - relabelings:
