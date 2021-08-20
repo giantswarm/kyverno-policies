@@ -21,7 +21,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.smoke
-def test_azure_cluster_policy(release, cluster, azurecluster) -> None:
+def test_azure_cluster_policy(release, cluster_v1alpha4, azurecluster) -> None:
     """
     test_azure_cluster_policy tests defaulting of an AzureCluster where all required values are empty strings.
 
