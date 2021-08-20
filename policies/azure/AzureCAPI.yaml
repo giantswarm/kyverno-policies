@@ -12,6 +12,12 @@ spec:
         - infrastructure.cluster.x-k8s.io/v1alpha4/AzureCluster
         - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachine
         - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachinePool
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachinePoolMachine
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureManagedCluster
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureManagedControlplane
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureManagedMachinePool
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureClusterIdentity
     context:
     - name: releaseVersion
       apiCall:
