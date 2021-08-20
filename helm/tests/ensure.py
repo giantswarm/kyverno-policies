@@ -326,7 +326,7 @@ def awsclusterroleidentity(kubernetes_cluster):
 @pytest.fixture
 def azurecluster(kubernetes_cluster):
     c = dedent(f"""
-        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
         kind: AzureCluster
         metadata:
           name: {cluster_name}
