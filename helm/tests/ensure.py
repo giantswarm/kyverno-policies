@@ -124,6 +124,10 @@ def cluster_v1alpha4(kubernetes_cluster):
             apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
             kind: KubeadmControlPlane
             name: {cluster_name}-control-plane
+          infrastructureRef:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+            kind: AWSCluster
+            name: {cluster_name}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
