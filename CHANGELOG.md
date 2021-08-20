@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- Enable labeling policies to work with v1alpha4 types.
-
 ## [0.0.10] - 2021-08-18
 
 ### Fixed
