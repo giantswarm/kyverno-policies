@@ -10,7 +10,7 @@ import ensure
 from textwrap import dedent
 
 from ensure import release
-from ensure import cluster
+from ensure import cluster_v1alpha4
 from ensure import azurecluster
 
 import pytest
