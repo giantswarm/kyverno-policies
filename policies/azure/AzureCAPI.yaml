@@ -9,13 +9,13 @@ spec:
     match:
       resources:
         kinds:
-        - infrastructure.cluster.x-k8s.io/v1alpha3/AzureCluster
-        - infrastructure.cluster.x-k8s.io/v1alpha3/AzureMachine
-        - infrastructure.cluster.x-k8s.io/v1alpha3/AzureMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureCluster
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachine
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachineTemplate
     context:
     - name: releaseVersion
       apiCall:
-        urlPath: "/apis/cluster.x-k8s.io/v1alpha3/namespaces/{{ request.object.metadata.namespace }}/clusters"
+        urlPath: "/apis/cluster.x-k8s.io/v1alpha4/namespaces/{{ request.object.metadata.namespace }}/clusters"
         jmesPath: "items[?metadata.name == '{{request.object.metadata.labels.\"cluster.x-k8s.io/cluster-name\"}}'].metadata.labels.\"release.giantswarm.io/version\" | [0]"
     preconditions:
       any:
