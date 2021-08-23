@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.11] - 2021-08-23
+
 ### Changed
 
 - Enable labeling policies to work with v1alpha4 types.
@@ -71,7 +73,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.10...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.11...HEAD
+[0.0.11]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.9...v0.0.8
