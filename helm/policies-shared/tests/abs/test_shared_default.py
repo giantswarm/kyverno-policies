@@ -14,7 +14,7 @@ from ensure import silence_with_matchers
 from ensure import servicemonitor
 
 import pytest
-from pytest_kube import forward_requests, wait_for_rollout, app_template
+from pytest_helm_charts import forward_requests, wait_for_rollout, app_template
 
 import logging
 LOGGER = logging.getLogger(__name__)

@@ -15,7 +15,7 @@ from ensure import machinedeployment
 from ensure import kubeadmconfig
 
 import pytest
-from pytest_kube import forward_requests, wait_for_rollout, app_template
+from pytest_helm_charts import forward_requests, wait_for_rollout, app_template
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -55,4 +55,3 @@ def test_kubeadmconfig_policy(kubeadmconfig) -> None:
     assert kubeadmconfig['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
-
