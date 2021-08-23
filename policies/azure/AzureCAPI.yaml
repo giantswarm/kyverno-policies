@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: aws-capi-policy
+  name: azure-capi-policy
 spec:
   background: false
   rules:
