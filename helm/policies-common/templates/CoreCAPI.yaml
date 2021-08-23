@@ -82,6 +82,8 @@ spec:
         - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
         - cluster.x-k8s.io/v1alpha3/Machine
         - cluster.x-k8s.io/v1alpha4/Machine
+        - cluster.x-k8s.io/v1alpha3/MachineSet
+        - cluster.x-k8s.io/v1alpha4/MachineSet
         - cluster.x-k8s.io/v1alpha3/MachineDeployment
         - cluster.x-k8s.io/v1alpha4/MachineDeployment
         - exp.cluster.x-k8s.io/v1alpha3/MachinePool
