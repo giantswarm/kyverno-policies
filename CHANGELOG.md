@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove Service Monitor policy pending upstream bug fix.
+
 ## [0.0.11] - 2021-08-23
 
 ### Changed
