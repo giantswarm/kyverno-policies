@@ -11,7 +11,6 @@ from textwrap import dedent
 
 from ensure import silence
 from ensure import silence_with_matchers
-from ensure import servicemonitor
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
