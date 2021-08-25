@@ -77,6 +77,40 @@ spec:
           sshKeyName: |-
             {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.sshKeyName }}') {{ `}}` }}
 
+  # awsmanagedcontrolplane-default adds default values to fields in a AWSManagedControlPlane CR if it has the watch-filter label and the values are completely missing.
+  - name: awsmanagedcontrolplane-default
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          # Create values if missing
+          +(region): {{ .Values.region }}
+          +(sshKeyName): {{ .Values.sshKeyName }}
+
+  # awsmanagedcontrolplane-default-empty-string adds default values to fields in a AWSManagedControlPlane CR if it has the watch-filter label and the values are empty strings.
+  - name: awsmanagedcontrolplane-default-empty-string
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          # Replace empty strings
+          region: |-
+            {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.region }}') {{ `}}` }}
+          sshKeyName: |-
+            {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.sshKeyName }}') {{ `}}` }}
+
   # awsclusterroleidentity-default adds default values to fields in a AWSClusterRoleIdentity CR if it has the watch-filter label and the values are completely missing.
   - name: awsclusterroleidentity-default
     match:
@@ -118,6 +152,7 @@ spec:
               {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.awsClusterRoleIdentity.sourceIdentityRef.name}}') {{ `}}` }}
             kind: |-
               {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.awsClusterRoleIdentity.sourceIdentityRef.kind }}') {{ `}}` }}
+
   # awsmachinetemplate-default adds default values to fields in a AWSMachineTemplate CR if it has the watch-filter label and the values are completely missing.
   - name: awsmachinetemplate-default
     match:
