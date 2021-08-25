@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove Service Monitor policy pending upstream bug fix.
 
+## [0.1.1] - 2021-08-25
+
 ### Fixed
 
 - Fix group `controlplane` for `AWSManagedControlPlane`CR.
@@ -87,7 +89,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.11...v0.1.0
 [0.0.11]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/giantswarm/kyverno-policies/compare/v0.0.9...v0.0.10
