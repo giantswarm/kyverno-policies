@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove Service Monitor policy pending upstream bug fix.
 
+### Fixed
+
+- Fix group `controlplane` for `AWSManagedControlPlane`CR.
+
 ## [0.1.0] - 2021-08-25
 
 ### Added

@@ -81,7 +81,7 @@ spec:
     match:
       resources:
         kinds:
-        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
+        - controlplane.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -97,7 +97,7 @@ spec:
     match:
       resources:
         kinds:
-        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
+        - controlplane.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
