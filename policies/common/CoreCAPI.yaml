@@ -120,7 +120,7 @@ spec:
             cluster.x-k8s.io/watch-filter: capi
         exclude:
           matchLabels:
-            cluster.x-k8s.io/control-plane: "*"
+            cluster.x-k8s.io/control-plane: ""
     mutate:
       patchStrategicMerge:
         spec:
@@ -143,7 +143,7 @@ spec:
             cluster.x-k8s.io/watch-filter: capi
         exclude:
           matchLabels:
-            cluster.x-k8s.io/control-plane: "*"
+            cluster.x-k8s.io/control-plane: ""
     mutate:
       patchStrategicMerge:
         spec:
