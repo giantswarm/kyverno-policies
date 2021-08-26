@@ -64,6 +64,6 @@ def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
 
     :param kubeadmconfig_controlplane: KubeadmConfig CR which is empty.
     """
-    assert kubeadmconfig['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
-    assert kubeadmconfig['spec']['joinConfiguration'] == None
+    assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert kubeadmconfig_controlplane['spec']['joinConfiguration'] == None
 
