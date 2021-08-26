@@ -66,5 +66,5 @@ def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
     """
     assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/control-plane'] == ""
-    assert kubeadmconfig_controlplane['spec']['joinConfiguration'] == None
+    assert kubeadmconfig_controlplane['spec'] == None
 
