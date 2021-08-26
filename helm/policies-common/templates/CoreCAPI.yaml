@@ -121,9 +121,9 @@ spec:
             cluster.x-k8s.io/watch-filter: capi
     preconditions:
       any:
-      - key: "{{ `{{` }} request.object.metadata.labels.\"cluster.x-k8s.io/control-plane\" | [0] {{ `}}` }}"
-        operator: Equals
-        value: "null"
+      - key: "cluster.x-k8s.io/control-plane"
+        operator: NotIn
+        value: "{{ `{{` }} request.object.metadata.labels | keys(@) {{ `}}` }}"
     mutate:
       patchStrategicMerge:
         spec:
@@ -146,9 +146,9 @@ spec:
             cluster.x-k8s.io/watch-filter: capi
     preconditions:
       any:
-      - key: "{{ `{{` }} request.object.metadata.labels.\"cluster.x-k8s.io/control-plane\" | [0] {{ `}}` }}"
-        operator: Equals
-        value: "null"
+      - key: "cluster.x-k8s.io/control-plane"
+        operator: NotIn
+        value: "{{ `{{` }} request.object.metadata.labels | keys(@) {{ `}}` }}"
     mutate:
       patchStrategicMerge:
         spec:
