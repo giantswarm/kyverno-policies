@@ -118,6 +118,11 @@ spec:
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
+    preconditions:
+      any:
+      - key: "{{ request.object.metadata.labels.\"cluster.x-k8s.io/control-plane\" }}"
+        operator: NotEquals
+        value: "*"
     mutate:
       patchStrategicMerge:
         spec:
@@ -138,6 +143,11 @@ spec:
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
+    preconditions:
+      any:
+      - key: "{{ request.object.metadata.labels.\"cluster.x-k8s.io/control-plane\" }}"
+        operator: NotEquals
+        value: "*"
     mutate:
       patchStrategicMerge:
         spec:
