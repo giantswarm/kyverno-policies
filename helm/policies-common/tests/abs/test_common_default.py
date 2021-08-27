@@ -13,6 +13,7 @@ from ensure import release
 from ensure import cluster
 from ensure import machinedeployment
 from ensure import kubeadmconfig
+from ensure import kubeadmconfig_controlplane
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -55,4 +56,16 @@ def test_kubeadmconfig_policy(kubeadmconfig) -> None:
     assert kubeadmconfig['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
+
+@pytest.mark.smoke
+def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
+    """
+    test_kubeadmconfig_policy_controlplane tests defaulting of a KubeadmConfig for a control plane where all required values are empty strings.
+
+    :param kubeadmconfig_controlplane: KubeadmConfig CR which is empty.
+    """
+    assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/control-plane'] == ""
+    # The object is completely empty before, so we make sure that it remains empty here.
+    assert kubeadmconfig_controlplane.get('spec') is None
 

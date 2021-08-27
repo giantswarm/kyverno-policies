@@ -110,7 +110,7 @@ spec:
             +(cluster.x-k8s.io/watch-filter): "capi"
             cluster.x-k8s.io/watch-filter: "capi"
 
-  - name: kubeadmconfigtemplate-defaults
+  - name: kubeadmconfigtemplate-worker-defaults
     match:
       resources:
         kinds:
@@ -119,6 +119,11 @@ spec:
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
+    preconditions:
+      any:
+      - key: "cluster.x-k8s.io/control-plane"
+        operator: NotIn
+        value: "{{ `{{` }} request.object.metadata.labels | keys(@) {{ `}}` }}"
     mutate:
       patchStrategicMerge:
         spec:
@@ -130,7 +135,7 @@ spec:
                     healthz-bind-address: 0.0.0.0
                     node-labels: role=worker
 
-  - name: kubeadmconfig-defaults
+  - name: kubeadmconfig-worker-defaults
     match:
       resources:
         kinds:
@@ -139,6 +144,11 @@ spec:
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
+    preconditions:
+      any:
+      - key: "cluster.x-k8s.io/control-plane"
+        operator: NotIn
+        value: "{{ `{{` }} request.object.metadata.labels | keys(@) {{ `}}` }}"
     mutate:
       patchStrategicMerge:
         spec:
