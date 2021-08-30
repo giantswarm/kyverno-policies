@@ -479,13 +479,22 @@ def silence_with_matchers(kubernetes_cluster):
 @pytest.fixture
 def kubeadm_control_plane(kubernetes_cluster):
     c = dedent(f"""
-        apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
+        apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
         kind: KubeadmControlPlane
         metadata:
           labels:
             cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: capi
           name: {cluster_name}
           namespace: default
+        spec:
+          kubeadmConfigSpec:
+            clusterConfiguration:
+              controllerManager:
+                extraArgs:
+                  allocate-node-cidrs: "false"
+          infrastructureTemplate: {{}}
+          version: 1.22.0
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)

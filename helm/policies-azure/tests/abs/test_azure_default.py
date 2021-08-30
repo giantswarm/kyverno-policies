@@ -12,13 +12,13 @@ from textwrap import dedent
 from ensure import release
 from ensure import cluster_v1alpha4
 from ensure import azurecluster
+from ensure import kubeadm_control_plane
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
 
 import logging
 LOGGER = logging.getLogger(__name__)
-
 
 @pytest.mark.smoke
 def test_azure_cluster_policy(release, cluster_v1alpha4, azurecluster) -> None:
@@ -30,3 +30,12 @@ def test_azure_cluster_policy(release, cluster_v1alpha4, azurecluster) -> None:
     :param azurecluster: AzureCluster CR with empty strings which matches the Cluster CR.
     """
     assert azurecluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+
+@pytest.mark.smoke
+def test_kcp_allocate_node_cidrs(kubeadm_control_plane) -> None:
+    """
+    test_kcp_allocate_node_cidrs tests the `allocate_node_cidrs` is set to true.
+
+    :param kubeadm_control_plane: KubeadmControlPlane CR created from an empty spec.
+    """
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['controllerManager']['extraArgs']['allocate-node-cidrs'] == "true"
