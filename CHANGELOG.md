@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Ensure `controllerManager`'s extra arg `allocate-node-cidrs` is set to true in `KubeadmControlPlane` for Azure clusters. 
+
 ## [0.1.3] - 2021-08-27
 
 ### Changed
