@@ -486,7 +486,6 @@ def kubeadm_control_plane(kubernetes_cluster):
             cluster.x-k8s.io/cluster-name: {cluster_name}
           name: {cluster_name}
           namespace: default
-        spec: {}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
