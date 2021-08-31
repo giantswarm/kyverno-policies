@@ -475,3 +475,37 @@ def silence_with_matchers(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
     LOGGER.info(f"Silence {silence_name} deleted")
+
+@pytest.fixture
+def kubeadm_control_plane(kubernetes_cluster):
+    c = dedent(f"""
+        apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
+        kind: KubeadmControlPlane
+        metadata:
+          labels:
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: capi
+          name: {cluster_name}
+          namespace: default
+        spec:
+          kubeadmConfigSpec:
+            clusterConfiguration:
+              controllerManager:
+                extraArgs:
+                  allocate-node-cidrs: "false"
+          infrastructureTemplate: {{}}
+          version: 1.22.0
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"KubeadmControlPlane {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get kubeadmcontrolplane {cluster_name}", output="yaml")
+
+    kcp = yaml.safe_load(raw)
+
+    yield kcp
+
+    kubernetes_cluster.kubectl(f"delete kubeadmcontrolplane {cluster_name}", output=None)
+    LOGGER.info(f"kubeadmcontrolplane {cluster_name} deleted")

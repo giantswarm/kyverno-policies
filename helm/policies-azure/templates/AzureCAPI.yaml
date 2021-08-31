@@ -35,3 +35,20 @@ spec:
           labels:
             +(cluster.x-k8s.io/watch-filter): "capi"
             cluster.x-k8s.io/watch-filter: "capi"
+  - name: kubeadmcontrolplane-enable-allocate-node-cidrs
+    match:
+      resources:
+        kinds:
+          - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
+          - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          kubeadmConfigSpec:
+            clusterConfiguration:
+              controllerManager:
+                extraArgs:
+                  allocate-node-cidrs: "true"
