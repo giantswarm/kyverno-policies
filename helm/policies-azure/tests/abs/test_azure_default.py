@@ -30,6 +30,7 @@ def test_azure_cluster_policy(release, cluster_v1alpha4, azurecluster) -> None:
     :param azurecluster: AzureCluster CR with empty strings which matches the Cluster CR.
     """
     assert azurecluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert azurecluster['spec']['location'] == "westeurope"
 
 @pytest.mark.smoke
 def test_kcp_allocate_node_cidrs(kubeadm_control_plane) -> None:
