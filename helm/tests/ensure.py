@@ -402,6 +402,8 @@ def azurecluster(kubernetes_cluster):
           labels:
             giantswarm.io/cluster: {cluster_name}
             cluster.x-k8s.io/cluster-name: {cluster_name}
+        spec:
+          location: ""
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
