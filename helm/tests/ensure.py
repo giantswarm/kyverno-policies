@@ -14,6 +14,7 @@ LOGGER = logging.getLogger(__name__)
 service_monitor_name = "test-service-monitor"
 silence_name = "test-silence"
 cluster_name = "test-cluster"
+machinepool_name = "mp0"
 release_version = "20.0.0"
 cluster_apps_operator_version = "2.0.0"
 watch_label = "capi"
@@ -418,6 +419,49 @@ def azurecluster(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete azurecluster {cluster_name}", output=None)
     LOGGER.info(f"AzureCluster {cluster_name} deleted")
+
+@pytest.fixture
+def azuremachinepool(kubernetes_cluster):
+    c = dedent(f"""
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+        kind: AzureMachinePool
+        metadata:
+          name: {machinepool_name}
+          namespace: default
+          labels:
+            "cluster.x-k8s.io/cluster-name": {cluster_name}
+            "giantswarm.io/cluster": {cluster_name}
+        spec:
+          identity: SystemAssigned
+          location: ""
+          strategy:
+            rollingUpdate:
+              deletePolicy: Oldest
+              maxSurge: 25%
+              maxUnavailable: 1
+            type: RollingUpdate
+          template:
+            osDisk:
+              diskSizeGB: 30
+              managedDisk:
+                storageAccountType: Premium_LRS
+              osType: Linux
+            sshPublicKey: ""
+            vmSize: Standard_D4s_v3
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"AzureMachinePool {machinepool_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get AzureMachinePool {machinepool_name}", output="yaml")
+
+    azuremachinepool = yaml.safe_load(raw)
+
+    yield azuremachinepool
+
+    kubernetes_cluster.kubectl(f"delete azuremachinepool {machinepool_name}", output=None)
+    LOGGER.info(f"AzureMachinePool {machinepool_name} deleted")
 
 
 # Silence fixtures
