@@ -51,11 +51,12 @@ spec:
               controllerManager:
                 extraArgs:
                   allocate-node-cidrs: "true"
-  - name: azurecluster-ensure-location-and-subscription-id
+  - name: ensure-location
     match:
       resources:
         kinds:
           - infrastructure.cluster.x-k8s.io/v1alpha4/AzureCluster
+          - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachinePool
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
