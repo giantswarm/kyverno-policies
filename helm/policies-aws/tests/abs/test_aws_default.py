@@ -36,7 +36,7 @@ def test_aws_cluster_policy(release, cluster, awscluster) -> None:
     assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awscluster['spec']['region'] == "eu-west-1"
     assert awscluster['spec']['sshKeyName'] == "ssh-key"
-    assert len(awscluster['spec']['network']['cni']['cniIngressRules']) > 0
+    assert len(awscluster['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
 
 @pytest.mark.smoke
