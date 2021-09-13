@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add CRDs related to kubeadm controlplane to CI.
+
 ## [0.5.0] - 2021-09-13
 
 ### Added
@@ -29,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Ensure `controllerManager`'s extra arg `allocate-node-cidrs` is set to true in `KubeadmControlPlane` for Azure clusters. 
+- Ensure `controllerManager`'s extra arg `allocate-node-cidrs` is set to true in `KubeadmControlPlane` for Azure clusters.
 
 ## [0.1.3] - 2021-08-27
 
