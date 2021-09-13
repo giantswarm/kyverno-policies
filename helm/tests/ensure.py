@@ -259,7 +259,7 @@ def awscluster(kubernetes_cluster):
           region: ""
           sshKeyName: ""
           networkSpec:
-            vpc: {}
+            vpc: {{}}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
@@ -288,7 +288,7 @@ def awscluster_empty(kubernetes_cluster):
             cluster.x-k8s.io/cluster-name: {cluster_name}
         spec:
           networkSpec:
-            vpc: {}
+            vpc: {{}}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
@@ -318,7 +318,7 @@ def awscluster_empty_labeled(kubernetes_cluster):
             cluster.x-k8s.io/watch-filter: {watch_label}
         spec:
           networkSpec:
-            vpc: {}
+            vpc: {{}}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
