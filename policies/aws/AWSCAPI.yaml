@@ -59,9 +59,9 @@ spec:
           +(sshKeyName): [[ .Values.sshKeyName ]]
           # always create (and override) cni rules
           networkSpec:
-            +(cni):
-              +(cniIngressRules):
-              - description: allow cni traffic across nodes and control plane
+            cni:
+              cniIngressRules:
+              - (description): allow cni traffic across nodes and control plane
                 protocol: "-1"
                 fromPort: -1
                 toPort: -1
