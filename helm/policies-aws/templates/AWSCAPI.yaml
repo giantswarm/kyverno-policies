@@ -58,14 +58,6 @@ spec:
           # Create values if missing
           +(region): {{ .Values.region }}
           +(sshKeyName): {{ .Values.sshKeyName }}
-          # always create (and override) cni rules
-          networkSpec:
-            +(cni):
-              +(cniIngressRules):
-              - description: allow cni traffic across nodes and control plane
-                protocol: "-1"
-                fromPort: -1
-                toPort: -1
 
   # awscluster-default-empty-string adds default values to fields in a AWSCluster CR if it has the watch-filter label and the values are empty strings.
   - name: awscluster-default-empty-string
@@ -84,6 +76,27 @@ spec:
             {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.region }}') {{ `}}` }}
           sshKeyName: |-
             {{ `{{` }} regex_replace_all('^$', '{{ `{{` }}@{{ `}}` }}', '{{ .Values.sshKeyName }}') {{ `}}` }}
+
+  # awscluster-cni adds default values to CNI ingress rules.
+  - name: awscluster-cni
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSCluster
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      overlay:
+        spec:
+          # always create (and override) cni rules
+          networkSpec:
+            cni:
+              cniIngressRules:
+                - description: allow cni traffic across nodes and control plane
+                  protocol: "-1"
+                  fromPort: -1
+                  toPort: -1
 
   # awsmanagedcontrolplane-default adds default values to fields in a AWSManagedControlPlane CR if it has the watch-filter label and the values are completely missing.
   - name: awsmanagedcontrolplane-default
