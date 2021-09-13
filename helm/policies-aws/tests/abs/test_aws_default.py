@@ -36,6 +36,7 @@ def test_aws_cluster_policy(release, cluster, awscluster) -> None:
     assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awscluster['spec']['region'] == "eu-west-1"
     assert awscluster['spec']['sshKeyName'] == "ssh-key"
+    assert len(awscluster['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
 
 @pytest.mark.smoke
@@ -50,7 +51,7 @@ def test_aws_cluster_policy_empty(release, cluster, awscluster_empty) -> None:
     assert awscluster_empty['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awscluster_empty['spec']['region'] == "eu-west-1"
     assert awscluster_empty['spec']['sshKeyName'] == "ssh-key"
-
+    assert len(awscluster['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
 @pytest.mark.smoke
 def test_aws_cluster_policy_solo(awscluster_empty_labeled) -> None:
@@ -62,7 +63,7 @@ def test_aws_cluster_policy_solo(awscluster_empty_labeled) -> None:
     assert awscluster_empty_labeled['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awscluster_empty_labeled['spec']['region'] == "eu-west-1"
     assert awscluster_empty_labeled['spec']['sshKeyName'] == "ssh-key"
-
+    assert len(awscluster['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
 @pytest.mark.smoke
 def test_aws_cluster_role_identity_policy_solo(awsclusterroleidentity) -> None:

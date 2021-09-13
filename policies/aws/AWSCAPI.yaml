@@ -57,6 +57,13 @@ spec:
           # Create values if missing
           +(region): [[ .Values.region ]]
           +(sshKeyName): [[ .Values.sshKeyName ]]
+          networkSpec:
+            cni:
+              cniIngressRules:
+              - description: allow cni traffic across nodes and control plane
+                protocol: "-1"
+                fromPort: -1
+                toPort: -1
 
   # awscluster-default-empty-string adds default values to fields in a AWSCluster CR if it has the watch-filter label and the values are empty strings.
   - name: awscluster-default-empty-string
