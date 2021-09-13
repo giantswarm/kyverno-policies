@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add AWS CNI security group rules to `AWSCluster` CR.
+
+## [0.4.0] - 2021-09-03
+
+### Added
+
+- Default `spec.location` field for CAPZ `AzureMachinePool` CRs.
+
+## [0.3.0] - 2021-09-02
+
+### Added
+
+- Default `spec.location` field for CAPZ `AzureCluster` CRs.
+
+## [0.2.0] - 2021-08-31
+
+### Changed
+
+- Ensure `controllerManager`'s extra arg `allocate-node-cidrs` is set to true in `KubeadmControlPlane` for Azure clusters. 
+
 ## [0.1.3] - 2021-08-27
 
 ### Changed
@@ -97,7 +119,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.1.3...v0.2.0
 [0.1.3]: https://github.com/giantswarm/kyverno-policies/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/giantswarm/kyverno-policies/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.1.0...v0.1.1
