@@ -93,10 +93,10 @@ spec:
           networkSpec:
             cni:
               cniIngressRules:
-              - description: allow cni traffic across nodes and control plane
-                protocol: "-1"
-                fromPort: -1
-                toPort: -1
+                - description: allow cni traffic across nodes and control plane
+                  protocol: "-1"
+                  fromPort: -1
+                  toPort: -1
 
   # awsmanagedcontrolplane-default adds default values to fields in a AWSManagedControlPlane CR if it has the watch-filter label and the values are completely missing.
   - name: awsmanagedcontrolplane-default
