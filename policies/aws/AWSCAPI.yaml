@@ -57,9 +57,10 @@ spec:
           # Create values if missing
           +(region): [[ .Values.region ]]
           +(sshKeyName): [[ .Values.sshKeyName ]]
+          # always create (and override) cni rules
           networkSpec:
-            cni:
-              cniIngressRules:
+            +(cni):
+              +(cniIngressRules):
               - description: allow cni traffic across nodes and control plane
                 protocol: "-1"
                 fromPort: -1

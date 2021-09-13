@@ -258,6 +258,8 @@ def awscluster(kubernetes_cluster):
         spec:
           region: ""
           sshKeyName: ""
+          networkSpec:
+            vpc: {}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
@@ -284,6 +286,9 @@ def awscluster_empty(kubernetes_cluster):
           labels:
             giantswarm.io/cluster: {cluster_name}
             cluster.x-k8s.io/cluster-name: {cluster_name}
+        spec:
+          networkSpec:
+            vpc: {}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
@@ -311,6 +316,9 @@ def awscluster_empty_labeled(kubernetes_cluster):
             giantswarm.io/cluster: {cluster_name}
             cluster.x-k8s.io/cluster-name: {cluster_name}
             cluster.x-k8s.io/watch-filter: {watch_label}
+        spec:
+          networkSpec:
+            vpc: {}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
