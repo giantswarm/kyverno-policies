@@ -1,4 +1,4 @@
-kind create cluster --image quay.io/giantswarm/kind-node:$1 --name kyverno-cluster
+kind create cluster --config $(pwd)/hack/cluster-conf.yaml --image quay.io/giantswarm/kind-node:$1 --name kyverno-cluster
 kubectl wait nodes/kyverno-cluster-control-plane --for=condition=ready --timeout=5m > /dev/null
 kind get kubeconfig --name kyverno-cluster > $(pwd)/kube.config
 # Giant Swarm CRDs
