@@ -1,0 +1,8 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+kind: VSphereCluster
+metadata:
+  name: hello
+  namespace: default
+  labels:
+    giantswarm.io/cluster: hello
+    cluster.x-k8s.io/cluster-name: hello

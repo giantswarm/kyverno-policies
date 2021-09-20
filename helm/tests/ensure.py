@@ -463,6 +463,86 @@ def azuremachinepool(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete azuremachinepool {machinepool_name}", output=None)
     LOGGER.info(f"AzureMachinePool {machinepool_name} deleted")
 
+# CAPV fixtures
+
+@pytest.fixture
+def vspherecluster(kubernetes_cluster):
+    c = dedent(f"""
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+        kind: VSphereCluster
+        metadata:
+          name: {cluster_name}
+          namespace: default
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"VSphereCluster {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get vspherecluster {cluster_name}", output="yaml")
+
+    vspherecluster = yaml.safe_load(raw)
+
+    yield vspherecluster
+
+    kubernetes_cluster.kubectl(f"delete vspherecluster {cluster_name}", output=None)
+    LOGGER.info(f"VSphereCluster {cluster_name} deleted")
+
+@pytest.fixture
+def vspherecluster_empty_labeled(kubernetes_cluster):
+    c = dedent(f"""
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+        kind: VSphereCluster
+        metadata:
+          name: {cluster_name}
+          namespace: default
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: {watch_label}
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"VSphereCluster {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get vspherecluster {cluster_name}", output="yaml")
+
+    vspherecluster = yaml.safe_load(raw)
+
+    yield vspherecluster
+
+    kubernetes_cluster.kubectl(f"delete vspherecluster {cluster_name}", output=None)
+    LOGGER.info(f"VSphereCluster {cluster_name} deleted")
+
+@pytest.fixture
+def vspheremachinetemplate(kubernetes_cluster):
+    c = dedent(f"""
+      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+      kind: VSphereMachineTemplate
+      metadata:
+        labels:
+          cluster.x-k8s.io/cluster-name: {cluster_name}
+          giantswarm.io/cluster: {cluster_name}
+        name: {cluster_name}
+        namespace: default
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"VSphereMachineTemplate {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get VSphereMachineTemplates {cluster_name}", output="yaml")
+
+    vspheremachinetemplate = yaml.safe_load(raw)
+
+    yield vspheremachinetemplate
+
+    kubernetes_cluster.kubectl(f"delete VsphereMachineTemplate {cluster_name}", output=None)
+    LOGGER.info(f"VSphereMachineTemplate {cluster_name} deleted")
 
 # Silence fixtures
 
