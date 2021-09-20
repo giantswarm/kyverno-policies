@@ -1,0 +1,11 @@
+annotations:
+  application.giantswarm.io/metadata: https://giantswarm.github.io/control-plane-test-catalog/policies-vsphere-0.5.0-8e894f2204e3ad62790b5efa788771249da9fc65.tgz-meta/main.yaml
+  application.giantswarm.io/readme: https://giantswarm.github.io/control-plane-test-catalog/policies-vsphere-0.5.0-8e894f2204e3ad62790b5efa788771249da9fc65.tgz-meta/README.md
+  application.giantswarm.io/team: ludacris
+  config.giantswarm.io/version: 1.x.x
+apiVersion: v1
+appVersion: master
+description: Giant Swarm policies for vsphere.
+home: https://github.com/giantswarm/kyverno-policies
+name: policies-vsphere
+version: 0.5.0-8e894f2204e3ad62790b5efa788771249da9fc65
