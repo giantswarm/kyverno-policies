@@ -15,8 +15,8 @@ commands:
     steps:
       - architect/run-tests-with-ats:
           chart_archive_prefix: "<< parameters.chart_archive_prefix >>"
-          app-test-suite_version: "v<< paramters.ats_version >>"
-          app-test-suite_container_tag: "<< paramters.ats_version >>"
+          app-test-suite_version: "v<< parameters.ats_version >>"
+          app-test-suite_container_tag: "<< parameters.ats_version >>"
           additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
 
 jobs:
