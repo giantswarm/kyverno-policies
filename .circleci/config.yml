@@ -4,6 +4,22 @@ version: 2.1
 orbs:
   architect: giantswarm/architect@dev:split-app-testing
 
+commands:
+  run-ats:
+    parameters:
+      kubernetes_version:
+        type: string
+      ats_version:
+        type: string
+        default: 0.1.4
+      chart_archive_prefix:
+        type: string
+    steps:
+      - architect/run-tests-with-ats:
+          chart_archive_prefix: "<< parameters.chart_archive_prefix >>"
+          app-test-suite_version: "v<< paramters.ats_version >>"
+          app-test-suite_container_tag: "<< paramters.ats_version >>"
+          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
 
 jobs:
   verify:
@@ -54,18 +70,14 @@ jobs:
             dabs.sh --generate-metadata --chart-dir helm/policies-aws
             dabs.sh --generate-metadata --chart-dir helm/policies-azure
             dabs.sh --generate-metadata --chart-dir helm/policies-shared
-      - architect/run-tests-with-ats:
+      - run-ats:
           chart_archive_prefix: "policies-common"
-          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
-      - architect/run-tests-with-ats:
+      - run-ats:
           chart_archive_prefix: "policies-aws"
-          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
-      - architect/run-tests-with-ats:
+      - run-ats:
           chart_archive_prefix: "policies-azure"
-          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
-      - architect/run-tests-with-ats:
+      - run-ats:
           chart_archive_prefix: "policies-shared"
-          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
       - run:
           name: Export kind logs
           when: always
