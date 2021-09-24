@@ -18,14 +18,16 @@ There are only very few prerequists for local testing:
 1. `make` has to be installed
 2. `kubectl` has to be installed
 3. `kind` has to be installed
-4. [dabs.sh](https://raw.githubusercontent.com/giantswarm/app-build-suite/v0.2.3/dabs.sh) has to be accessible.
+4. [dabs.sh](https://raw.githubusercontent.com/giantswarm/app-build-suite/v1.0.4/dabs.sh) has to be accessible.
+5. [dats.sh](https://raw.githubusercontent.com/giantswarm/app-test-suite/v0.1.4/dats.sh) has to be accessible.
 
-Tests are implemented with [pytest](https://docs.pytest.org) and the framework is supplied by [app-build-suite](https://github.com/giantswarm/app-build-suite/blob/master/docs/tutorial.md).
+Tests are implemented with [pytest](https://docs.pytest.org) with plugin [pytest-helm-charts](https://github.com/giantswarm/pytest-helm-charts).
 
 Executing the integration tests can be done with this simple set of commands:
 ```bash
 make setup # Creates the kind cluster and installs all dependencies.
-./dabs.sh -c ./helm/policies-aws # Executes the tests related to the AWS policies against the kind cluster.
+./dabs.sh --generate-metadata -c ./helm/policies-aws # Builds helm chart archive to be tested.
+./dats.sh --chart-file $(ls -1 -t policies-aws*.tgz | head -n 1) # Executes the tests related to the AWS policies against the kind cluster.
 ```
 
 To only generate the policies in the `helm` folder structure:

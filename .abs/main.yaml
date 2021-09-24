@@ -1,10 +1,4 @@
 replace-chart-version-with-git: true
-smoke-tests-cluster-type: external
-functional-tests-cluster-type: external
-external-cluster-kubeconfig-path: kube.config
-external-cluster-type: kind
 destination: build
 generate-metadata: true
 catalog-base-url: https://giantswarm.github.io/control-plane-test-catalog/
-external-cluster-version: v1.21.1
-skip-steps: test_functional
