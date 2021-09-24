@@ -7,8 +7,6 @@ orbs:
 commands:
   run-ats:
     parameters:
-      kubernetes_version:
-        type: string
       ats_version:
         type: string
         default: 0.1.4
