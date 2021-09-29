@@ -359,6 +359,42 @@ def awsmachinetemplate(kubernetes_cluster):
     LOGGER.info(f"AWSMachineTemplate {cluster_name} deleted")
 
 @pytest.fixture
+def awsmachinepool(kubernetes_cluster):
+    c = dedent(f"""
+      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+      kind: AWSMachinePool
+      metadata:
+        labels:
+          cluster.x-k8s.io/cluster-name: {cluster_name}
+          cluster.x-k8s.io/watch-filter: capi
+          giantswarm.io/cluster: {cluster_name}
+          giantswarm.io/machine-pool: {cluster_name}
+        name: {cluster_name}
+        namespace: default
+      spec:
+        availabilityZones:
+        - eu-west-1a
+        awsLaunchTemplate:
+          ami: {}
+          iamInstanceProfile: nodes-{cluster_name}-{cluster_name}
+          instanceType: m5.xlarge
+          sshKeyName: ""
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    LOGGER.info(f"AWSMachinePool {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get AWSMachinePools {cluster_name}", output="yaml")
+
+    awsmachinepool = yaml.safe_load(raw)
+
+    yield awsmachinepool
+
+    kubernetes_cluster.kubectl(f"delete AWSMachinePool {cluster_name}", output=None)
+    LOGGER.info(f"AWSMachinePool {cluster_name} deleted")
+
+@pytest.fixture
 def awsclusterroleidentity(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3

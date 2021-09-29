@@ -86,3 +86,14 @@ def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
     """
     assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awsmachinetemplate['spec']['template']['spec']['instanceType'] == "t3.large"
+
+@pytest.mark.smoke
+def test_aws_machine_pool_policy_solo(awsmachinepool) -> None:
+    """
+    test_aws_machine_template_policy_solo tests defaulting of an AWSMachineTemplate where all required values are missing and no other CRs are given.
+
+    :param awsmachinetemplate: AWSMachineTemplate CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
+    """
+
+    assert awsmachinepool['spec']['awsLaunchTemplate']['rootVolume']['size'] == 300
+    assert awsmachinepool['spec']['awsLaunchTemplate']['rootVolume']['type'] == "gp3"

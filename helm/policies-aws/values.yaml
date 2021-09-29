@@ -9,3 +9,34 @@ awsClusterRoleIdentity:
 
 awsControlPlane:
   instanceType: t3.large
+
+awsMachineTemplate:
+  rootVolume:
+    size: 20
+    type: gp3
+  nonRootVolumes:
+    etcd:
+      name: "/dev/xvdc"
+      encrypted: true
+      size: 100
+      type: gp3
+    var-lib-docker:
+      name: "/dev/xvdd"
+      encrypted: true
+      size: 100
+      type: gp3
+    var-lib-kubelet:
+      name: "/dev/xvde"
+      encrypted: true
+      size: 100
+      type: gp3
+    var-log:
+      name: "/dev/xvdf"
+      encrypted: true
+      size: 100
+      type: gp3
+
+awsMachinePool:
+  rootVolume:
+    size: 300
+    type: gp3

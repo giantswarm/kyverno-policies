@@ -205,3 +205,56 @@ spec:
             spec:
               instanceType: |-
                 {{ regex_replace_all('^$', '{{@}}', '[[ .Values.awsControlPlane.instanceType ]]') }}
+
+  # awsmachinetemplate-disk set default values for disks in a AWSMachineTemplate CR if it has the watch-filter label and control-plane role filter.
+  - name: awsmachinetemplate-disks
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSMachineTemplate
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+            cluster.x-k8s.io/role: control-plane
+    mutate:
+      patchStrategicMerge:
+        spec:
+          template:
+            spec:
+              rootVolume:
+                size: [[ .Values.awsMachineTemplate.rootVolume.size ]]
+                type: [[ .Values.awsMachineTemplate.rootVolume.type ]]
+              nonRootVolumes:
+              - deviceName: [[ .Values.awsMachineTemplate.nonRootVolumes.etcd.name ]]
+                size: [[ .Values.awsMachineTemplate.nonRootVolumes.etcd.size ]]
+                type: [[ .Values.awsMachineTemplate.nonRootVolumes.etcd.type ]]
+                encrypted: [[ .Values.awsMachineTemplate.nonRootVolumes.etcd.encrypted ]]
+              - deviceName: [[ .Values.awsMachineTemplate.nonRootVolumes.var-lib-docker.name ]]
+                size: [[ .Values.awsMachineTemplate.nonRootVolumes.var-lib-docker.size ]]
+                type: [[ .Values.awsMachineTemplate.nonRootVolumes.var-lib-docker.type ]]
+                encrypted: [[ .Values.awsMachineTemplate.nonRootVolumes.var-lib-docker.encrypted ]]
+              - deviceName: [[ .Values.awsMachineTemplate.nonRootVolumes.var-lib-kubelet.name ]]
+                size: [[ .Values.awsMachineTemplate.nonRootVolumes.var-lib-kubelet.size ]]
+                type: [[ .Values.awsMachineTemplate.nonRootVolumes.var-lib-kubelet.type ]]
+                encrypted: [[ .Values.awsMachineTemplate.nonRootVolumes.var-lib-kubelet.encrypted ]]
+              - deviceName: [[ .Values.awsMachineTemplate.nonRootVolumes.var-log.name ]]
+                size: [[ .Values.awsMachineTemplate.nonRootVolumes.var-log.size ]]
+                type: [[ .Values.awsMachineTemplate.nonRootVolumes.var-log.type ]]
+                encrypted: [[ .Values.awsMachineTemplate.nonRootVolumes.var-log.encrypted ]]
+
+  # awsmachinepool-default default missing values on AWSMachinePool CR with capi watch filter
+  - name: awsmachinepool-default
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha3/AWSMachinePool
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          awsLaunchTemplate:
+            +(rootVolume):
+              +(size): [[ .Values.awsMachinePool.rootVolume.size ]]
+              +(type): [[ .Values.awsMachinePool.rootVolume.type ]]
