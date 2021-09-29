@@ -375,7 +375,6 @@ def awsmachinepool(kubernetes_cluster):
         availabilityZones:
         - eu-west-1a
         awsLaunchTemplate:
-          ami: {}
           iamInstanceProfile: nodes-{cluster_name}-{cluster_name}
           instanceType: m5.xlarge
           sshKeyName: ""
