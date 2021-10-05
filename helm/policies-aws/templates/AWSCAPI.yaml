@@ -238,10 +238,6 @@ spec:
                 size: {{ .Values.awsMachineTemplate.nonRootVolumes.varlibkubelet.size }}
                 type: {{ .Values.awsMachineTemplate.nonRootVolumes.varlibkubelet.type }}
                 encrypted: {{ .Values.awsMachineTemplate.nonRootVolumes.varlibkubelet.encrypted }}
-              - deviceName: {{ .Values.awsMachineTemplate.nonRootVolumes.varlog.name }}
-                size: {{ .Values.awsMachineTemplate.nonRootVolumes.varlog.size }}
-                type: {{ .Values.awsMachineTemplate.nonRootVolumes.varlog.type }}
-                encrypted: {{ .Values.awsMachineTemplate.nonRootVolumes.varlog.encrypted }}
 
   # awsmachinepool-default default missing values on AWSMachinePool CR with capi watch filter
   - name: awsmachinepool-default

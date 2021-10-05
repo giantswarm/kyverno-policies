@@ -12,7 +12,7 @@ awsControlPlane:
 
 awsMachineTemplate:
   rootVolume:
-    size: 20
+    size: 120
     type: gp3
   nonRootVolumes:
     etcd:
@@ -20,18 +20,13 @@ awsMachineTemplate:
       encrypted: true
       size: 100
       type: gp3
-    varlibdocker:
+    varlibcontainerd:
       name: "/dev/xvdd"
       encrypted: true
       size: 100
       type: gp3
     varlibkubelet:
       name: "/dev/xvde"
-      encrypted: true
-      size: 100
-      type: gp3
-    varlog:
-      name: "/dev/xvdf"
       encrypted: true
       size: 100
       type: gp3
