@@ -1,9 +1,11 @@
+annotations:
+  application.giantswarm.io/metadata: https://giantswarm.github.io/control-plane-test-catalog/policies-common-0.1.3-8e894f2204e3ad62790b5efa788771249da9fc65.tgz-meta/main.yaml
+  application.giantswarm.io/readme: https://giantswarm.github.io/control-plane-test-catalog/policies-common-0.1.3-8e894f2204e3ad62790b5efa788771249da9fc65.tgz-meta/README.md
+  application.giantswarm.io/team: ludacris
+  config.giantswarm.io/version: 1.x.x
 apiVersion: v1
-name: policies-common
 appVersion: master
 description: Giant Swarm policies for all clusters.
 home: https://github.com/giantswarm/kyverno-policies
-annotations:
-  application.giantswarm.io/team: "ludacris"
-  config.giantswarm.io/version: 1.x.x
-version: [[ .Version ]]
+name: policies-common
+version: 0.1.3-8e894f2204e3ad62790b5efa788771249da9fc65

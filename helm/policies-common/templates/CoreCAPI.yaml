@@ -145,7 +145,7 @@ spec:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
     preconditions:
-      any:
+      all:
       - key: "cluster.x-k8s.io/control-plane"
         operator: NotIn
         value: "{{ `{{` }} request.object.metadata.labels | keys(@) {{ `}}` }}"
@@ -156,7 +156,56 @@ spec:
             nodeRegistration:
               kubeletExtraArgs:
                 healthz-bind-address: 0.0.0.0
-                node-labels: role=worker
+
+  - name: kubeadmconfig-worker-merge-labels
+    match:
+      resources:
+        kinds:
+          - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
+          - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfig
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    preconditions:
+      all:
+        - key: "cluster.x-k8s.io/control-plane"
+          operator: NotIn
+          value: "{{ `{{` }} request.object.metadata.labels | keys(@) {{ `}}` }}"
+        - key: "node-labels"
+          operator: In
+          value: "{{ `{{` }} request.object.spec.joinConfiguration.nodeRegistration.kubeletExtraArgs | keys(@) {{ `}}` }}"
+        - key: "{{ `{{` }} request.object.spec.joinConfiguration.nodeRegistration.kubeletExtraArgs.\"node-labels\" {{ `}}` }}"
+          operator: NotEquals
+          value: "*role=*"
+    mutate:
+      patchStrategicMerge:
+        spec:
+          joinConfiguration:
+            nodeRegistration:
+              kubeletExtraArgs:
+                node-labels: "{{ `{{` }} join(',', ['role=worker', request.object.spec.joinConfiguration.nodeRegistration.kubeletExtraArgs.\"node-labels\"]) {{ `}}` }}"
+
+  - name: kubeadmconfig-worker-default-labels
+    match:
+      resources:
+        kinds:
+          - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
+          - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfig
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    preconditions:
+      all:
+        - key: "cluster.x-k8s.io/control-plane"
+          operator: NotIn
+          value: "{{ `{{` }} request.object.metadata.labels | keys(@) {{ `}}` }}"
+    mutate:
+      patchStrategicMerge:
+        spec:
+          joinConfiguration:
+            nodeRegistration:
+              kubeletExtraArgs:
+                +(node-labels): role=worker
 
   - name: kubeadmcontrolplane-defaults
     match:

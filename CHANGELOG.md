@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add CRDs related to kubeadm controlplane to CI.
 
+### Changed
+
+- Keep existing `node-labels` when ensuring the `role=worker` label exists in `KubeadmConfig`s.
+
 ## [0.5.0] - 2021-09-13
 
 ### Added
