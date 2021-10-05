@@ -16,6 +16,7 @@ from ensure import awscluster_empty
 from ensure import awscluster_empty_labeled
 from ensure import awsclusterroleidentity
 from ensure import awsmachinetemplate
+from ensure import awsmachinepool
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
