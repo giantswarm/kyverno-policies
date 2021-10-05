@@ -145,7 +145,7 @@ spec:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
     preconditions:
-      all:
+      any:
       - key: "cluster.x-k8s.io/control-plane"
         operator: NotIn
         value: "{{ `{{` }} request.object.metadata.labels | keys(@) {{ `}}` }}"
