@@ -108,4 +108,5 @@ def test_aws_kube_adm_control_plane(kubeadmcontrolplane) -> None:
     """
 
     assert len(kubeadmcontrolplane['spec']['kubeadmConfigSpec']['files']) > 0
-    assert len(kubeadmcontrolplane['spec']['kubeadmConfigSpec']['preKubeadmCommands]) > 0
+    assert len(kubeadmcontrolplane['spec']['kubeadmConfigSpec']['preKubeadmCommands']) > 0
+
