@@ -98,3 +98,14 @@ def test_aws_machine_pool_policy_solo(awsmachinepool) -> None:
 
     assert awsmachinepool['spec']['awsLaunchTemplate']['rootVolume']['size'] == 300
     assert awsmachinepool['spec']['awsLaunchTemplate']['rootVolume']['type'] == "gp3"
+
+@pytest.mark.smoke
+def test_aws_kube_adm_control_plane(kubeadmcontrolplane) -> None:
+    """
+    test_aws_kube_adm_control_plane tests defaulting of an KubeadmControlPlane for aws for disk sizing.
+
+    :param kubeadmcontrolplane: KubeadmControlPlane CR with the cluster.x-k8s.io/watch-filter label.
+    """
+
+    assert len(kubeadmcontrolplane['spec']['kubeadmConfigSpec']['files']) > 0
+    assert len(kubeadmcontrolplane['spec']['kubeadmConfigSpec']['preKubeadmCommands]) > 0
