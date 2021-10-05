@@ -15,7 +15,7 @@ spec:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
     mutate:
-      patchStrategicMerge:
+      overlay:
         spec:
           kubeadmConfigSpec:
             files:
