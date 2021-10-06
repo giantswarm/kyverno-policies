@@ -16,6 +16,7 @@ from ensure import awscluster_empty
 from ensure import awscluster_empty_labeled
 from ensure import awsclusterroleidentity
 from ensure import awsmachinetemplate
+from ensure import awsmachinepool
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -86,3 +87,14 @@ def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
     """
     assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert awsmachinetemplate['spec']['template']['spec']['instanceType'] == "t3.large"
+
+@pytest.mark.smoke
+def test_aws_machine_pool_policy_solo(awsmachinepool) -> None:
+    """
+    test_aws_machine_pool_policy_solo tests defaulting of an AWSMachinePool where all required values are missing and no other CRs are given.
+
+    :param awsmachinepool: AWSMachinePool CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
+    """
+
+    assert awsmachinepool['spec']['awsLaunchTemplate']['rootVolume']['size'] == 300
+    assert awsmachinepool['spec']['awsLaunchTemplate']['rootVolume']['type'] == "gp3"

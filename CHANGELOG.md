@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add CRDs related to kubeadm controlplane to CI.
+- Add policies to configure default disk sizes and disk initialization for CAPA cluster.
 
 ### Changed
 
