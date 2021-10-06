@@ -147,6 +147,22 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      # VSphere
+      - architect/push-to-app-catalog:
+          name: push-policies-vsphere-to-catalog
+          app_catalog: control-plane-test-catalog
+          app_catalog_test: control-plane-test-catalog
+          attach_workspace: true
+          chart: policies-vsphere
+          context: "architect"
+          explicit_allow_chart_name_mismatch: true
+          on_tag: false
+          requires:
+            - test-policies
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
 
       # Shared
       - architect/push-to-app-catalog:

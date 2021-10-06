@@ -1,7 +1,7 @@
 apiVersion: v1
-name: policies-vmware
+name: policies-vsphere
 appVersion: master
-description: Giant Swarm policies for vmware.
+description: Giant Swarm policies for vsphere.
 home: https://github.com/giantswarm/kyverno-policies
 annotations:
   application.giantswarm.io/team: "ludacris"
