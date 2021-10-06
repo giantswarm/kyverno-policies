@@ -91,9 +91,9 @@ def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
 @pytest.mark.smoke
 def test_aws_machine_pool_policy_solo(awsmachinepool) -> None:
     """
-    test_aws_machine_template_policy_solo tests defaulting of an AWSMachineTemplate where all required values are missing and no other CRs are given.
+    test_aws_machine_pool_policy_solo tests defaulting of an AWSMachinePool where all required values are missing and no other CRs are given.
 
-    :param awsmachinetemplate: AWSMachineTemplate CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
+    :param awsmachinepool: AWSMachinePool CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
     """
 
     assert awsmachinepool['spec']['awsLaunchTemplate']['rootVolume']['size'] == 300
