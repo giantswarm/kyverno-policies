@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Validate deprecated APIs.
+
 ### Changed
 
 - Use `ats` for integration testing instead of `abs`.
