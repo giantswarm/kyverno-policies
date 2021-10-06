@@ -4,6 +4,20 @@ version: 2.1
 orbs:
   architect: giantswarm/architect@4.6.0
 
+commands:
+  run-ats:
+    parameters:
+      ats_version:
+        type: string
+        default: 0.1.4
+      chart_archive_prefix:
+        type: string
+    steps:
+      - architect/run-tests-with-ats:
+          chart_archive_prefix: "<< parameters.chart_archive_prefix >>"
+          app-test-suite_version: "v<< parameters.ats_version >>"
+          app-test-suite_container_tag: "<< parameters.ats_version >>"
+          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
 
 jobs:
   verify:
@@ -24,6 +38,7 @@ jobs:
     environment:
       KIND_VERSION: v0.11.1
       KUBERNETES_VERSION: v1.21.1
+      DABS_VERSION: v1.0.4
     steps:
       - checkout
       - run:
@@ -35,6 +50,10 @@ jobs:
           command: |
             curl -sLO https://storage.googleapis.com/kubernetes-release/release/$KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl  && sudo mv kubectl /usr/bin
       - run:
+          name: Download dabs.sh
+          command: |
+            wget -O dabs.sh https://github.com/giantswarm/app-build-suite/releases/download/$DABS_VERSION/dabs.sh && chmod +x dabs.sh && sudo mv dabs.sh /usr/bin
+      - run:
           name: Install Make
           command: |
             sudo apt-get update && sudo apt-get install make
@@ -42,26 +61,21 @@ jobs:
           name: Setup
           command: |
             make setup
-      - architect/run-tests-with-abs:
-          chart_dir: "./helm/policies-common"
-          app-build-suite_version: "v0.2.3"
-          app-build-suite_container_tag: "0.2.3"
-          additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
-      - architect/run-tests-with-abs:
-          chart_dir: "./helm/policies-aws"
-          app-build-suite_version: "v0.2.3"
-          app-build-suite_container_tag: "0.2.3"
-          additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
-      - architect/run-tests-with-abs:
-          chart_dir: "./helm/policies-azure"
-          app-build-suite_version: "v0.2.3"
-          app-build-suite_container_tag: "0.2.3"
-          additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
-      - architect/run-tests-with-abs:
-          chart_dir: "./helm/policies-shared"
-          app-build-suite_version: "v0.2.3"
-          app-build-suite_container_tag: "0.2.3"
-          additional_app-build-suite_flags: "--external-cluster-version $KUBERNETES_VERSION"
+      - run:
+          name: Make chart archives
+          command: |
+            dabs.sh --generate-metadata --chart-dir helm/policies-common
+            dabs.sh --generate-metadata --chart-dir helm/policies-aws
+            dabs.sh --generate-metadata --chart-dir helm/policies-azure
+            dabs.sh --generate-metadata --chart-dir helm/policies-shared
+      - run-ats:
+          chart_archive_prefix: "policies-common"
+      - run-ats:
+          chart_archive_prefix: "policies-aws"
+      - run-ats:
+          chart_archive_prefix: "policies-azure"
+      - run-ats:
+          chart_archive_prefix: "policies-shared"
       - run:
           name: Export kind logs
           when: always

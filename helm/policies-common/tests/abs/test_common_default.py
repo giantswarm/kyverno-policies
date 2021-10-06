@@ -14,6 +14,8 @@ from ensure import cluster
 from ensure import machinedeployment
 from ensure import kubeadmconfig
 from ensure import kubeadmconfig_controlplane
+from ensure import kubeadmconfig_with_labels
+from ensure import kubeadmconfig_with_role_labels
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -56,6 +58,28 @@ def test_kubeadmconfig_policy(kubeadmconfig) -> None:
     assert kubeadmconfig['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
+
+@pytest.mark.smoke
+def test_kubeadmconfig_policy_with_labels(kubeadmconfig_with_labels) -> None:
+    """
+    test_kubeadmconfig_policy tests defaulting of a KubeadmConfig where all required values are empty strings.
+
+    :param kubeadmconfig_with_labels: KubeadmConfig CR which is empty.
+    """
+    assert kubeadmconfig_with_labels['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert kubeadmconfig_with_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
+    assert kubeadmconfig_with_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker,mylabel=test"
+
+@pytest.mark.smoke
+def test_kubeadmconfig_policy_with_role_labels(kubeadmconfig_with_role_labels) -> None:
+    """
+    test_kubeadmconfig_policy tests defaulting of a KubeadmConfig where all required values are empty strings.
+
+    :param kubeadmconfig_with_role_labels: KubeadmConfig CR which is empty.
+    """
+    assert kubeadmconfig_with_role_labels['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert kubeadmconfig_with_role_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
+    assert kubeadmconfig_with_role_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=emperor,mylabel=test"
 
 @pytest.mark.smoke
 def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
