@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2021-10-06
+
 ### Changed
 
 - Use `ats` for integration testing instead of `abs`.
@@ -138,6 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2021-06-02
 
 [Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.6.0...v0.6.0
 [0.6.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.3.0...v0.4.0
