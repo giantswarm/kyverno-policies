@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use `ats` for integration testing instead of `abs`.
+
 ## [0.6.0] - 2021-10-05
 
 ### Added
