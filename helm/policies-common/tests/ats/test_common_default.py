@@ -101,4 +101,4 @@ def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
 
     :param kubeadmconfig_controlplane: KubeadmConfig CR which is empty.
     """
-    assert kubeadmconfig_controlplane['spec']['kubeadmConfigSpec']['initConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-ip'] == '{{ ds.meta_data.local_ipv4 }}'
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['initConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-ip'] == '{{ ds.meta_data.local_ipv4 }}'
