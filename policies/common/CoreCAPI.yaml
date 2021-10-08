@@ -230,4 +230,4 @@ spec:
               nodeRegistration:
                 kubeletExtraArgs:
                   healthz-bind-address: 0.0.0.0
-                  node-ip: "{{ 1{ ds.meta_data.local_ipv4 }2 | replace_all(@,'1','{') | replace_all(@,'2','}') }}"
+                  node-ip: "'{{ ds.meta_data.local_ipv4 }}'"
