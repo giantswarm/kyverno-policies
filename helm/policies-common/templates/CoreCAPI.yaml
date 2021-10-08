@@ -232,4 +232,4 @@ spec:
                 kubeletExtraArgs:
                   healthz-bind-address: 0.0.0.0
                   node-ip: |-
-                    {{ `{{` }} '{{ `{{` }} ds.meta_data.local_ipv4 {{ `}}` }}' {{ `}}` }}
+                    {{ `{{` }} '{{ `{{` }} `{{ `{{` }}` {{ `}}` }} ds.meta_data.local_ipv4 {{ `{{` }} `{{ `}}` }}` {{ `}}` }}' {{ `}}` }}
