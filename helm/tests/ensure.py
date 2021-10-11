@@ -57,7 +57,12 @@ def release(kubernetes_cluster):
     kubernetes_cluster.kubectl("apply", input=r, output=None)
     LOGGER.info(f"Release v{release_version} applied")
 
-    yield
+    raw = kubernetes_cluster.kubectl(
+        f"get release v{release_version}", output="yaml")
+
+    release = yaml.safe_load(raw)
+
+    yield release
 
     kubernetes_cluster.kubectl(f"delete release v{release_version}", output=None)
     LOGGER.info(f"Release v{release_version} deleted")
