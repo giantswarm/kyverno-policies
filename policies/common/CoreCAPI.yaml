@@ -215,6 +215,11 @@ spec:
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
+    context:
+    - name: dictionary
+      configMap:
+        name: kyverno-policies-data
+        namespace: default
     mutate:
       patchStrategicMerge:
         spec:
@@ -230,5 +235,4 @@ spec:
               nodeRegistration:
                 kubeletExtraArgs:
                   healthz-bind-address: 0.0.0.0
-                  node-ip:  |-
-                    {{ `{{` }} ds.meta_data.local_ipv4 {{ `}}` }}
+                  node-ip: "{{ dictionary.data.node-ip }}"
