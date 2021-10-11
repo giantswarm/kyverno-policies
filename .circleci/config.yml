@@ -69,6 +69,7 @@ jobs:
             dabs.sh --generate-metadata --chart-dir helm/policies-common
             dabs.sh --generate-metadata --chart-dir helm/policies-aws
             dabs.sh --generate-metadata --chart-dir helm/policies-azure
+            dabs.sh --generate-metadata --chart-dir helm/policies-vsphere
             dabs.sh --generate-metadata --chart-dir helm/policies-shared
       - run-ats:
           chart_archive_prefix: "policies-common"
@@ -79,6 +80,9 @@ jobs:
       - run-ats:
           chart_archive_prefix: "policies-azure"
           tests_dir: "helm/policies-azure/tests/ats"
+      - run-ats:
+          chart_archive_prefix: "policies-vsphere"
+          tests_dir: "helm/policies-vsphere/tests/ats"
       - run-ats:
           chart_archive_prefix: "policies-shared"
           tests_dir: "helm/policies-shared/tests/ats"
