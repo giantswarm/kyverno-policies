@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kyverno-policies-data
+  namespace: default
+data:
+  node-ip: "{{ ds.meta_data.local_ipv4 }}"
