@@ -236,4 +236,4 @@ spec:
               nodeRegistration:
                 kubeletExtraArgs:
                   healthz-bind-address: 0.0.0.0
-                  node-ip: "{{ `{{` }} dictionary.data.node-ip {{ `}}` }}"
+                  node-ip: "{{ `{{` }} dictionary.data.nodeip {{ `}}` }}"

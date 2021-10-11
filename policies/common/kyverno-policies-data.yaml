@@ -4,4 +4,4 @@ metadata:
   name: kyverno-policies-data
   namespace: default
 data:
-  node-ip: "{{ ds.meta_data.local_ipv4 }}"
+  nodeip: "{{ ds.meta_data.local_ipv4 }}"
