@@ -16,6 +16,7 @@ from ensure import kubeadmconfig
 from ensure import kubeadmconfig_controlplane
 from ensure import kubeadmconfig_with_labels
 from ensure import kubeadmconfig_with_role_labels
+from ensure import kubeadm_control_plane
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -93,3 +94,11 @@ def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
     # The object is completely empty before, so we make sure that it remains empty here.
     assert kubeadmconfig_controlplane.get('spec') is None
 
+@pytest.mark.smoke
+def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
+    """
+    test_kubeadmconfig_policy_controlplane tests defaulting of a KubeadmConfig for a control plane where all required values are empty strings.
+
+    :param kubeadmconfig_controlplane: KubeadmConfig CR which is empty.
+    """
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['initConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-ip'] == '{{ ds.meta_data.local_ipv4 }}'
