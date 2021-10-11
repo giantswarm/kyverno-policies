@@ -119,6 +119,11 @@ spec:
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
+    context:
+    - name: dictionary
+      configMap:
+        name: kyverno-policies-data
+        namespace: default
     preconditions:
       any:
       - key: "cluster.x-k8s.io/control-plane"
@@ -134,6 +139,7 @@ spec:
                   kubeletExtraArgs:
                     healthz-bind-address: 0.0.0.0
                     node-labels: role=worker
+                    node-ip: '{{ `{{` }} dictionary.data.nodeip {{ `}}` }}'
 
   - name: kubeadmconfig-worker-defaults
     match:
@@ -144,6 +150,11 @@ spec:
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
+    context:
+    - name: dictionary
+      configMap:
+        name: kyverno-policies-data
+        namespace: default
     preconditions:
       any:
       - key: "cluster.x-k8s.io/control-plane"
@@ -156,6 +167,7 @@ spec:
             nodeRegistration:
               kubeletExtraArgs:
                 healthz-bind-address: 0.0.0.0
+                node-ip: '{{ `{{` }} dictionary.data.nodeip {{ `}}` }}'
 
   - name: kubeadmconfig-worker-merge-labels
     match:
