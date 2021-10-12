@@ -445,10 +445,10 @@ def awsmachinepool(kubernetes_cluster):
         awsLaunchTemplate:
           iamInstanceProfile: nodes-{cluster_name}-{cluster_name}
           instanceType: m5.xlarge
+          rootVolume: {{}}
           sshKeyName: ""
         maxSize: 2
         minSize: 2
-        rootVolume: {{}}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
