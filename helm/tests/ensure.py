@@ -445,7 +445,9 @@ def awsmachinepool(kubernetes_cluster):
         awsLaunchTemplate:
           iamInstanceProfile: nodes-{cluster_name}-{cluster_name}
           instanceType: m5.xlarge
-          rootVolume: {{}}
+          rootVolume:
+            size: 0
+            type: ""
           sshKeyName: ""
         maxSize: 2
         minSize: 2
