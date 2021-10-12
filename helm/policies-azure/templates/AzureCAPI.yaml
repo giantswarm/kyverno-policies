@@ -65,3 +65,22 @@ spec:
       patchStrategicMerge:
         spec:
           location: {{ .Values.location }}
+  # This rule is going to be replaced by one looking for subscription ID in the organization secret directly.
+  # Currently blocked by the lack of base64decode in kyverno.
+  - name: ensure-subscription
+    match:
+      resources:
+        kinds:
+          - infrastructure.cluster.x-k8s.io/v1alpha4/AzureCluster
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    context:
+      - name: subscriptionID
+        apiCall:
+          urlPath: "/apis/security.giantswarm.io/v1alpha1/organization"
+          jmesPath: "items[?metadata.name == '{{ `{{` }}request.object.metadata.labels.\"giantswarm.io/organization\"{{ `}}` }}'].metadata.annotations.subscriptionid | [0]"
+    mutate:
+      patchStrategicMerge:
+        spec:
+          subscriptionID: "{{ `{{` }} subscriptionID {{ `}}` }}"

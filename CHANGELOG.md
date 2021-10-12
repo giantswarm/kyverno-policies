@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Default SubscriptionID field for `AzureCluster` CRs. 
+
 ### Changed
 
 - Add test setup for `vsphere` policies.
