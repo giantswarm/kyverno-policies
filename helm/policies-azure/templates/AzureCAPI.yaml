@@ -65,6 +65,8 @@ spec:
       patchStrategicMerge:
         spec:
           location: {{ .Values.location }}
+  # This rule is going to be replaced by one looking for subscription ID in the organization secret directly.
+  # Currently blocked by the lack of base64decode in kyverno.
   - name: ensure-subscription
     match:
       resources:
