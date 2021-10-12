@@ -448,6 +448,7 @@ def awsmachinepool(kubernetes_cluster):
           sshKeyName: ""
         maxSize: 2
         minSize: 2
+        rootVolume: {{}}
     """)
 
     kubernetes_cluster.kubectl("apply", input=c, output=None)
