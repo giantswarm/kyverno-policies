@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix annotation name in subscription id defaulting rule.
+
 ## [0.7.0] - 2021-10-12
 
 ### Added
