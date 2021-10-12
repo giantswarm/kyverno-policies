@@ -446,7 +446,7 @@ def awsmachinepool(kubernetes_cluster):
           iamInstanceProfile: nodes-{cluster_name}-{cluster_name}
           instanceType: m5.xlarge
           rootVolume:
-            size: 0
+            size: 8
             type: ""
           sshKeyName: ""
         maxSize: 2
