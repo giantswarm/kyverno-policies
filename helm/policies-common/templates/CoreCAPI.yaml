@@ -218,6 +218,8 @@ spec:
             nodeRegistration:
               kubeletExtraArgs:
                 +(node-labels): role=worker
+                +(v): "2"
+                +(image-pull-progress-deadline): "{{ .Values.Installation.V1.Guest.Kubernetes.Kubelet.ImagePullProgressDeadline }}"
 
   - name: kubeadmcontrolplane-defaults
     match:
@@ -244,8 +246,104 @@ spec:
               scheduler:
                 extraArgs:
                   bind-address: 0.0.0.0
+              apiServer:
+                extraArgs:
+                  audit-log-maxage: "30"
+                  audit-log-maxbackup: "30"
+                  audit-log-maxsize: "100"
+                  audit-log-path: "/var/log/apiserver/audit.log"
+                  audit-policy-file: "/etc/kubernetes/policies/audit-policy.yaml"
+                  encryption-provider-config: "/etc/kubernetes/encryption/k8s-encryption-config.yaml"
+                  service-account-lookup: "true"
+                  enable-admission-plugins: "NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota,DefaultStorageClass,PersistentVolumeClaimResize,PodSecurityPolicy,Priority,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook"
+                  kubelet-preferred-address-types: "InternalIP"
+                  +(profiling): "false"
+                  +(tls-cipher-suites): "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256"
             initConfiguration:
               nodeRegistration:
                 kubeletExtraArgs:
                   healthz-bind-address: 0.0.0.0
                   node-ip: "{{ `{{` }} dictionary.data.nodeip {{ `}}` }}"
+                  +(v): "2"
+                  +(image-pull-progress-deadline): "{{ .Values.Installation.V1.Guest.Kubernetes.Kubelet.ImagePullProgressDeadline }}"
+
+# NOTE: It's currently not possible to check for a key either being missing or checking its value.
+# This should be fixed in Kyverno 1.4.2 where missing keys are replaced with "" but there is
+# currently a regression bug which prevents us from being able to upgrade.
+# Once this is resolved the following two policies should be enabled and the `kubeadmcontrolplane-apiserverargs`
+# policy can be removed.
+
+  # - name: kubeadmcontrolplane-merge-runtimeconfig-flags
+  #   match:
+  #     resources:
+  #       kinds:
+  #       - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
+  #       - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+  #       selector:
+  #         matchLabels:
+  #           cluster.x-k8s.io/watch-filter: capi
+  #   preconditions:
+  #     any:
+  #     - key: "{{ `{{` }}request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraArgs.\"runtime-config\"{{ `}}` }}"
+  #       operator: Equals
+  #       value: ""
+  #     - key: "{{ `{{` }}request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraArgs.\"runtime-config\"{{ `}}` }}"
+  #       operator: NotEquals
+  #       value: "*api/all=*"
+  #     - key: "{{ `{{` }}request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraArgs.\"runtime-config\"{{ `}}` }}"
+  #       operator: NotEquals
+  #       value: "*scheduling.k8s.io/v1alpha1=*"
+  #   mutate:
+  #     patchStrategicMerge:
+  #       spec:
+  #         kubeadmConfigSpec:
+  #           clusterConfiguration:
+  #             apiServer:
+  #               extraArgs:
+  #                 runtime-config: "{{ `{{` }} join(',', ['api/all=true', 'scheduling.k8s.io/v1alpha1=true', request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraArgs.\"runtime-config\"]) {{ `}}` }}"
+
+
+  # - name: kubeadmcontrolplane-merge-featuregates-flags
+  #   match:
+  #     resources:
+  #       kinds:
+  #       - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
+  #       - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+  #       selector:
+  #         matchLabels:
+  #           cluster.x-k8s.io/watch-filter: capi
+  #   preconditions:
+  #     any:
+  #     - key: "{{ `{{` }}request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraArgs.\"feature-gates\"{{ `}}` }}"
+  #       operator: Equals
+  #       value: ""
+  #     - key: "{{ `{{` }}request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraArgs.\"feature-gates\"{{ `}}` }}"
+  #       operator: NotEquals
+  #       value: "*TTLAfterFinished=*"
+  #   mutate:
+  #     patchStrategicMerge:
+  #       spec:
+  #         kubeadmConfigSpec:
+  #           clusterConfiguration:
+  #             apiServer:
+  #               extraArgs:
+  #                 feature-gates: "{{ `{{` }} join(',', ['TTLAfterFinished=true', request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraArgs.\"feature-gates\"]) {{ `}}` }}"
+
+  - name: kubeadmcontrolplane-apiserverargs
+    match:
+      resources:
+        kinds:
+        - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
+        - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    mutate:
+      patchStrategicMerge:
+        spec:
+          kubeadmConfigSpec:
+            clusterConfiguration:
+              apiServer:
+                extraArgs:
+                  +(feature-gates): "TTLAfterFinished=true"
+                  +(runtime-config): "api/all=true,scheduling.k8s.io/v1alpha1=true"

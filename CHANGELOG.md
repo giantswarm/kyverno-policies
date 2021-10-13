@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- kubelet and api server flags for CAPI clusters.
+
 ## [0.7.1] - 2021-10-12
 
 ### Fixed
@@ -17,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Default SubscriptionID field for `AzureCluster` CRs. 
+- Default SubscriptionID field for `AzureCluster` CRs.
 
 ### Changed
 
