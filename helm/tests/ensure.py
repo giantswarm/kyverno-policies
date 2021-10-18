@@ -495,6 +495,53 @@ def awsclusterroleidentity(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete AWSClusterRoleIdentity {cluster_name}", output=None)
     LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} deleted")
 
+# CAPV fixtures
+
+@pytest.fixture
+def vspherecluster(kubernetes_cluster):
+    created_clusters = []
+
+    def _vspherecluster(name,endpoint):
+        c = dedent(f"""
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+            kind: VSphereCluster
+            metadata:
+              labels:
+                giantswarm.io/cluster: {name}
+                cluster.x-k8s.io/cluster-name: {name}
+                cluster.x-k8s.io/watch-filter: {watch_label}
+                release.giantswarm.io/version: {release_version}
+              name: {name}
+              namespace: default
+            spec:
+              controlPlaneEndpoint:
+                host: {endpoint}
+                port: 6443
+              identityRef:
+                kind: Secret
+                name: {name}
+              server: vcenter-rhr3c72bx1.ionoscloud.tools
+              thumbprint: 4E:79:A1:50:3E:11:C6:CB:34:7A:A8:C8:93:1A:3D:AA:96:AF:73:03
+        """)
+
+        kubernetes_cluster.kubectl("apply", input=c, output=None)
+        LOGGER.info(f"VSphereCluster {name} applied")
+
+        created_clusters.append(name)
+
+        raw = kubernetes_cluster.kubectl(
+            f"get VSphereCluster {name}", output="yaml")
+
+        vsphere_cluster = yaml.safe_load(raw)
+
+        return vsphere_cluster
+
+    yield _vspherecluster
+
+    for cluster in created_clusters:
+      kubernetes_cluster.kubectl(f"delete VSphereCluster {cluster}", output=None)
+      LOGGER.info(f"VSphereCluster {cluster} deleted")
+
 # CAPZ fixtures
 
 @pytest.fixture
