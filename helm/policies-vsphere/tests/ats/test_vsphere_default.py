@@ -20,7 +20,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.smoke
-@pytest.mark.parametrize('vspherecluster')
 def test_cluster_vsphere_policy(release, vspherecluster) -> None:
     """
     test_cluster_policy tests defaulting of a Cluster where all required values are empty strings.
