@@ -79,7 +79,7 @@ spec:
       - name: subscriptionID
         apiCall:
           urlPath: "/apis/security.giantswarm.io/v1alpha1/organization"
-          jmesPath: "items[?metadata.name == '{{ `{{` }}request.object.metadata.labels.\"giantswarm.io/organization\"{{ `}}` }}'].metadata.annotations.subscriptionid | [0]"
+          jmesPath: "items[?metadata.name == '{{ `{{` }}request.object.metadata.labels.\"giantswarm.io/organization\"{{ `}}` }}'].metadata.annotations.subscription | [0]"
     mutate:
       patchStrategicMerge:
         spec:
