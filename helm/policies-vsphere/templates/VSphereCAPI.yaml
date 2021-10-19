@@ -36,6 +36,7 @@ spec:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha4/VSphereCluster
     context:
+    # Collect all endpoints from existing vsphere clusters.
     - name: usedEndpoints
       apiCall:
         urlPath: "/apis/infrastructure.cluster.x-k8s.io/v1alpha4/namespaces/{{ `{{` }} request.object.metadata.namespace {{ `}}` }}/VSphereCluster"
@@ -44,4 +45,5 @@ spec:
       patchStrategicMerge:
         spec:
           controlPlaneEndpoint:
+            # Get configured IPs | filter out already used ones | select the first non used one.
             host: "{{ `{{` }} {{.Values.vsphereIPs}} | [? !contains( `{{ `{{` }}usedEndpoints{{ `}}` }}`, @)] | [0]{{ `}}` }}"
