@@ -16,7 +16,9 @@ from ensure import kubeadmconfig
 from ensure import kubeadmconfig_controlplane
 from ensure import kubeadmconfig_with_labels
 from ensure import kubeadmconfig_with_role_labels
+from ensure import kubeadmconfig_with_kubelet_args
 from ensure import kubeadm_control_plane
+from ensure import kubeadmconfig_controlplane
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -58,6 +60,8 @@ def test_kubeadmconfig_policy(kubeadmconfig) -> None:
     """
     assert kubeadmconfig['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
+    assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['v'] == "2"
+    assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['image-pull-progress-deadline'] == "10m"
     assert kubeadmconfig['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
 
 @pytest.mark.smoke
@@ -69,6 +73,8 @@ def test_kubeadmconfig_policy_with_labels(kubeadmconfig_with_labels) -> None:
     """
     assert kubeadmconfig_with_labels['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig_with_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
+    assert kubeadmconfig_with_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['v'] == "2"
+    assert kubeadmconfig_with_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['image-pull-progress-deadline'] == "10m"
     assert kubeadmconfig_with_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker,mylabel=test"
 
 @pytest.mark.smoke
@@ -80,7 +86,22 @@ def test_kubeadmconfig_policy_with_role_labels(kubeadmconfig_with_role_labels) -
     """
     assert kubeadmconfig_with_role_labels['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig_with_role_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
+    assert kubeadmconfig_with_role_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['v'] == "2"
+    assert kubeadmconfig_with_role_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['image-pull-progress-deadline'] == "10m"
     assert kubeadmconfig_with_role_labels['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=emperor,mylabel=test"
+
+@pytest.mark.smoke
+def test_kubeadmconfig_policy_with_kubelet_args(kubeadmconfig_with_kubelet_args) -> None:
+    """
+    test_kubeadmconfig_policy tests defaulting of a KubeadmConfig where all required values are empty strings.
+
+    :param kubeadmconfig_with_kubelet_args: KubeadmConfig CR which is empty.
+    """
+    assert kubeadmconfig_with_kubelet_args['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert kubeadmconfig_with_kubelet_args['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['healthz-bind-address'] == "0.0.0.0"
+    assert kubeadmconfig_with_kubelet_args['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['v'] == "1"
+    assert kubeadmconfig_with_kubelet_args['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['image-pull-progress-deadline'] == "1m"
+    assert kubeadmconfig_with_kubelet_args['spec']['joinConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-labels'] == "role=worker"
 
 @pytest.mark.smoke
 def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
@@ -102,3 +123,5 @@ def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
     :param kubeadmconfig_controlplane: KubeadmConfig CR which is empty.
     """
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['initConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-ip'] == '{{ ds.meta_data.local_ipv4 }}'
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['feature-gates'] == 'TTLAfterFinished=true'
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['runtime-config'] == 'api/all=true,scheduling.k8s.io/v1alpha1=true'
