@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- CircleCI job to validate policies
+
 ### Changed
 
 - Updated kubelet and api server flags to handle duplicates
