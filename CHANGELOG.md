@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated kubelet and api server flags to handle duplicates
+
 ## [0.8.0] - 2021-10-13
 
 ### Added
