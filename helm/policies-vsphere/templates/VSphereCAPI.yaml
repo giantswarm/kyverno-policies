@@ -4,15 +4,16 @@ kind: ClusterPolicy
 metadata:
   name: vsphere-capi-policy
 spec:
+  background: false
   rules:
   - name: vsphere-label
     match:
       resources:
         kinds:
-        - infrastructure.cluster.x-k8s.io/v1alpha3/VSphereCluster
-        - infrastructure.cluster.x-k8s.io/v1alpha3/VSphereMachine
-        - infrastructure.cluster.x-k8s.io/v1alpha3/VSphereMachineTemplate
-        - infrastructure.cluster.x-k8s.io/v1alpha3/VSphereVM
+        - infrastructure.cluster.x-k8s.io/v1alpha4/VSphereCluster
+        - infrastructure.cluster.x-k8s.io/v1alpha4/VSphereMachine
+        - infrastructure.cluster.x-k8s.io/v1alpha4/VSphereMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha4/VSphereVM
     context:
     - name: releaseVersion
       apiCall:
@@ -29,3 +30,18 @@ spec:
           labels:
             +(cluster.x-k8s.io/watch-filter): "capi"
             cluster.x-k8s.io/watch-filter: "capi"
+  - name: default-endpoint
+    match:
+      resources:
+        kinds:
+        - infrastructure.cluster.x-k8s.io/v1alpha4/VSphereCluster
+    context:
+    - name: usedEndpoints
+      apiCall:
+        urlPath: "/apis/infrastructure.cluster.x-k8s.io/v1alpha4/namespaces/{{ `{{` }} request.object.metadata.namespace {{ `}}` }}/VSphereCluster"
+        jmesPath: "items[*].spec.controlPlaneEndpoint.host"
+    mutate:
+      patchStrategicMerge:
+        spec:
+          controlPlaneEndpoint:
+            host: "{{ `{{` }} {{.Values.vsphereIPs}} | [? !contains( `{{ `{{` }}usedEndpoints{{ `}}` }}`, @)] | [0]{{ `}}` }}"

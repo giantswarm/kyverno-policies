@@ -20,15 +20,21 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.smoke
-def test_cluster_vsphere_policy(release, vspherecluster) -> None:
+def test_cluster_vsphere_policy(vspherecluster) -> None:
     """
-    test_cluster_policy tests defaulting of a Cluster where all required values are empty strings.
+    test_cluster_vsphere_policy tests defaulting of a controlPlaneEndpoints for vsphere clusters.
 
-    :param release: Release CR which is used by the Cluster.
+    :param vspherecluster: Factory for creation of Vsphere clusters.
     """
-    cluster1 = vspherecluster('test','192.0.0.1')
-    cluster2 = vspherecluster('test2','192.0.0.2')
+    # Pass in each cluster with the same endpoint
+    cluster1 = vspherecluster('tes1','192.0.0.1')
+    cluster2 = vspherecluster('test2','192.0.0.1')
+    cluster3 = vspherecluster('test3','192.0.0.1')
     assert cluster1['metadata']['name'] == 'test'
     assert cluster2['metadata']['name'] == 'test2'
-    assert release['metadata']['name'] == "v20.0.0"
+    assert cluster3['metadata']['name'] == 'test3'
+    # Ensure endpoints are mutated to match values from values.yaml
+    assert cluster1['spec']['controlPlaneEndpoint']['Host'] == '1.1.1.1'
+    assert cluster2['spec']['controlPlaneEndpoint']['Host'] == '1.1.1.2'
+    assert cluster3['spec']['controlPlaneEndpoint']['Host'] == '1.1.1.3'
 
