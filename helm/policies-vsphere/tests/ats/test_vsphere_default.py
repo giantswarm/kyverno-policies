@@ -34,7 +34,7 @@ def test_cluster_vsphere_policy(vspherecluster) -> None:
     assert cluster2['metadata']['name'] == 'test2'
     assert cluster3['metadata']['name'] == 'test3'
     # Ensure endpoints are mutated to match values from values.yaml
-    assert cluster1['spec']['controlPlaneEndpoint']['Host'] == '1.1.1.1'
-    assert cluster2['spec']['controlPlaneEndpoint']['Host'] == '1.1.1.2'
-    assert cluster3['spec']['controlPlaneEndpoint']['Host'] == '1.1.1.3'
+    assert cluster1['spec']['controlPlaneEndpoint']['host'] == '1.1.1.1'
+    assert cluster2['spec']['controlPlaneEndpoint']['host'] == '1.1.1.2'
+    assert cluster3['spec']['controlPlaneEndpoint']['host'] == '1.1.1.3'
 
