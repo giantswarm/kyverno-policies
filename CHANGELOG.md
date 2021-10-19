@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Default ControlPlaneEndpoint Host on vsphere.
+
 ## [0.7.0] - 2021-10-12
 
 ### Added
 
-- Default SubscriptionID field for `AzureCluster` CRs. 
+- Default SubscriptionID field for `AzureCluster` CRs.
 
 ### Changed
 
