@@ -25,4 +25,5 @@ kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.c
 # CAPV CRDs
 kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api-provider-vsphere/master/config/crd/bases/infrastructure.cluster.x-k8s.io_vsphereclusters.yaml
 # Kyverno
+sleep 30s
 kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.com/kyverno/kyverno/v1.5.0-rc3/definitions/release/install.yaml
