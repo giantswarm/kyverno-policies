@@ -1,7 +1,7 @@
 {
   "extends": [
     "config:base",
-    ":reviewer(team:giantswarm/team-ludacris)"
+    ":reviewer(team:team-honeybadger)"
   ],
   "assigneesFromCodeOwners": true,
   "packageRules": [
@@ -19,6 +19,5 @@
     "architect",
     "zricethezav/gitleaks-action"
   ],
-  "schedule": [ "after 9am on thursday" ],
-  "baseBranches": ["master", "test/renovate"]
+  "schedule": [ "after 9am on thursday" ]
 }
