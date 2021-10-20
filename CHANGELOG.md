@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2021-10-20
+
 ### Fixed
 
 - Removed `encryption-provider-config` and `audit-policy-file` flags until we can confirm the file exists on the machine images
@@ -184,7 +186,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.7.0...v0.7.1
