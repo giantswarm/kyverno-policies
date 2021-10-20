@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "87dba5ed4e923871f87243a84abed06eb5cd723acad801cce679f8718cad8f64"
+            "sha256": "65cc0863134db32bf29f5763e7dc40638dc293493e1654f58abc5c0697bbe2cd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -101,11 +101,6 @@
             ],
             "index": "pypi",
             "version": "==6.2.2"
-        },
-        "pytest-kube": {
-            "editable": false,
-            "git": "https://github.com/giantswarm/pytest-kube.git",
-            "ref": "5c18f89596d24a4fa81c47f26c3a33df3dcbc1a5"
         },
         "pytest-rerunfailures": {
             "hashes": [
