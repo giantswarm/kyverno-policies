@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Removed `encryption-provider-config` flag until we can confirm the file exists on the machine images
+- Removed `encryption-provider-config` and `audit-policy-file` flags until we can confirm the file exists on the machine images
 
 ## [0.9.0] - 2021-10-19
 
