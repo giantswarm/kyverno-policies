@@ -44,6 +44,7 @@ spec:
     mutate:
       patchStrategicMerge:
         spec:
-          controlPlaneEndpoint:
+          +(controlPlaneEndpoint):
             # Get configured IPs | filter out already used ones | select the first non used one.
             +(host): "{{ [[.Values.vsphereIPs]] | [? !contains( `{{usedEndpoints}}`, @)] | [0]}}"
+            +(port): 6443

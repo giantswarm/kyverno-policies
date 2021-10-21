@@ -546,8 +546,6 @@ def vspherecluster(kubernetes_cluster):
               name: {name}
               namespace: default
             spec:
-              controlPlaneEndpoint:
-                port: 6443
               identityRef:
                 kind: Secret
                 name: {name}
