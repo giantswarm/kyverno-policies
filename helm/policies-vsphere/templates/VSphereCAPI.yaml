@@ -35,6 +35,7 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha4/VSphereCluster
+        - cluster.x-k8s.io/v1alpha4/Cluster
     context:
     # Collect all endpoints from existing vsphere clusters.
     - name: usedEndpoints
@@ -46,4 +47,4 @@ spec:
         spec:
           controlPlaneEndpoint:
             # Get configured IPs | filter out already used ones | select the first non used one.
-            host: "{{ `{{` }} {{.Values.vsphereIPs}} | [? !contains( `{{ `{{` }}usedEndpoints{{ `}}` }}`, @)] | [0]{{ `}}` }}"
+            +(host): "{{ `{{` }} {{.Values.vsphereIPs}} | [? !contains( `{{ `{{` }}usedEndpoints{{ `}}` }}`, @)] | [0]{{ `}}` }}"
