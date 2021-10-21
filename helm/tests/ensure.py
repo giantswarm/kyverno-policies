@@ -533,7 +533,7 @@ def awsclusterroleidentity(kubernetes_cluster):
 def vspherecluster(kubernetes_cluster):
     created_clusters = []
 
-    def _vspherecluster(name,endpoint):
+    def _vspherecluster(name):
         c = dedent(f"""
             apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
             kind: VSphereCluster
@@ -547,7 +547,6 @@ def vspherecluster(kubernetes_cluster):
               namespace: default
             spec:
               controlPlaneEndpoint:
-                host: {endpoint}
                 port: 6443
               identityRef:
                 kind: Secret
