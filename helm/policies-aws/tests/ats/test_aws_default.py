@@ -19,7 +19,6 @@ from ensure import awsmachinetemplate
 from ensure import awsmachinepool
 
 import pytest
-from pytest_kube import forward_requests, wait_for_rollout, app_template
 
 import logging
 LOGGER = logging.getLogger(__name__)

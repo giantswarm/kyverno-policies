@@ -3,3 +3,6 @@ kube.config
 build/
 logs/
 *test_results_smoke.xml
+**/.idea/
+**/test_results_*.xml
+helm/**/*.tgz
