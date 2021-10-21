@@ -4,16 +4,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pre-commit = "==2.11.1"
-setuptools = "==54.0.0"
+pre-commit = ">=2.11"
 
 [packages]
-pytest = "==6.2.2"
-pykube-ng = "==21.3.0"
-pyyaml = "==5.4.1"
-pytest-rerunfailures = "==9.1.1"
-requests = "==2.25.1"
-setuptools = "==54.0.0"
+pytest = ">=6.2"
+pykube-ng = ">=21.3"
 
 [requires]
 python_version = "3.8"
