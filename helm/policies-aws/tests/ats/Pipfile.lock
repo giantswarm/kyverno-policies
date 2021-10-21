@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "591d33102c398debfdef3f99cdd73cd1bfc0a130346af74e93f9f1d19ac7f05e"
+            "sha256": "139432187334e2de746ea41a2ce68f807138d9b0f079a30ac3cfd5ed8196f98f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -83,7 +83,7 @@
                 "sha256:62799fcfd1630c20e2e7fd89f54cd8ab4ec40806f7bf706f3ab50511b98a1c91",
                 "sha256:78defb7f2cf1a38bdd27c7250e0cde22f070e0e4f27e65c6d1414ebe48cf916c"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==21.10.0"
         },
         "pyparsing": {
@@ -91,7 +91,7 @@
                 "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1",
                 "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"
             ],
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2'",
             "version": "==2.4.7"
         },
         "pytest": {
@@ -101,6 +101,14 @@
             ],
             "index": "pypi",
             "version": "==6.2.5"
+        },
+        "pytest-helm-charts": {
+            "hashes": [
+                "sha256:867de2892516c90e387fd26df589d6b961e8130e6a4b6a86e6ff99082ae91202",
+                "sha256:ed441a4401a45f7ee968640f5f5598a6f79a57f781204dfb2383b01af8540cec"
+            ],
+            "index": "pypi",
+            "version": "==0.5.2"
         },
         "pyyaml": {
             "hashes": [
@@ -154,7 +162,7 @@
                 "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b",
                 "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
             ],
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2'",
             "version": "==0.10.2"
         },
         "urllib3": {
@@ -273,7 +281,7 @@
                 "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
                 "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
             "version": "==1.16.0"
         },
         "toml": {
@@ -281,7 +289,7 @@
                 "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b",
                 "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
             ],
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2'",
             "version": "==0.10.2"
         },
         "virtualenv": {

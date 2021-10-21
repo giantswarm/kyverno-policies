@@ -8,7 +8,7 @@ pre-commit = ">=2.11"
 
 [packages]
 pytest = ">=6.2"
-pykube-ng = ">=21.3"
+pytest-helm-charts = ">=0.5.2"
 
 [requires]
 python_version = "3.8"

@@ -3,6 +3,7 @@ from textwrap import dedent
 
 import pytest
 import yaml
+from pytest_helm_charts.fixtures import Cluster
 
 LOGGER = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ watch_label = "capi"
 # Giant Swarm specific fixtures
 
 @pytest.fixture(scope="module")
-def release(kubernetes_cluster):
+def release(kube_cluster: Cluster):
     r = dedent(f"""
         apiVersion: release.giantswarm.io/v1alpha1
         kind: Release
@@ -50,24 +51,24 @@ def release(kubernetes_cluster):
           ready: false
     """)
 
-    kubernetes_cluster.kubectl("apply", input=r, output=None)
+    kube_cluster.kubectl("apply", std_input=r, output_format=None)
     LOGGER.info(f"Release v{release_version} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get release v{release_version}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get release v{release_version}", output_format="yaml")
 
     release = yaml.safe_load(raw)
 
     yield release
 
-    kubernetes_cluster.kubectl(f"delete release v{release_version}", output=None)
+    kube_cluster.kubectl(f"delete release v{release_version}", output_format=None)
     LOGGER.info(f"Release v{release_version} deleted")
 
 
 # CAPI Core fixtures
 
 @pytest.fixture
-def cluster(kubernetes_cluster):
+def cluster(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: cluster.x-k8s.io/v1alpha3
         kind: Cluster
@@ -93,22 +94,22 @@ def cluster(kubernetes_cluster):
             name: {cluster_name}
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"Cluster {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get cluster {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get cluster {cluster_name}", output_format="yaml")
 
     cluster = yaml.safe_load(raw)
 
     yield cluster
 
-    kubernetes_cluster.kubectl(f"delete cluster {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete cluster {cluster_name}", output_format=None)
     LOGGER.info(f"Cluster {cluster_name} deleted")
 
 
 @pytest.fixture
-def cluster_v1alpha4(kubernetes_cluster):
+def cluster_v1alpha4(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: cluster.x-k8s.io/v1alpha4
         kind: Cluster
@@ -134,22 +135,22 @@ def cluster_v1alpha4(kubernetes_cluster):
             name: {cluster_name}
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"Cluster {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get cluster {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get cluster {cluster_name}", output_format="yaml")
 
     cluster = yaml.safe_load(raw)
 
     yield cluster
 
-    kubernetes_cluster.kubectl(f"delete cluster {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete cluster {cluster_name}", output_format=None)
     LOGGER.info(f"Cluster {cluster_name} deleted")
 
 
 @pytest.fixture
-def machinedeployment(kubernetes_cluster):
+def machinedeployment(kube_cluster: Cluster):
     md = dedent(f"""
         apiVersion: cluster.x-k8s.io/v1alpha3
         kind: MachineDeployment
@@ -179,22 +180,22 @@ def machinedeployment(kubernetes_cluster):
               version: v1.19.7
     """)
 
-    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    kube_cluster.kubectl("apply", std_input=md, output_format=None)
     LOGGER.info(f"MachineDeployment {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get machinedeployment {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get machinedeployment {cluster_name}", output_format="yaml")
 
     machinedeployment = yaml.safe_load(raw)
 
     yield machinedeployment
 
-    kubernetes_cluster.kubectl(f"delete machinedeployment {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete machinedeployment {cluster_name}", output_format=None)
     LOGGER.info(f"MachineDeployment {cluster_name} deleted")
 
 
 @pytest.fixture
-def kubeadmconfig(kubernetes_cluster):
+def kubeadmconfig(kube_cluster: Cluster):
     md = dedent(f"""
         apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
         kind: KubeadmConfig
@@ -206,22 +207,22 @@ def kubeadmconfig(kubernetes_cluster):
             cluster.x-k8s.io/watch-filter: {watch_label}
     """)
 
-    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    kube_cluster.kubectl("apply", std_input=md, output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get kubeadmconfig {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output_format="yaml")
 
     kubeadmconfig = yaml.safe_load(raw)
 
     yield kubeadmconfig
 
-    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
 
 @pytest.fixture
-def kubeadmconfig_with_labels(kubernetes_cluster):
+def kubeadmconfig_with_labels(kube_cluster: Cluster):
     md = dedent(f"""
         apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
         kind: KubeadmConfig
@@ -238,22 +239,22 @@ def kubeadmconfig_with_labels(kubernetes_cluster):
                 node-labels: mylabel=test
     """)
 
-    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    kube_cluster.kubectl("apply", std_input=md, output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get kubeadmconfig {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output_format="yaml")
 
     kubeadmconfig = yaml.safe_load(raw)
 
     yield kubeadmconfig
 
-    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
 
 @pytest.fixture
-def kubeadmconfig_with_role_labels(kubernetes_cluster):
+def kubeadmconfig_with_role_labels(kube_cluster: Cluster):
     md = dedent(f"""
         apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
         kind: KubeadmConfig
@@ -270,22 +271,22 @@ def kubeadmconfig_with_role_labels(kubernetes_cluster):
                 node-labels: role=emperor,mylabel=test
     """)
 
-    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    kube_cluster.kubectl("apply", std_input=md, output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get kubeadmconfig {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output_format="yaml")
 
     kubeadmconfig = yaml.safe_load(raw)
 
     yield kubeadmconfig
 
-    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
 
 @pytest.fixture
-def kubeadmconfig_with_kubelet_args(kubernetes_cluster):
+def kubeadmconfig_with_kubelet_args(kube_cluster: Cluster):
     md = dedent(f"""
         apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
         kind: KubeadmConfig
@@ -303,22 +304,22 @@ def kubeadmconfig_with_kubelet_args(kubernetes_cluster):
                 image-pull-progress-deadline: 1m
     """)
 
-    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    kube_cluster.kubectl("apply", std_input=md, output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get kubeadmconfig {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output_format="yaml")
 
     kubeadmconfig = yaml.safe_load(raw)
 
     yield kubeadmconfig
 
-    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
 
 @pytest.fixture
-def kubeadmconfig_controlplane(kubernetes_cluster):
+def kubeadmconfig_controlplane(kube_cluster: Cluster):
     md = dedent(f"""
         apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
         kind: KubeadmConfig
@@ -331,24 +332,24 @@ def kubeadmconfig_controlplane(kubernetes_cluster):
             cluster.x-k8s.io/control-plane: ""
     """)
 
-    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    kube_cluster.kubectl("apply", std_input=md, output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get kubeadmconfig {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output_format="yaml")
 
     kubeadmconfig = yaml.safe_load(raw)
 
     yield kubeadmconfig
 
-    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
 
 # CAPA fixtures
 
 @pytest.fixture
-def awscluster(kubernetes_cluster):
+def awscluster(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -363,22 +364,22 @@ def awscluster(kubernetes_cluster):
           sshKeyName: ""
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get awscluster {cluster_name}", output_format="yaml")
 
     awscluster = yaml.safe_load(raw)
 
     yield awscluster
 
-    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete awscluster {cluster_name}", output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
 
 
 @pytest.fixture
-def awscluster_empty(kubernetes_cluster):
+def awscluster_empty(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -390,22 +391,22 @@ def awscluster_empty(kubernetes_cluster):
             cluster.x-k8s.io/cluster-name: {cluster_name}
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get awscluster {cluster_name}", output_format="yaml")
 
     awscluster = yaml.safe_load(raw)
 
     yield awscluster
 
-    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete awscluster {cluster_name}", output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
 
 
 @pytest.fixture
-def awscluster_empty_labeled(kubernetes_cluster):
+def awscluster_empty_labeled(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -418,22 +419,22 @@ def awscluster_empty_labeled(kubernetes_cluster):
             cluster.x-k8s.io/watch-filter: {watch_label}
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get awscluster {cluster_name}", output_format="yaml")
 
     awscluster = yaml.safe_load(raw)
 
     yield awscluster
 
-    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete awscluster {cluster_name}", output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
 
 
 @pytest.fixture
-def awsmachinetemplate(kubernetes_cluster):
+def awsmachinetemplate(kube_cluster: Cluster):
     c = dedent(f"""
       apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
       kind: AWSMachineTemplate
@@ -451,22 +452,22 @@ def awsmachinetemplate(kubernetes_cluster):
             sshKeyName: ""
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSMachineTemplate {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get AWSMachineTemplates {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get AWSMachineTemplates {cluster_name}", output_format="yaml")
 
     awsmachinetemplate = yaml.safe_load(raw)
 
     yield awsmachinetemplate
 
-    kubernetes_cluster.kubectl(f"delete AWSMachineTemplate {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete AWSMachineTemplate {cluster_name}", output_format=None)
     LOGGER.info(f"AWSMachineTemplate {cluster_name} deleted")
 
 
 @pytest.fixture
-def awsmachinepool(kubernetes_cluster):
+def awsmachinepool(kube_cluster: Cluster):
     c = dedent(f"""
       apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
       kind: AWSMachinePool
@@ -489,22 +490,22 @@ def awsmachinepool(kubernetes_cluster):
         minSize: 2
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSMachinePool {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get AWSMachinePools {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get AWSMachinePools {cluster_name}", output_format="yaml")
 
     awsmachinepool = yaml.safe_load(raw)
 
     yield awsmachinepool
 
-    kubernetes_cluster.kubectl(f"delete AWSMachinePool {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete AWSMachinePool {cluster_name}", output_format=None)
     LOGGER.info(f"AWSMachinePool {cluster_name} deleted")
 
 
 @pytest.fixture
-def awsclusterroleidentity(kubernetes_cluster):
+def awsclusterroleidentity(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSClusterRoleIdentity
@@ -522,24 +523,24 @@ def awsclusterroleidentity(kubernetes_cluster):
           roleARN: ""
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get AWSClusterRoleIdentity {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get AWSClusterRoleIdentity {cluster_name}", output_format="yaml")
 
     awsclusterroleidentity = yaml.safe_load(raw)
 
     yield awsclusterroleidentity
 
-    kubernetes_cluster.kubectl(f"delete AWSClusterRoleIdentity {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete AWSClusterRoleIdentity {cluster_name}", output_format=None)
     LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} deleted")
 
 
 # CAPZ fixtures
 
 @pytest.fixture
-def azurecluster(kubernetes_cluster):
+def azurecluster(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
         kind: AzureCluster
@@ -553,22 +554,22 @@ def azurecluster(kubernetes_cluster):
           location: ""
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AzureCluster {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get azurecluster {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get azurecluster {cluster_name}", output_format="yaml")
 
     azurecluster = yaml.safe_load(raw)
 
     yield azurecluster
 
-    kubernetes_cluster.kubectl(f"delete azurecluster {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete azurecluster {cluster_name}", output_format=None)
     LOGGER.info(f"AzureCluster {cluster_name} deleted")
 
 
 @pytest.fixture
-def azuremachinepool(kubernetes_cluster):
+def azuremachinepool(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
         kind: AzureMachinePool
@@ -597,24 +598,24 @@ def azuremachinepool(kubernetes_cluster):
             vmSize: Standard_D4s_v3
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AzureMachinePool {machinepool_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get AzureMachinePool {machinepool_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get AzureMachinePool {machinepool_name}", output_format="yaml")
 
     azuremachinepool = yaml.safe_load(raw)
 
     yield azuremachinepool
 
-    kubernetes_cluster.kubectl(f"delete azuremachinepool {machinepool_name}", output=None)
+    kube_cluster.kubectl(f"delete azuremachinepool {machinepool_name}", output_format=None)
     LOGGER.info(f"AzureMachinePool {machinepool_name} deleted")
 
 
 # Silence fixtures
 
 @pytest.fixture
-def silence(kubernetes_cluster):
+def silence(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: monitoring.giantswarm.io/v1alpha1
         kind: Silence
@@ -626,22 +627,22 @@ def silence(kubernetes_cluster):
           targetTags: []
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"Silence {silence_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get silences {silence_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get silences {silence_name}", output_format="yaml")
 
     silence = yaml.safe_load(raw)
 
     yield silence
 
-    kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
+    kube_cluster.kubectl(f"delete silence {silence_name}", output_format=None)
     LOGGER.info(f"Silence {silence_name} deleted")
 
 
 @pytest.fixture
-def silence_with_matchers(kubernetes_cluster):
+def silence_with_matchers(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: monitoring.giantswarm.io/v1alpha1
         kind: Silence
@@ -657,22 +658,22 @@ def silence_with_matchers(kubernetes_cluster):
           targetTags: []
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"Silence {silence_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get silences {silence_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get silences {silence_name}", output_format="yaml")
 
     silence = yaml.safe_load(raw)
 
     yield silence
 
-    kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
+    kube_cluster.kubectl(f"delete silence {silence_name}", output_format=None)
     LOGGER.info(f"Silence {silence_name} deleted")
 
 
 @pytest.fixture
-def kubeadm_control_plane(kubernetes_cluster):
+def kubeadm_control_plane(kube_cluster: Cluster):
     c = dedent(f"""
         apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
         kind: KubeadmControlPlane
@@ -692,15 +693,15 @@ def kubeadm_control_plane(kubernetes_cluster):
           version: 1.22.0
     """)
 
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
+    kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"KubeadmControlPlane {cluster_name} applied")
 
-    raw = kubernetes_cluster.kubectl(
-        f"get kubeadmcontrolplane {cluster_name}", output="yaml")
+    raw = kube_cluster.kubectl(
+        f"get kubeadmcontrolplane {cluster_name}", output_format="yaml")
 
     kcp = yaml.safe_load(raw)
 
     yield kcp
 
-    kubernetes_cluster.kubectl(f"delete kubeadmcontrolplane {cluster_name}", output=None)
+    kube_cluster.kubectl(f"delete kubeadmcontrolplane {cluster_name}", output_format=None)
     LOGGER.info(f"kubeadmcontrolplane {cluster_name} deleted")
