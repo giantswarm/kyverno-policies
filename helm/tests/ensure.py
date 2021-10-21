@@ -1,14 +1,9 @@
-import yaml
-from functools import partial
-import time
-import random
-import string
+import logging
 from textwrap import dedent
 
 import pytest
-from pytest_kube import forward_requests, wait_for_rollout, app_template
+import yaml
 
-import logging
 LOGGER = logging.getLogger(__name__)
 
 service_monitor_name = "test-service-monitor"
@@ -18,6 +13,7 @@ machinepool_name = "mp0"
 release_version = "20.0.0"
 cluster_apps_operator_version = "2.0.0"
 watch_label = "capi"
+
 
 # Giant Swarm specific fixtures
 
@@ -67,6 +63,7 @@ def release(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete release v{release_version}", output=None)
     LOGGER.info(f"Release v{release_version} deleted")
 
+
 # CAPI Core fixtures
 
 @pytest.fixture
@@ -108,6 +105,7 @@ def cluster(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete cluster {cluster_name}", output=None)
     LOGGER.info(f"Cluster {cluster_name} deleted")
+
 
 @pytest.fixture
 def cluster_v1alpha4(kubernetes_cluster):
@@ -194,6 +192,7 @@ def machinedeployment(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete machinedeployment {cluster_name}", output=None)
     LOGGER.info(f"MachineDeployment {cluster_name} deleted")
 
+
 @pytest.fixture
 def kubeadmconfig(kubernetes_cluster):
     md = dedent(f"""
@@ -219,6 +218,7 @@ def kubeadmconfig(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
+
 
 @pytest.fixture
 def kubeadmconfig_with_labels(kubernetes_cluster):
@@ -251,6 +251,7 @@ def kubeadmconfig_with_labels(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
+
 @pytest.fixture
 def kubeadmconfig_with_role_labels(kubernetes_cluster):
     md = dedent(f"""
@@ -281,6 +282,7 @@ def kubeadmconfig_with_role_labels(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
+
 
 @pytest.fixture
 def kubeadmconfig_with_kubelet_args(kubernetes_cluster):
@@ -342,6 +344,7 @@ def kubeadmconfig_controlplane(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
+
 # CAPA fixtures
 
 @pytest.fixture
@@ -373,6 +376,7 @@ def awscluster(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
 
+
 @pytest.fixture
 def awscluster_empty(kubernetes_cluster):
     c = dedent(f"""
@@ -398,6 +402,7 @@ def awscluster_empty(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
+
 
 @pytest.fixture
 def awscluster_empty_labeled(kubernetes_cluster):
@@ -425,6 +430,7 @@ def awscluster_empty_labeled(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
+
 
 @pytest.fixture
 def awsmachinetemplate(kubernetes_cluster):
@@ -457,6 +463,7 @@ def awsmachinetemplate(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete AWSMachineTemplate {cluster_name}", output=None)
     LOGGER.info(f"AWSMachineTemplate {cluster_name} deleted")
+
 
 @pytest.fixture
 def awsmachinepool(kubernetes_cluster):
@@ -495,6 +502,7 @@ def awsmachinepool(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete AWSMachinePool {cluster_name}", output=None)
     LOGGER.info(f"AWSMachinePool {cluster_name} deleted")
 
+
 @pytest.fixture
 def awsclusterroleidentity(kubernetes_cluster):
     c = dedent(f"""
@@ -527,6 +535,7 @@ def awsclusterroleidentity(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete AWSClusterRoleIdentity {cluster_name}", output=None)
     LOGGER.info(f"AWSClusterRoleIdentity {cluster_name} deleted")
 
+
 # CAPZ fixtures
 
 @pytest.fixture
@@ -556,6 +565,7 @@ def azurecluster(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete azurecluster {cluster_name}", output=None)
     LOGGER.info(f"AzureCluster {cluster_name} deleted")
+
 
 @pytest.fixture
 def azuremachinepool(kubernetes_cluster):
@@ -629,6 +639,7 @@ def silence(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
     LOGGER.info(f"Silence {silence_name} deleted")
 
+
 @pytest.fixture
 def silence_with_matchers(kubernetes_cluster):
     c = dedent(f"""
@@ -658,6 +669,7 @@ def silence_with_matchers(kubernetes_cluster):
 
     kubernetes_cluster.kubectl(f"delete silence {silence_name}", output=None)
     LOGGER.info(f"Silence {silence_name} deleted")
+
 
 @pytest.fixture
 def kubeadm_control_plane(kubernetes_cluster):

@@ -1,26 +1,22 @@
+import pytest
+import logging
 import sys
+
 sys.path.append('../../../tests')
 
-import yaml
-from functools import partial
-import time
-import random
-import string
-import ensure
-from textwrap import dedent
+# noinspection PyUnresolvedReferences
+from ensure import (
+    release,
+    cluster,
+    awscluster,
+    awscluster_empty,
+    awscluster_empty_labeled,
+    awsclusterroleidentity,
+    awsmachinetemplate,
+    awsmachinepool,
+    watch_label,
+)
 
-from ensure import release
-from ensure import cluster
-from ensure import awscluster
-from ensure import awscluster_empty
-from ensure import awscluster_empty_labeled
-from ensure import awsclusterroleidentity
-from ensure import awsmachinetemplate
-from ensure import awsmachinepool
-
-import pytest
-
-import logging
 LOGGER = logging.getLogger(__name__)
 
 
@@ -33,7 +29,7 @@ def test_aws_cluster_policy(release, cluster, awscluster) -> None:
     :param cluster: Cluster CR which uses the release and matches the AWSCluster.
     :param awscluster: AWSCluster CR with empty strings which matches the Cluster CR.
     """
-    assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
     assert awscluster['spec']['region'] == "eu-west-1"
     assert awscluster['spec']['sshKeyName'] == "ssh-key"
     assert len(awscluster['spec']['networkSpec']['cni']['cniIngressRules']) > 0
@@ -48,10 +44,11 @@ def test_aws_cluster_policy_empty(release, cluster, awscluster_empty) -> None:
     :param cluster: Cluster CR which uses the release and matches the AWSCluster.
     :param awscluster_empty: Empty AWSCluster CR which matches the Cluster CR.
     """
-    assert awscluster_empty['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster_empty['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
     assert awscluster_empty['spec']['region'] == "eu-west-1"
     assert awscluster_empty['spec']['sshKeyName'] == "ssh-key"
     assert len(awscluster_empty['spec']['networkSpec']['cni']['cniIngressRules']) > 0
+
 
 @pytest.mark.smoke
 def test_aws_cluster_policy_solo(awscluster_empty_labeled) -> None:
@@ -60,10 +57,11 @@ def test_aws_cluster_policy_solo(awscluster_empty_labeled) -> None:
 
     :param awscluster_empty_labeled: AWSCluster CR which is empty but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert awscluster_empty_labeled['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster_empty_labeled['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
     assert awscluster_empty_labeled['spec']['region'] == "eu-west-1"
     assert awscluster_empty_labeled['spec']['sshKeyName'] == "ssh-key"
     assert len(awscluster_empty_labeled['spec']['networkSpec']['cni']['cniIngressRules']) > 0
+
 
 @pytest.mark.smoke
 def test_aws_cluster_role_identity_policy_solo(awsclusterroleidentity) -> None:
@@ -72,10 +70,11 @@ def test_aws_cluster_role_identity_policy_solo(awsclusterroleidentity) -> None:
 
     :param awsclusterroleidentity: AWSClusterRoleIdentity CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert awsclusterroleidentity['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awsclusterroleidentity['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
     assert awsclusterroleidentity['spec']['roleARN'] == "default-arn"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['name'] == "default"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['kind'] == "AWSClusterControllerIdentity"
+
 
 @pytest.mark.smoke
 def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
@@ -84,8 +83,9 @@ def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
 
     :param awsmachinetemplate: AWSMachineTemplate CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
     assert awsmachinetemplate['spec']['template']['spec']['instanceType'] == "t3.large"
+
 
 @pytest.mark.smoke
 def test_aws_machine_pool_policy_solo(awsmachinepool) -> None:
