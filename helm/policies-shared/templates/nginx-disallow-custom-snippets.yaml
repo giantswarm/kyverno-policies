@@ -29,6 +29,16 @@ spec:
         pattern:
           data:
             =(allow-snippet-annotations) : "false"
+    - name: check-config-map-legacy
+      message: "ingress-nginx enable-snippet-directives must be set to false"
+      match:
+        resources:
+          kinds:
+            - ConfigMap
+      validate:
+        pattern:
+          data:
+            =(enable-snippet-directives) : "false"
     - name: check-ingress-annotations
       message: "ingress-nginx custom snippets are not allowed"
       match:
