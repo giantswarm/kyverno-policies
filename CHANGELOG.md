@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added policy to enforce mitigation for nginx CVE-2021-25742 from
+
 ## [0.9.1] - 2021-10-20
 
 ### Fixed
