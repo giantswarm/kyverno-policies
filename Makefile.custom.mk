@@ -3,8 +3,10 @@ SHELL:=/usr/bin/env bash
 # If not already set through env
 KUBERNETES_VERSION ?= v1.21.1
 
+##@ Generate
+
 .PHONY: generate
-generate:
+generate: ## Replace variables on Helm manifests.
 	./hack/template.sh
 
 .PHONY: verify
