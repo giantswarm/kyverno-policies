@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove `PodSecurityPolicy` from the enabled api-server admission plugins.
+
 ## [0.9.1] - 2021-10-20
 
 ### Fixed
