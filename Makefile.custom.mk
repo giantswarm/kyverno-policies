@@ -14,11 +14,13 @@ verify:
 	@$(MAKE) generate
 	git diff --exit-code
 
+##@ Test
+
 .PHONY: clean
-clean:
+clean: ## Delete test manifests from kind cluster.
 	./hack/cleanup-local.sh
 
 .PHONY: setup
-setup:
+setup: ## Create kind cluster with CAPI and Kyverno.
 	@$(MAKE) generate
 	./hack/setup-local.sh $(KUBERNETES_VERSION)
