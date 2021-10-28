@@ -25,5 +25,5 @@ def test_cluster_vsphere_policy(release) -> None:
 
     :param release: Release CR which is used by the Cluster.
     """
-    assert release['metadata']['name'] == "v20.0.0"
+    assert release['metadata']['name'].startswith("v20.0.0")
 
