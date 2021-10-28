@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Apply policies to v20 even when v20 contains suffixes in its name.
+
 ## [0.9.2] - 2021-10-26
 
 ### Changed

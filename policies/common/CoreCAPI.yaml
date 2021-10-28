@@ -20,7 +20,7 @@ spec:
       any:
       - key: "{{ request.object.metadata.labels.\"release.giantswarm.io/version\" }}"
         operator: Equals
-        value: "20.0.0"
+        value: "20.0.0*"
     mutate:
       patchStrategicMerge:
         metadata:
@@ -101,7 +101,7 @@ spec:
       any:
       - key: "{{ releaseVersion }}"
         operator: Equals
-        value: "20.0.0"
+        value: "20.0.0*"
     mutate:
       patchStrategicMerge:
         metadata:

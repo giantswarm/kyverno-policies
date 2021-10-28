@@ -15,7 +15,7 @@ service_monitor_name = "test-service-monitor"
 silence_name = "test-silence"
 cluster_name = "test-cluster"
 machinepool_name = "mp0"
-release_version = "20.0.0"
+release_version = "20.0.0-alpha1"
 cluster_apps_operator_version = "2.0.0"
 watch_label = "capi"
 
