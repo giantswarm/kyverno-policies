@@ -4,6 +4,6 @@ appVersion: master
 description: Giant Swarm policies for vsphere.
 home: https://github.com/giantswarm/kyverno-policies
 annotations:
-  application.giantswarm.io/team: "ludacris"
+  application.giantswarm.io/team: "honeybadger"
   config.giantswarm.io/version: 1.x.x
 version: [[ .Version ]]
