@@ -24,3 +24,7 @@ clean: ## Delete test manifests from kind cluster.
 setup: ## Create kind cluster with CAPI and Kyverno.
 	@$(MAKE) generate
 	./hack/setup-local.sh $(KUBERNETES_VERSION)
+
+.PHONE: tilt-up
+tilt-up: ## Start Tilt
+	tilt up

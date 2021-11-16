@@ -1,0 +1,30 @@
+---
+apiVersion: exp.cluster.x-k8s.io/v1alpha3
+kind: MachinePool
+metadata:
+  name: fj78u
+  namespace: default
+  annotations:
+    "machine-pool.giantswarm.io/name": "np1"
+  labels:
+    "cluster.x-k8s.io/cluster-name": j4ih7
+    "cluster.x-k8s.io/watch-filter": capi
+    "giantswarm.io/cluster": j4ih7
+    "release.giantswarm.io/version": "20.0.0"
+    "giantswarm.io/organization": "giantswarm"
+    "giantswarm.io/machine-pool": "fj78u"
+spec:
+  clusterName: j4ih7
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+          kind: KubeadmConfig
+          name: fj78u
+      clusterName: j4ih7
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AzureMachinePool
+        name: fj78u
+      version: v1.19.9

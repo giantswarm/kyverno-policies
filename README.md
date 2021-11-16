@@ -127,3 +127,16 @@ PASSED                                                                          
 INFO     ensure:ensure.py:203 AWSCluster test-cluster deleted
 INFO     ensure:ensure.py:102 Cluster test-cluster deleted
 ```
+
+### Tilt
+You can use Tilt for fast feedback loops.
+
+First create the local `kind` cluster
+```shell
+make setup
+```
+
+Then you just need to start `tilt`
+```shell
+make tilt-up
+```
