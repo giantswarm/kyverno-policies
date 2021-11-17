@@ -140,7 +140,7 @@ def test_kubeadmcontrolplane_auditpolicy(kubeadm_control_plane) -> None:
     hasAuditPolicy = False
     hasLogPath = False
     for vol in kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraVolumes']:
-        if vol['hostPath'] == "/etc/kubernetes/policies/audit-policy.yaml":
+        if vol['hostPath'] == "/etc/kubernetes/policies":
             hasAuditPolicy = True
         if vol['hostPath'] == "/var/log/apiserver":
             hasLogPath = True
