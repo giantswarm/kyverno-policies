@@ -252,6 +252,72 @@ def kubeadmconfig_with_labels(kubernetes_cluster):
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
 @pytest.fixture
+def kubeadmconfig_with_files(kubernetes_cluster):
+    md = dedent(f"""
+        apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+        kind: KubeadmConfig
+        metadata:
+          name: {cluster_name}
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: {watch_label}
+        spec:
+          files:
+          - content: ""
+            encoding: base64
+            owner: root
+            path: /etc/ssh/sshd_config
+            permissions: "640"
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output="yaml")
+
+    kubeadmconfig = yaml.safe_load(raw)
+
+    yield kubeadmconfig
+
+    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
+
+@pytest.fixture
+def kubeadmconfig_with_audit_file(kubernetes_cluster):
+    md = dedent(f"""
+        apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+        kind: KubeadmConfig
+        metadata:
+          name: {cluster_name}
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: {watch_label}
+        spec:
+          files:
+          - content: ""
+            encoding: base64
+            owner: root
+            path: /etc/kubernetes/policies/audit-policy.yaml
+            permissions: "640"
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output="yaml")
+
+    kubeadmconfig = yaml.safe_load(raw)
+
+    yield kubeadmconfig
+
+    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
+
+@pytest.fixture
 def kubeadmconfig_with_role_labels(kubernetes_cluster):
     md = dedent(f"""
         apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3

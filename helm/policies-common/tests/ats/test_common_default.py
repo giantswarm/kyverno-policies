@@ -19,6 +19,8 @@ from ensure import kubeadmconfig_with_role_labels
 from ensure import kubeadmconfig_with_kubelet_args
 from ensure import kubeadm_control_plane
 from ensure import kubeadmconfig_controlplane
+from ensure import kubeadmconfig_with_files
+from ensure import kubeadmconfig_with_audit_file
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -125,3 +127,46 @@ def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['initConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-ip'] == '{{ ds.meta_data.local_ipv4 }}'
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['feature-gates'] == 'TTLAfterFinished=true'
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['runtime-config'] == 'api/all=true,scheduling.k8s.io/v1alpha1=true'
+
+@pytest.mark.smoke
+def test_kubeadmcontrolplane_auditpolicy(kubeadm_control_plane) -> None:
+    """
+    test_kubeadmcontrolplane_auditpolicy tests defaulting of a KubeadmControlPlane with audit policy details
+
+    :param kubeadm_control_plane: KubeadmControlPlane CR which is empty.
+    """
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['audit-policy-file'] == '/etc/kubernetes/policies/audit-policy.yaml'
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['audit-log-path'] == '/var/log/apiserver/audit.log'
+    hasAuditPolicy = False
+    hasLogPath = False
+    for vol in kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraVolumes']:
+        if vol['hostPath'] == "/etc/kubernetes/policies/audit-policy.yaml":
+            hasAuditPolicy = True
+        if vol['hostPath'] == "/var/log/apiserver":
+            hasLogPath = True
+    assert hasAuditPolicy == True
+    assert hasLogPath == True
+
+@pytest.mark.smoke
+def test_kubeadmconfig_auditpolicy(kubeadmconfig_with_files) -> None:
+    """
+    test_kubeadmconfig_auditpolicy tests defaulting of a kubeadmconfig with audit policy details
+
+    :param kubeadmconfig_with_files: KubeadmConfig CR which includes some existing files
+    """
+    found = False
+    for file in kubeadmconfig_with_files['spec']['files']:
+        if file['path'] == "/etc/kubernetes/policies/audit-policy.yaml":
+            found = True
+
+    assert found == True
+
+@pytest.mark.smoke
+def test_kubeadmconfig_auditpolicy(kubeadmconfig_with_audit_file) -> None:
+    """
+    test_kubeadmconfig_auditpolicy tests defaulting of a kubeadmconfig with audit policy details
+
+    :param kubeadmconfig_with_audit_file: KubeadmConfig CR which includes an existing audit file
+    """
+    assert len(kubeadmconfig_with_audit_file['spec']['files']) == 1
+
