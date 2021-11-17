@@ -20,6 +20,7 @@ from ensure import kubeadmconfig_with_kubelet_args
 from ensure import kubeadm_control_plane
 from ensure import kubeadmconfig_controlplane
 from ensure import kubeadmconfig_with_files
+from ensure import kubeadmconfig_with_audit_file
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -159,4 +160,13 @@ def test_kubeadmconfig_auditpolicy(kubeadmconfig_with_files) -> None:
             found = True
 
     assert found == True
+
+@pytest.mark.smoke
+def test_kubeadmconfig_auditpolicy(kubeadmconfig_with_audit_file) -> None:
+    """
+    test_kubeadmconfig_auditpolicy tests defaulting of a kubeadmconfig with audit policy details
+
+    :param kubeadmconfig_with_audit_file: KubeadmConfig CR which includes an existing audit file
+    """
+    assert len(kubeadmconfig_with_audit_file['spec']['files']) == 1
 
