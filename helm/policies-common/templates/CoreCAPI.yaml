@@ -262,8 +262,8 @@ spec:
                   +(runtime-config): "api/all=true,scheduling.k8s.io/v1alpha1=true"
                   +(feature-gates): "TTLAfterFinished=true"
                 extraVolumes:
-                  - hostPath: /etc/kubernetes/policies/audit-policy.yaml
-                    mountPath: /etc/kubernetes/policies/audit-policy.yaml
+                  - hostPath: /etc/kubernetes/policies
+                    mountPath: /etc/kubernetes/policies
                     name: audit-policy
                     readOnly: true
                   - hostPath: /var/log/apiserver
