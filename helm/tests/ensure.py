@@ -364,13 +364,13 @@ def awscluster(kubernetes_cluster):
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
     raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
+        f"get awsclusters.v1alpha3.infrastructure.cluster.x-k8s.io {cluster_name}", output="yaml")
 
     awscluster = yaml.safe_load(raw)
 
     yield awscluster
 
-    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
+    kubernetes_cluster.kubectl(f"delete awsclusters.v1alpha3.infrastructure.cluster.x-k8s.io {cluster_name}", output=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
 
 @pytest.fixture

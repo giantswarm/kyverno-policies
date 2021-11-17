@@ -5,3 +5,4 @@ build/
 logs/
 *test_results_smoke.xml
 .helm
+policies-*.tgz
