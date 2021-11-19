@@ -53,3 +53,14 @@ def test_azure_machine_pool_default(release, cluster_v1alpha4, azuremachinepool)
     """
     assert azuremachinepool['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert azuremachinepool['spec']['location'] == "westeurope"
+
+# @pytest.mark.smoke
+# def test_azure_machine_pool_default_additional_tags(release, cluster_v1alpha4, azuremachinepool) -> None:
+#     """
+#     test_azure_machine_pool_default tests defaulting of an AzureMachinePool where all required values are empty strings.
+#
+#     :param release: Release CR which is used by the Cluster.
+#     :param cluster_v1alpha4: Cluster CR which uses the release and matches the AzureCluster.
+#     :param azuremachinepool: AzureMachinePool CR with empty strings which matches the Cluster CR.
+#     """
+#     assert azuremachinepool['spec']['additionalTags']['cluster-autoscaler-name'] == azuremachinepool['metadata']['name']

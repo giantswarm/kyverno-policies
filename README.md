@@ -133,7 +133,7 @@ You can use Tilt for fast feedback loops.
 
 First create the local `kind` cluster
 ```shell
-make setup
+make kind-create
 ```
 
 Then you just need to start `tilt`

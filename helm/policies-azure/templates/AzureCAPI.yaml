@@ -84,3 +84,17 @@ spec:
       patchStrategicMerge:
         spec:
           subscriptionID: "{{ `{{` }} subscriptionID {{ `}}` }}"
+
+#  - name: replace-clusterid
+#    match:
+#      resources:
+#        kinds:
+#          - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachinePool
+#        selector:
+#          matchLabels:
+#            cluster.x-k8s.io/watch-filter: capi
+#    mutate:
+#      patchStrategicMerge:
+#        spec:
+#          additionalTags:
+#            cluster-autoscaler-name: "{{ `{{` }} request.object.metadata.name {{ `}}` }}"

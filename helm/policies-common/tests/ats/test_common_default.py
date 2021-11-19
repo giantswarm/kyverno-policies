@@ -12,13 +12,13 @@ from textwrap import dedent
 from ensure import release
 from ensure import cluster
 from ensure import machinedeployment
+from ensure import machinepool
 from ensure import kubeadmconfig
 from ensure import kubeadmconfig_controlplane
 from ensure import kubeadmconfig_with_labels
 from ensure import kubeadmconfig_with_role_labels
 from ensure import kubeadmconfig_with_kubelet_args
 from ensure import kubeadm_control_plane
-from ensure import kubeadmconfig_controlplane
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -112,8 +112,6 @@ def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
     """
     assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/control-plane'] == ""
-    # The object is completely empty before, so we make sure that it remains empty here.
-    assert kubeadmconfig_controlplane.get('spec') is None
 
 @pytest.mark.smoke
 def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
@@ -125,3 +123,13 @@ def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['initConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-ip'] == '{{ ds.meta_data.local_ipv4 }}'
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['feature-gates'] == 'TTLAfterFinished=true'
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['runtime-config'] == 'api/all=true,scheduling.k8s.io/v1alpha1=true'
+
+
+@pytest.mark.smoke
+def test_machinepool_policy(machinepool) -> None:
+    """
+    test_machinepool_policy tests defaulting of a MachinePool replicas
+
+    :param machinepool: MachinePool CR which is empty.
+    """
+    assert machinepool['spec']['replicas'] == 1

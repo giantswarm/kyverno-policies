@@ -1,0 +1,30 @@
+#apiVersion: kyverno.io/v1
+#kind: ClusterPolicy
+#metadata:
+#  name: default-capi-releases
+#spec:
+#  background: false
+#  schemaValidation: false
+#  rules:
+#    - name: set-capi-release-field
+#      context:
+#        - name: release
+#          configMap:
+#            name: 20-0-0-alpha1-machinepool
+#            namespace: default
+#      match:
+#        resources:
+#          kinds:
+#            - exp.cluster.x-k8s.io/v1alpha3/MachinePool
+#            - cluster.x-k8s.io/v1alpha4/MachinePool
+#          selector:
+#            matchLabels:
+#              cluster.x-k8s.io/watch-filter: capi
+#      mutate:
+#        patchesJson6902: |-
+#          - op: replace
+#            path: /spec/replicas
+#            value: {{ yaml_to_json(release.data.replicas) }}
+#          - op: replace
+#            path: /spec/template
+#            value: {{ yaml_to_json(release.data.template) }}
