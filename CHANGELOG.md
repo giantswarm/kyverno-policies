@@ -11,9 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Tilt support.
 
+## [0.10.0] - 2021-11-19
+
 ### Changed
 
 - Apply policies to v20 even when v20 contains suffixes in its name.
+
+### Added
+
+- Policy to apply `audit-policy.yaml` to kubeadmconfig
 
 ## [0.9.2] - 2021-10-26
 
@@ -200,7 +206,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.2...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.2...v0.10.0
 [0.9.2]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.8.0...v0.9.0
