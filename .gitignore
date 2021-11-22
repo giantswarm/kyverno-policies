@@ -4,5 +4,6 @@ kube.config
 build/
 logs/
 *test_results_smoke.xml
+# Used by Tilt extension to deploy remote Helm charts
 .helm
 policies-*.tgz

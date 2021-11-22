@@ -86,6 +86,8 @@ spec:
         - cluster.x-k8s.io/v1alpha4/MachineSet
         - cluster.x-k8s.io/v1alpha3/MachineDeployment
         - cluster.x-k8s.io/v1alpha4/MachineDeployment
+        - exp.cluster.x-k8s.io/v1alpha3/MachinePool
+        - cluster.x-k8s.io/v1alpha4/MachinePool
     exclude:
       resources:
         selector:
@@ -336,21 +338,3 @@ spec:
               apiServer:
                 extraArgs:
                   feature-gates: "{{ `{{` }} join(',', ['TTLAfterFinished=true', request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraArgs.\"feature-gates\"]) {{ `}}` }}"
-
-#  - name: default-release-config
-#    match:
-#      resources:
-#        kinds:
-#          - exp.cluster.x-k8s.io/v1alpha3/MachinePool
-#          - exp.cluster.x-k8s.io/v1alpha4/MachinePool
-#        selector:
-#          matchLabels:
-#            cluster.x-k8s.io/watch-filter: capi
-#    context:
-#      - name: releaseConfig
-#        configMap:
-#          name: 20-0-0-alpha1
-#          namespace: default
-#    mutate:
-#      patchStrategicMerge:
-#        spec: "{{ `{{` }} releaseConfig.data.spec {{ `}}` }}"

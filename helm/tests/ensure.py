@@ -197,49 +197,6 @@ def machinedeployment(kubernetes_cluster):
     kubernetes_cluster.kubectl(f"delete machinedeployment {cluster_name}", output=None)
     LOGGER.info(f"MachineDeployment {cluster_name} deleted")
 
-
-@pytest.fixture
-def machinepool(kubernetes_cluster):
-    mp = dedent(f"""
-        apiVersion: cluster.x-k8s.io/v1alpha4
-        kind: MachinePool
-        metadata:
-          name: {cluster_name}
-          labels:
-            release.giantswarm.io/version: {release_version}
-            giantswarm.io/cluster: {cluster_name}
-            cluster.x-k8s.io/cluster-name: {cluster_name}
-            cluster.x-k8s.io/watch-filter: {watch_label}
-        spec:
-          clusterName: {cluster_name}
-          template:
-            spec:
-              bootstrap:
-                configRef:
-                  apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
-                  kind: KubeadmConfig
-                  name: {cluster_name}
-              clusterName: {cluster_name}
-              infrastructureRef:
-                apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-                kind: AWSMachinePool
-                name: {cluster_name}
-              version: v1.19.7
-    """)
-
-    kubernetes_cluster.kubectl("apply", input=mp, output=None)
-    LOGGER.info(f"MachinePool {cluster_name} applied")
-
-    raw = kubernetes_cluster.kubectl(
-        f"get machinepool {cluster_name}", output="yaml")
-
-    machinepool = yaml.safe_load(raw)
-
-    yield machinepool
-
-    kubernetes_cluster.kubectl(f"delete machinepool {cluster_name}", output=None)
-    LOGGER.info(f"MachinePool {cluster_name} deleted")
-
 @pytest.fixture
 def kubeadmconfig(kubernetes_cluster):
     md = dedent(f"""
@@ -416,7 +373,7 @@ def awscluster_v1alpha3(kubernetes_cluster):
 
     yield awscluster
 
-    kubernetes_cluster.kubectl(f"delete awsclusters {cluster_name}", output=None)
+    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
 
 @pytest.fixture

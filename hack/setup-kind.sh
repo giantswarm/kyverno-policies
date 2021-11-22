@@ -17,5 +17,5 @@ export AZURE_CLIENT_SECRET_B64="${MOCK_CREDENTIALS}"
 
 export EXP_MACHINE_POOL="true"
 clusterctl init --infrastructure=aws:v0.7.2,azure:v0.5.3
- kubectl wait --for=condition=ready --timeout=60s pod -lcluster.x-k8s.io/provider=infrastructure-aws -A
- kubectl wait --for=condition=ready --timeout=60s pod -lcluster.x-k8s.io/provider=infrastructure-azure -A
+kubectl wait --for=condition=ready --timeout=90s pod -lcluster.x-k8s.io/provider=infrastructure-aws -A
+kubectl wait --for=condition=ready --timeout=90s pod -lcluster.x-k8s.io/provider=infrastructure-azure -A

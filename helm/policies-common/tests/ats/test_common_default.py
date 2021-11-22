@@ -12,7 +12,6 @@ from textwrap import dedent
 from ensure import release
 from ensure import cluster
 from ensure import machinedeployment
-from ensure import machinepool
 from ensure import kubeadmconfig
 from ensure import kubeadmconfig_controlplane
 from ensure import kubeadmconfig_with_labels

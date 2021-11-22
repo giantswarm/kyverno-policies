@@ -26,23 +26,23 @@ clean: ## Delete test manifests from kind cluster.
 .PHONY: kind-create
 kind-create: ## create kind cluster if needed
 	KIND_CLUSTER_NAME=$(KIND_CLUSTER_NAME) ./hack/kind-with-registry.sh
-	./hack/apply-crds.sh
+	./hack/setup-kind.sh
 
-.PHONE: tilt-up
+.PHONY: tilt-up
 tilt-up: ## Start Tilt
 	tilt up
 
 # If you change kyverno version here remember to change it in the Tiltfile too
-.PHONE: install-kyverno
+.PHONY: install-kyverno
 install-kyverno:
 	kubectl create --context kind-$(KIND_CLUSTER_NAME) -f https://raw.githubusercontent.com/kyverno/kyverno/v1.5.1/definitions/release/install.yaml
 	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=ready pod -l app=kyverno -nkyverno
 
-.PHONE: kind-get-kubeconfig
+.PHONY: kind-get-kubeconfig
 kind-get-kubeconfig:
 	kind get kubeconfig --name $(KIND_CLUSTER_NAME) > $(PWD)/kube.config
 
-.PHONE: dabs
+.PHONY: dabs
 dabs: generate
 	dabs.sh --generate-metadata --chart-dir helm/policies-common
 	dabs.sh --generate-metadata --chart-dir helm/policies-aws
