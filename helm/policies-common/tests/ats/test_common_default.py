@@ -114,8 +114,6 @@ def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
     """
     assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/control-plane'] == ""
-    # The object is completely empty before, so we make sure that it remains empty here.
-    assert kubeadmconfig_controlplane.get('spec') is None
 
 @pytest.mark.smoke
 def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
@@ -169,4 +167,3 @@ def test_kubeadmconfig_auditpolicy(kubeadmconfig_with_audit_file) -> None:
     :param kubeadmconfig_with_audit_file: KubeadmConfig CR which includes an existing audit file
     """
     assert len(kubeadmconfig_with_audit_file['spec']['files']) == 1
-

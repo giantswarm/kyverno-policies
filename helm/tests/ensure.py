@@ -167,6 +167,9 @@ def machinedeployment(kubernetes_cluster):
             matchLabels:
               clusterName: {cluster_name}
           template:
+            metadata:
+              labels:
+                clusterName: {cluster_name}
             spec:
               bootstrap:
                 configRef:
@@ -411,7 +414,7 @@ def kubeadmconfig_controlplane(kubernetes_cluster):
 # CAPA fixtures
 
 @pytest.fixture
-def awscluster(kubernetes_cluster):
+def awscluster_v1alpha3(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -430,7 +433,7 @@ def awscluster(kubernetes_cluster):
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
     raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
+        f"get awsclusters.v1alpha3.infrastructure.cluster.x-k8s.io {cluster_name}", output="yaml")
 
     awscluster = yaml.safe_load(raw)
 
@@ -440,7 +443,7 @@ def awscluster(kubernetes_cluster):
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
 
 @pytest.fixture
-def awscluster_empty(kubernetes_cluster):
+def awscluster_v1alpha3_empty(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -456,7 +459,7 @@ def awscluster_empty(kubernetes_cluster):
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
     raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
+        f"get awsclusters.v1alpha3.infrastructure.cluster.x-k8s.io {cluster_name}", output="yaml")
 
     awscluster = yaml.safe_load(raw)
 
@@ -466,7 +469,7 @@ def awscluster_empty(kubernetes_cluster):
     LOGGER.info(f"AWSCluster {cluster_name} deleted")
 
 @pytest.fixture
-def awscluster_empty_labeled(kubernetes_cluster):
+def awscluster_v1alpha3_empty_labeled(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -483,7 +486,7 @@ def awscluster_empty_labeled(kubernetes_cluster):
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
     raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
+        f"get awsclusters.v1alpha3.infrastructure.cluster.x-k8s.io {cluster_name}", output="yaml")
 
     awscluster = yaml.safe_load(raw)
 
@@ -728,7 +731,7 @@ def silence_with_matchers(kubernetes_cluster):
 @pytest.fixture
 def kubeadm_control_plane(kubernetes_cluster):
     c = dedent(f"""
-        apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
+        apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
         kind: KubeadmControlPlane
         metadata:
           labels:
@@ -742,7 +745,11 @@ def kubeadm_control_plane(kubernetes_cluster):
               controllerManager:
                 extraArgs:
                   allocate-node-cidrs: "false"
-          infrastructureTemplate: {{}}
+          machineTemplate:
+            infrastructureRef:
+              apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+              kind: AWSMachineTemplate
+              name: {cluster_name}
           version: 1.22.0
     """)
 

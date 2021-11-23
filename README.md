@@ -26,7 +26,7 @@ Tests are implemented with [pytest](https://docs.pytest.org) with plugin [pytest
 Executing the integration tests can be done with this simple set of commands:
 ```bash
 make setup # Creates the kind cluster and installs all dependencies.
-./dabs.sh --generate-metadata -c ./helm/policies-aws # Builds helm chart archive to be tested.
+dabs.sh --generate-metadata -c ./helm/policies-aws # Builds helm chart archive to be tested.
 ./dats.sh --chart-file $(ls -1 -t policies-aws*.tgz | head -n 1) # Executes the tests related to the AWS policies against the kind cluster.
 ```
 
@@ -126,4 +126,17 @@ PASSED                                                                          
 ------------------------------------ live log teardown ---------------------------------------------------
 INFO     ensure:ensure.py:203 AWSCluster test-cluster deleted
 INFO     ensure:ensure.py:102 Cluster test-cluster deleted
+```
+
+### Tilt
+You can use Tilt for fast feedback loops.
+
+First create the local `kind` cluster
+```shell
+make kind-create
+```
+
+Then you just need to start `tilt`
+```shell
+make tilt-up
 ```

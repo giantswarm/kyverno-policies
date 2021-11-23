@@ -86,7 +86,7 @@ spec:
         - cluster.x-k8s.io/v1alpha3/MachineDeployment
         - cluster.x-k8s.io/v1alpha4/MachineDeployment
         - exp.cluster.x-k8s.io/v1alpha3/MachinePool
-        - exp.cluster.x-k8s.io/v1alpha4/MachinePool
+        - cluster.x-k8s.io/v1alpha4/MachinePool
     exclude:
       resources:
         selector:

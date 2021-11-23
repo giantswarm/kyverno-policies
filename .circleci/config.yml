@@ -76,17 +76,17 @@ jobs:
           command: |
             sudo apt-get update && sudo apt-get install make
       - run:
-          name: Setup
+          name: Install clusterctl
           command: |
-            make setup
+            curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v0.4.4/clusterctl-linux-amd64 -o clusterctl && chmod +x clusterctl  && sudo mv clusterctl /usr/bin
+      - run:
+          name: Create kind cluster and install kyverno
+          command: |
+            make kind-create kind-get-kubeconfig install-kyverno
       - run:
           name: Make chart archives
           command: |
-            dabs.sh --generate-metadata --chart-dir helm/policies-common
-            dabs.sh --generate-metadata --chart-dir helm/policies-aws
-            dabs.sh --generate-metadata --chart-dir helm/policies-azure
-            dabs.sh --generate-metadata --chart-dir helm/policies-vsphere
-            dabs.sh --generate-metadata --chart-dir helm/policies-shared
+            make dabs
       - run-ats:
           chart_archive_prefix: "policies-common"
           tests_dir: "helm/policies-common/tests/ats"
