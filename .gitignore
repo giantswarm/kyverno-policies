@@ -6,3 +6,4 @@ logs/
 **/.idea/
 **/test_results_*.xml
 helm/**/*.tgz
+**/__pycache__/
