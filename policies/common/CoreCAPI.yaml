@@ -260,14 +260,6 @@ spec:
                   +(tls-cipher-suites): "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256"
                   +(runtime-config): "api/all=true,scheduling.k8s.io/v1alpha1=true"
                   +(feature-gates): "TTLAfterFinished=true"
-                extraVolumes:
-                  - hostPath: /etc/kubernetes/policies
-                    mountPath: /etc/kubernetes/policies
-                    name: audit-policy
-                    readOnly: true
-                  - hostPath: /var/log/apiserver
-                    mountPath: /var/log/apiserver
-                    name: apiserver-log
             initConfiguration:
               nodeRegistration:
                 kubeletExtraArgs:
@@ -275,6 +267,46 @@ spec:
                   node-ip: "{{ dictionary.data.nodeip }}"
                   +(v): "2"
                   +(image-pull-progress-deadline): "[[ .Values.Installation.V1.Guest.Kubernetes.Kubelet.ImagePullProgressDeadline ]]"
+
+  - name: kubeadmcontrolplane-extravolumes-apiserver-policies
+    match:
+      resources:
+        kinds:
+          - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
+          - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    preconditions:
+      any:
+        - key: "/etc/kubernetes/policies"
+          operator: NotIn
+          value: "{{request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraVolumes[].hostPath}}"
+    mutate:
+      patchesJson6902: |-
+        - op: add
+          path: "/spec/kubeadmConfigSpec/clusterConfiguration/apiServer/extraVolumes/-"
+          value: {"hostPath":"/etc/kubernetes/policies","mountPath":"/etc/kubernetes/policies","readOnly":true,"name":"audit-policy"}
+
+  - name: kubeadmcontrolplane-extravolumes-apiserver-logs
+    match:
+      resources:
+        kinds:
+          - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
+          - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        selector:
+          matchLabels:
+            cluster.x-k8s.io/watch-filter: capi
+    preconditions:
+      any:
+        - key: "/var/log/apiserver"
+          operator: NotIn
+          value: "{{request.object.spec.kubeadmConfigSpec.clusterConfiguration.apiServer.extraVolumes[].hostPath}}"
+    mutate:
+      patchesJson6902: |-
+        - op: add
+          path: "/spec/kubeadmConfigSpec/clusterConfiguration/apiServer/extraVolumes/-"
+          value: {"hostPath":"/var/log/apiserver","mountPath":"/var/log/apiserver","name":"apiserver-log"}
 
   - name: kubeadmcontrolplane-merge-runtimeconfig-apiall-flags
     match:
