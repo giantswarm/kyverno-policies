@@ -125,6 +125,13 @@ def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['initConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-ip'] == '{{ ds.meta_data.local_ipv4 }}'
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['feature-gates'] == 'TTLAfterFinished=true'
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['runtime-config'] == 'api/all=true,scheduling.k8s.io/v1alpha1=true'
+    # Assert that we don't lose extraArgs or extraVolumes that were already set.
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['cloud-provider'] == 'azure'
+    hasExistingExtraVolume = False
+    for volume in kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraVolumes']:
+        if volume['hostPath'] == "/etc/kubernetes/azure.json":
+            hasExistingExtraVolume = True
+    assert hasExistingExtraVolume == True
 
 @pytest.mark.smoke
 def test_kubeadmcontrolplane_auditpolicy(kubeadm_control_plane) -> None:
