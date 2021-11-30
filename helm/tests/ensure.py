@@ -742,6 +742,15 @@ def kubeadm_control_plane(kubernetes_cluster):
         spec:
           kubeadmConfigSpec:
             clusterConfiguration:
+              apiServer:
+                extraArgs:
+                  cloud-config: /etc/kubernetes/azure.json
+                  cloud-provider: azure
+                extraVolumes:
+                - hostPath: /etc/kubernetes/azure.json
+                  mountPath: /etc/kubernetes/azure.json
+                  name: cloud-config
+                  readOnly: true
               controllerManager:
                 extraArgs:
                   allocate-node-cidrs: "false"

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Tilt support.
 
+### Changed
+
+- The api-server `extraVolumes` are appended instead of over writing the existing ones.
+
 ## [0.10.0] - 2021-11-19
 
 ### Changed
