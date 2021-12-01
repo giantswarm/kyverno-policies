@@ -1,0 +1,9 @@
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+kind: KubeadmConfig
+metadata:
+  name: mycluster
+  labels:
+    giantswarm.io/cluster: mycluster
+    cluster.x-k8s.io/cluster-name: mycluster
+    cluster.x-k8s.io/watch-filter: capi
+    cluster.x-k8s.io/control-plane: ""

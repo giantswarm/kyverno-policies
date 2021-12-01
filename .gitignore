@@ -1,9 +1,12 @@
 dabs.sh
+dats.sh
 kube.config
 build/
 logs/
-*test_results_smoke.xml
 **/.idea/
 **/test_results_*.xml
 helm/**/*.tgz
 **/__pycache__/
+# Used by Tilt extension to deploy remote Helm charts
+.helm
+policies-*.tgz

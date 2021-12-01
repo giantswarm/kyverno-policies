@@ -19,6 +19,8 @@ from ensure import kubeadmconfig_with_role_labels
 from ensure import kubeadmconfig_with_kubelet_args
 from ensure import kubeadm_control_plane
 from ensure import kubeadmconfig_controlplane
+from ensure import kubeadmconfig_with_files
+from ensure import kubeadmconfig_with_audit_file
 
 import pytest
 from pytest_kube import forward_requests, wait_for_rollout, app_template
@@ -112,8 +114,6 @@ def test_kubeadmconfig_policy_controlplane(kubeadmconfig_controlplane) -> None:
     """
     assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
     assert kubeadmconfig_controlplane['metadata']['labels']['cluster.x-k8s.io/control-plane'] == ""
-    # The object is completely empty before, so we make sure that it remains empty here.
-    assert kubeadmconfig_controlplane.get('spec') is None
 
 @pytest.mark.smoke
 def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
@@ -125,3 +125,52 @@ def test_kubeadmcontrolplane_policy(kubeadm_control_plane) -> None:
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['initConfiguration']['nodeRegistration']['kubeletExtraArgs']['node-ip'] == '{{ ds.meta_data.local_ipv4 }}'
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['feature-gates'] == 'TTLAfterFinished=true'
     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['runtime-config'] == 'api/all=true,scheduling.k8s.io/v1alpha1=true'
+    # Assert that we don't lose extraArgs or extraVolumes that were already set.
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['cloud-provider'] == 'azure'
+    hasExistingExtraVolume = False
+    for volume in kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraVolumes']:
+        if volume['hostPath'] == "/etc/kubernetes/azure.json":
+            hasExistingExtraVolume = True
+    assert hasExistingExtraVolume == True
+
+@pytest.mark.smoke
+def test_kubeadmcontrolplane_auditpolicy(kubeadm_control_plane) -> None:
+    """
+    test_kubeadmcontrolplane_auditpolicy tests defaulting of a KubeadmControlPlane with audit policy details
+
+    :param kubeadm_control_plane: KubeadmControlPlane CR which is empty.
+    """
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['audit-policy-file'] == '/etc/kubernetes/policies/audit-policy.yaml'
+    assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['audit-log-path'] == '/var/log/apiserver/audit.log'
+    hasAuditPolicy = False
+    hasLogPath = False
+    for vol in kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraVolumes']:
+        if vol['hostPath'] == "/etc/kubernetes/policies":
+            hasAuditPolicy = True
+        if vol['hostPath'] == "/var/log/apiserver":
+            hasLogPath = True
+    assert hasAuditPolicy == True
+    assert hasLogPath == True
+
+@pytest.mark.smoke
+def test_kubeadmconfig_auditpolicy(kubeadmconfig_with_files) -> None:
+    """
+    test_kubeadmconfig_auditpolicy tests defaulting of a kubeadmconfig with audit policy details
+
+    :param kubeadmconfig_with_files: KubeadmConfig CR which includes some existing files
+    """
+    found = False
+    for file in kubeadmconfig_with_files['spec']['files']:
+        if file['path'] == "/etc/kubernetes/policies/audit-policy.yaml":
+            found = True
+
+    assert found == True
+
+@pytest.mark.smoke
+def test_kubeadmconfig_auditpolicy(kubeadmconfig_with_audit_file) -> None:
+    """
+    test_kubeadmconfig_auditpolicy tests defaulting of a kubeadmconfig with audit policy details
+
+    :param kubeadmconfig_with_audit_file: KubeadmConfig CR which includes an existing audit file
+    """
+    assert len(kubeadmconfig_with_audit_file['spec']['files']) == 1

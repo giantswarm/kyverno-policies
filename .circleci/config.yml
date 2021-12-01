@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  architect: giantswarm/architect@4.6.0
+  architect: giantswarm/architect@4.8.1
 
 commands:
   run-ats:
@@ -76,9 +76,13 @@ jobs:
           command: |
             sudo apt-get update && sudo apt-get install make
       - run:
-          name: Setup
+          name: Install clusterctl
           command: |
-            make setup
+            curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v0.4.4/clusterctl-linux-amd64 -o clusterctl && chmod +x clusterctl  && sudo mv clusterctl /usr/bin
+      - run:
+          name: Create kind cluster and install kyverno
+          command: |
+            make kind-create kind-get-kubeconfig install-kyverno
       - run:
           name: Make chart archives
           command: |
@@ -90,6 +94,11 @@ jobs:
             #- run-ats:
             #    chart_archive_prefix: "policies-common"
             #    tests_dir: "helm/policies-common/tests/ats"
+            # NEW - should make all
+            # make dabs
+      # - run-ats:
+      #     chart_archive_prefix: "policies-common"
+      #     tests_dir: "helm/policies-common/tests/ats"
       - run-ats:
           chart_archive_prefix: "policies-aws"
           tests_dir: "helm/policies-aws/tests/ats"

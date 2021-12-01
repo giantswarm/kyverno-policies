@@ -11,7 +11,7 @@ service_monitor_name = "test-service-monitor"
 silence_name = "test-silence"
 cluster_name = "test-cluster"
 machinepool_name = "mp0"
-release_version = "20.0.0"
+release_version = "20.0.0-alpha1"
 cluster_apps_operator_version = "2.0.0"
 watch_label = "capi"
 
@@ -166,6 +166,9 @@ def machinedeployment(kube_cluster: Cluster):
             matchLabels:
               clusterName: {cluster_name}
           template:
+            metadata:
+              labels:
+                clusterName: {cluster_name}
             spec:
               bootstrap:
                 configRef:
@@ -252,6 +255,72 @@ def kubeadmconfig_with_labels(kube_cluster: Cluster):
     kube_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output_format=None)
     LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
+
+@pytest.fixture
+def kubeadmconfig_with_files(kubernetes_cluster):
+    md = dedent(f"""
+        apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+        kind: KubeadmConfig
+        metadata:
+          name: {cluster_name}
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: {watch_label}
+        spec:
+          files:
+          - content: ""
+            encoding: base64
+            owner: root
+            path: /etc/ssh/sshd_config
+            permissions: "640"
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output="yaml")
+
+    kubeadmconfig = yaml.safe_load(raw)
+
+    yield kubeadmconfig
+
+    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
+
+@pytest.fixture
+def kubeadmconfig_with_audit_file(kubernetes_cluster):
+    md = dedent(f"""
+        apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+        kind: KubeadmConfig
+        metadata:
+          name: {cluster_name}
+          labels:
+            giantswarm.io/cluster: {cluster_name}
+            cluster.x-k8s.io/cluster-name: {cluster_name}
+            cluster.x-k8s.io/watch-filter: {watch_label}
+        spec:
+          files:
+          - content: ""
+            encoding: base64
+            owner: root
+            path: /etc/kubernetes/policies/audit-policy.yaml
+            permissions: "640"
+    """)
+
+    kubernetes_cluster.kubectl("apply", input=md, output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} applied")
+
+    raw = kubernetes_cluster.kubectl(
+        f"get kubeadmconfig {cluster_name}", output="yaml")
+
+    kubeadmconfig = yaml.safe_load(raw)
+
+    yield kubeadmconfig
+
+    kubernetes_cluster.kubectl(f"delete kubeadmconfig {cluster_name}", output=None)
+    LOGGER.info(f"KubeadmConfig {cluster_name} deleted")
 
 @pytest.fixture
 def kubeadmconfig_with_role_labels(kube_cluster: Cluster):
@@ -349,7 +418,7 @@ def kubeadmconfig_controlplane(kube_cluster: Cluster):
 # CAPA fixtures
 
 @pytest.fixture
-def awscluster(kube_cluster: Cluster):
+def awscluster_v1alpha3(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -367,8 +436,8 @@ def awscluster(kube_cluster: Cluster):
     kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-    raw = kube_cluster.kubectl(
-        f"get awscluster {cluster_name}", output_format="yaml")
+    raw = kubernetes_cluster.kubectl(
+        f"get awsclusters.v1alpha3.infrastructure.cluster.x-k8s.io {cluster_name}", output="yaml")
 
     awscluster = yaml.safe_load(raw)
 
@@ -379,7 +448,7 @@ def awscluster(kube_cluster: Cluster):
 
 
 @pytest.fixture
-def awscluster_empty(kube_cluster: Cluster):
+def awscluster_v1alpha3_empty(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -394,8 +463,8 @@ def awscluster_empty(kube_cluster: Cluster):
     kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-    raw = kube_cluster.kubectl(
-        f"get awscluster {cluster_name}", output_format="yaml")
+    raw = kubernetes_cluster.kubectl(
+        f"get awsclusters.v1alpha3.infrastructure.cluster.x-k8s.io {cluster_name}", output="yaml")
 
     awscluster = yaml.safe_load(raw)
 
@@ -406,7 +475,7 @@ def awscluster_empty(kube_cluster: Cluster):
 
 
 @pytest.fixture
-def awscluster_empty_labeled(kube_cluster: Cluster):
+def awscluster_v1alpha3_empty_labeled(kubernetes_cluster):
     c = dedent(f"""
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSCluster
@@ -422,8 +491,8 @@ def awscluster_empty_labeled(kube_cluster: Cluster):
     kube_cluster.kubectl("apply", std_input=c, output_format=None)
     LOGGER.info(f"AWSCluster {cluster_name} applied")
 
-    raw = kube_cluster.kubectl(
-        f"get awscluster {cluster_name}", output_format="yaml")
+    raw = kubernetes_cluster.kubectl(
+        f"get awsclusters.v1alpha3.infrastructure.cluster.x-k8s.io {cluster_name}", output="yaml")
 
     awscluster = yaml.safe_load(raw)
 
@@ -675,7 +744,7 @@ def silence_with_matchers(kube_cluster: Cluster):
 @pytest.fixture
 def kubeadm_control_plane(kube_cluster: Cluster):
     c = dedent(f"""
-        apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
+        apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
         kind: KubeadmControlPlane
         metadata:
           labels:
@@ -686,10 +755,23 @@ def kubeadm_control_plane(kube_cluster: Cluster):
         spec:
           kubeadmConfigSpec:
             clusterConfiguration:
+              apiServer:
+                extraArgs:
+                  cloud-config: /etc/kubernetes/azure.json
+                  cloud-provider: azure
+                extraVolumes:
+                - hostPath: /etc/kubernetes/azure.json
+                  mountPath: /etc/kubernetes/azure.json
+                  name: cloud-config
+                  readOnly: true
               controllerManager:
                 extraArgs:
                   allocate-node-cidrs: "false"
-          infrastructureTemplate: {{}}
+          machineTemplate:
+            infrastructureRef:
+              apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
+              kind: AWSMachineTemplate
+              name: {cluster_name}
           version: 1.22.0
     """)
 

@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2021-11-30
+
+### Added
+
+- Tilt support.
+
+### Changed
+
+- The api-server `extraVolumes` are appended instead of over writing the existing ones.
+
+## [0.10.0] - 2021-11-19
+
+### Changed
+
+- Apply policies to v20 even when v20 contains suffixes in its name.
+
+### Added
+
+- Policy to apply `audit-policy.yaml` to kubeadmconfig
+
+## [0.9.2] - 2021-10-26
+
+### Changed
+
+- Remove `PodSecurityPolicy` from the enabled api-server admission plugins.
+
 ## [0.9.1] - 2021-10-20
 
 ### Fixed
@@ -186,7 +212,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.10.0...v0.11.0
+[0.10.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.2...v0.10.0
+[0.9.2]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.7.1...v0.8.0

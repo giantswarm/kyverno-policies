@@ -3,6 +3,22 @@ import logging
 import sys
 
 sys.path.append('../../../tests')
+import yaml
+from functools import partial
+import time
+import random
+import string
+import ensure
+from textwrap import dedent
+
+from ensure import release
+from ensure import cluster
+from ensure import awscluster_v1alpha3
+from ensure import awscluster_v1alpha3_empty
+from ensure import awscluster_v1alpha3_empty_labeled
+from ensure import awsclusterroleidentity
+from ensure import awsmachinetemplate
+from ensure import awsmachinepool
 
 # noinspection PyUnresolvedReferences
 from ensure import (
@@ -21,7 +37,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.smoke
-def test_aws_cluster_policy(release, cluster, awscluster) -> None:
+def test_aws_cluster_policy(release, cluster, awscluster_v1alpha3) -> None:
     """
     test_aws_cluster_policy tests defaulting of an AWSCluster where all required values are empty strings.
 
@@ -29,14 +45,14 @@ def test_aws_cluster_policy(release, cluster, awscluster) -> None:
     :param cluster: Cluster CR which uses the release and matches the AWSCluster.
     :param awscluster: AWSCluster CR with empty strings which matches the Cluster CR.
     """
-    assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
-    assert awscluster['spec']['region'] == "eu-west-1"
-    assert awscluster['spec']['sshKeyName'] == "ssh-key"
-    assert len(awscluster['spec']['networkSpec']['cni']['cniIngressRules']) > 0
+    assert awscluster_v1alpha3['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster_v1alpha3['spec']['region'] == "eu-west-1"
+    assert awscluster_v1alpha3['spec']['sshKeyName'] == "ssh-key"
+    assert len(awscluster_v1alpha3['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
 
 @pytest.mark.smoke
-def test_aws_cluster_policy_empty(release, cluster, awscluster_empty) -> None:
+def test_aws_cluster_policy_empty(release, cluster, awscluster_v1alpha3_empty) -> None:
     """
     test_aws_cluster_policy_empty tests defaulting of an AWSCluster where all required values are missing.
 
@@ -44,23 +60,23 @@ def test_aws_cluster_policy_empty(release, cluster, awscluster_empty) -> None:
     :param cluster: Cluster CR which uses the release and matches the AWSCluster.
     :param awscluster_empty: Empty AWSCluster CR which matches the Cluster CR.
     """
-    assert awscluster_empty['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
-    assert awscluster_empty['spec']['region'] == "eu-west-1"
-    assert awscluster_empty['spec']['sshKeyName'] == "ssh-key"
-    assert len(awscluster_empty['spec']['networkSpec']['cni']['cniIngressRules']) > 0
+    assert awscluster_v1alpha3_empty['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster_v1alpha3_empty['spec']['region'] == "eu-west-1"
+    assert awscluster_v1alpha3_empty['spec']['sshKeyName'] == "ssh-key"
+    assert len(awscluster_v1alpha3_empty['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
 
 @pytest.mark.smoke
-def test_aws_cluster_policy_solo(awscluster_empty_labeled) -> None:
+def test_aws_cluster_policy_solo(awscluster_v1alpha3_empty_labeled) -> None:
     """
     test_aws_cluster_policy_solo tests defaulting of an AWSCluster where all required values are missing and no other CRs are given.
 
-    :param awscluster_empty_labeled: AWSCluster CR which is empty but has the cluster.x-k8s.io/watch-filter label.
+    :param awscluster_v1alpha3_empty_labeled: AWSCluster CR which is empty but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert awscluster_empty_labeled['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
-    assert awscluster_empty_labeled['spec']['region'] == "eu-west-1"
-    assert awscluster_empty_labeled['spec']['sshKeyName'] == "ssh-key"
-    assert len(awscluster_empty_labeled['spec']['networkSpec']['cni']['cniIngressRules']) > 0
+    assert awscluster_v1alpha3_empty_labeled['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awscluster_v1alpha3_empty_labeled['spec']['region'] == "eu-west-1"
+    assert awscluster_v1alpha3_empty_labeled['spec']['sshKeyName'] == "ssh-key"
+    assert len(awscluster_v1alpha3_empty_labeled['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
 
 @pytest.mark.smoke
