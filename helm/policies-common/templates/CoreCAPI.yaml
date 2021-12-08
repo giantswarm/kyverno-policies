@@ -30,6 +30,8 @@ spec:
             cluster.x-k8s.io/watch-filter: "capi"
             +(cluster-apps-operator.giantswarm.io/version): "{{ `{{` }} release.spec.components | [?name == 'cluster-apps-operator'].version | [0]{{ `}}` }}"
             cluster-apps-operator.giantswarm.io/version: "{{ `{{` }} release.spec.components | [?name == 'cluster-apps-operator'].version | [0]{{ `}}` }}"
+            +(cluster-apps-operator.giantswarm.io/watching): ""
+            cluster-apps-operator.giantswarm.io/watching: ""
 
   # cluster-default adds default values to fields in a Cluster CR if it has the watch-filter label and the values are completely missing.
   - name: cluster-default
