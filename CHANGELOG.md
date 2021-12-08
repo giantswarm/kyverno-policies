@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `cluster-apps-operator.giantswarm.io/watching` label to Cluster CRs so they will
+  be watched by `cluster-apps-operator` >=v1.1.0 (deployed by an app collection) in addition
+  to <v1.1.0 (deployed by release-operator).
+
 ## [0.11.0] - 2021-11-30
 
 ### Added
