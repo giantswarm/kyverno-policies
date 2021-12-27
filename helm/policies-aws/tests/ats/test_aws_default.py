@@ -1,6 +1,8 @@
+import pytest
+import logging
 import sys
-sys.path.append('../../../tests')
 
+sys.path.append('../../../tests')
 import yaml
 from functools import partial
 import time
@@ -18,10 +20,19 @@ from ensure import awsclusterroleidentity
 from ensure import awsmachinetemplate
 from ensure import awsmachinepool
 
-import pytest
-from pytest_kube import forward_requests, wait_for_rollout, app_template
+# noinspection PyUnresolvedReferences
+from ensure import (
+    release,
+    cluster,
+    awscluster,
+    awscluster_empty,
+    awscluster_empty_labeled,
+    awsclusterroleidentity,
+    awsmachinetemplate,
+    awsmachinepool,
+    watch_label,
+)
 
-import logging
 LOGGER = logging.getLogger(__name__)
 
 
@@ -54,6 +65,7 @@ def test_aws_cluster_policy_empty(release, cluster, awscluster_v1alpha3_empty) -
     assert awscluster_v1alpha3_empty['spec']['sshKeyName'] == "ssh-key"
     assert len(awscluster_v1alpha3_empty['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
+
 @pytest.mark.smoke
 def test_aws_cluster_policy_solo(awscluster_v1alpha3_empty_labeled) -> None:
     """
@@ -66,6 +78,7 @@ def test_aws_cluster_policy_solo(awscluster_v1alpha3_empty_labeled) -> None:
     assert awscluster_v1alpha3_empty_labeled['spec']['sshKeyName'] == "ssh-key"
     assert len(awscluster_v1alpha3_empty_labeled['spec']['networkSpec']['cni']['cniIngressRules']) > 0
 
+
 @pytest.mark.smoke
 def test_aws_cluster_role_identity_policy_solo(awsclusterroleidentity) -> None:
     """
@@ -73,10 +86,11 @@ def test_aws_cluster_role_identity_policy_solo(awsclusterroleidentity) -> None:
 
     :param awsclusterroleidentity: AWSClusterRoleIdentity CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert awsclusterroleidentity['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awsclusterroleidentity['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
     assert awsclusterroleidentity['spec']['roleARN'] == "default-arn"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['name'] == "default"
     assert awsclusterroleidentity['spec']['sourceIdentityRef']['kind'] == "AWSClusterControllerIdentity"
+
 
 @pytest.mark.smoke
 def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
@@ -85,8 +99,9 @@ def test_aws_machine_template_policy_solo(awsmachinetemplate) -> None:
 
     :param awsmachinetemplate: AWSMachineTemplate CR with empty strings but has the cluster.x-k8s.io/watch-filter label.
     """
-    assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
+    assert awsmachinetemplate['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == watch_label
     assert awsmachinetemplate['spec']['template']['spec']['instanceType'] == "t3.large"
+
 
 @pytest.mark.smoke
 def test_aws_machine_pool_policy_solo(awsmachinepool) -> None:
