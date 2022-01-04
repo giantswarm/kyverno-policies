@@ -29,7 +29,7 @@ replace_all () {
   mv $filename.modified $filename
 }
 
-for i in aws azure common shared vsphere; do
+for i in aws azure common shared openstack vsphere; do
   mkdir -p $(pwd)/helm/policies-$i/templates
 
   cp -a $(pwd)/policies/$i/. $(pwd)/helm/policies-$i/templates

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `policies-openstack` for OpenStack-specific policies.
+- Add policy for OpenStack which defaults `failureDomain` based on `MachineDeployment`
+  request's `machine-deployment.giantswarm.io/failure-domain` label.
+
 ## [0.12.0] - 2021-12-09
 
 ### Added
