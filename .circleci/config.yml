@@ -290,7 +290,7 @@ workflows:
       - architect/push-to-app-collection:
           name: push-policies-shared-to-openstack-app-collection
           context: architect
-          app_name: "policies-openstack"
+          app_name: "policies-shared"
           app_namespace: "giantswarm"
           app_collection_repo: "openstack-app-collection"
           requires:
