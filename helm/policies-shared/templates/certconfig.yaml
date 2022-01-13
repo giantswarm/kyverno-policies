@@ -1,0 +1,35 @@
+# THIS FILE IS GENERATED WITH 'make generate' - DO NOT EDIT MANUALLY
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: block-bulk-certconfigs-delete
+  annotations:
+    policies.kyverno.io/title: Block bulk certconfig deletes
+    policies.kyverno.io/subject: CertConfigs
+    policies.kyverno.io/description: >-
+      A bug in an old kubectl-gs version causes all certconfigs to
+      be deleted on performing a login, this policy blocks that
+      action while still allowing the single delete.
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+  - name: block-bulk-certconfigs-delete
+    match:
+      any:
+      - resources:
+          kinds:
+          - core.giantswarm.io/v1alpha1/certconfigs
+    preconditions:
+      any:
+      - key: "{{ `{{` }}request.name{{ `}}` }}"
+        operator: Equals
+        value: ""
+    validate:
+      message: "Deleting all is not allowed"
+      deny:
+        conditions:
+        - key: "{{ `{{` }}request.operation{{ `}}` }}"
+          operator: In
+          value:
+          - DELETE
