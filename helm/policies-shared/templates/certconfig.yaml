@@ -19,7 +19,7 @@ spec:
       any:
       - resources:
           kinds:
-          - core.giantswarm.io/v1alpha1/certconfigs
+          - CertConfig
     preconditions:
       any:
       - key: "{{ `{{` }}request.name{{ `}}` }}"
