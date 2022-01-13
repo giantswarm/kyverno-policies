@@ -25,7 +25,7 @@ spec:
         operator: Equals
         value: ""
     validate:
-      message: "Deleting all is not allowed"
+      message: "Your current kubectl-gs version contains a critical bug, please update to the latest version using `kubectl gs selfupdate`"
       deny:
         conditions:
         - key: "{{request.operation}}"
