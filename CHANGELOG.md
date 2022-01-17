@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Default Azure subscription ID by getting value directly from organization credentials secret.
+
 ## [0.13.2] - 2022-01-13
 
 ### Fixed
