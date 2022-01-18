@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support all API versions for CAPI resources
+
 ### Changed
 
 - Default Azure subscription ID by getting value directly from organization credentials secret.

@@ -12,6 +12,7 @@ spec:
         kinds:
         - cluster.x-k8s.io/v1alpha3/Cluster
         - cluster.x-k8s.io/v1alpha4/Cluster
+        - cluster.x-k8s.io/v1beta1/Cluster
     context:
     - name: release
       apiCall:
@@ -40,6 +41,7 @@ spec:
         kinds:
         - cluster.x-k8s.io/v1alpha3/Cluster
         - cluster.x-k8s.io/v1alpha4/Cluster
+        - cluster.x-k8s.io/v1beta1/Cluster
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -57,6 +59,7 @@ spec:
         kinds:
         - cluster.x-k8s.io/v1alpha3/Cluster
         - cluster.x-k8s.io/v1alpha4/Cluster
+        - cluster.x-k8s.io/v1beta1/Cluster
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -74,22 +77,31 @@ spec:
         kinds:
         - addons.cluster.x-k8s.io/v1alpha3/ClusterResourceSet
         - addons.cluster.x-k8s.io/v1alpha4/ClusterResourceSet
+        - addons.cluster.x-k8s.io/v1beta1/ClusterResourceSet
         - addons.cluster.x-k8s.io/v1alpha3/ClusterResourceSetBinding
         - addons.cluster.x-k8s.io/v1alpha4/ClusterResourceSetBinding
+        - addons.cluster.x-k8s.io/v1beta1/ClusterResourceSetBinding
         - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
         - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfig
+        - bootstrap.cluster.x-k8s.io/v1beta1/KubeadmConfig
         - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfigTemplate
         - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfigTemplate
+        - bootstrap.cluster.x-k8s.io/v1beta1/KubeadmConfigTemplate
         - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
         - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        - controlplane.cluster.x-k8s.io/v1beta1/KubeadmControlPlane
         - cluster.x-k8s.io/v1alpha3/Machine
         - cluster.x-k8s.io/v1alpha4/Machine
+        - cluster.x-k8s.io/v1beta1/Machine
         - cluster.x-k8s.io/v1alpha3/MachineSet
         - cluster.x-k8s.io/v1alpha4/MachineSet
+        - cluster.x-k8s.io/v1beta1/MachineSet
         - cluster.x-k8s.io/v1alpha3/MachineDeployment
         - cluster.x-k8s.io/v1alpha4/MachineDeployment
+        - cluster.x-k8s.io/v1beta1/MachineDeployment
         - exp.cluster.x-k8s.io/v1alpha3/MachinePool
         - cluster.x-k8s.io/v1alpha4/MachinePool
+        - cluster.x-k8s.io/v1beta1/MachinePool
     exclude:
       resources:
         selector:
@@ -118,6 +130,7 @@ spec:
         kinds:
         - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfigTemplate
         - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfigTemplate
+        - bootstrap.cluster.x-k8s.io/v1beta1/KubeadmConfigTemplate
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -149,6 +162,7 @@ spec:
         kinds:
         - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
         - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfig
+        - bootstrap.cluster.x-k8s.io/v1beta1/KubeadmConfig
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -177,6 +191,7 @@ spec:
         kinds:
           - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
           - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfig
+          - bootstrap.cluster.x-k8s.io/v1beta1/KubeadmConfig
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -205,6 +220,7 @@ spec:
         kinds:
           - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
           - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfig
+          - bootstrap.cluster.x-k8s.io/v1beta1/KubeadmConfig
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -229,6 +245,7 @@ spec:
         kinds:
         - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
         - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        - controlplane.cluster.x-k8s.io/v1beta1/KubeadmControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -277,6 +294,7 @@ spec:
         kinds:
           - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
           - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+          - controlplane.cluster.x-k8s.io/v1beta1/KubeadmControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -297,6 +315,7 @@ spec:
         kinds:
           - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
           - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+          - controlplane.cluster.x-k8s.io/v1beta1/KubeadmControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -317,6 +336,7 @@ spec:
         kinds:
         - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
         - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        - controlplane.cluster.x-k8s.io/v1beta1/KubeadmControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -340,6 +360,7 @@ spec:
         kinds:
         - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
         - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        - controlplane.cluster.x-k8s.io/v1beta1/KubeadmControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -364,6 +385,7 @@ spec:
         kinds:
         - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
         - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+        - controlplane.cluster.x-k8s.io/v1beta1/KubeadmControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -387,6 +409,7 @@ spec:
         kinds:
         - bootstrap.cluster.x-k8s.io/v1alpha3/KubeadmConfig
         - bootstrap.cluster.x-k8s.io/v1alpha4/KubeadmConfig
+        - bootstrap.cluster.x-k8s.io/v1beta1/KubeadmConfig
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
