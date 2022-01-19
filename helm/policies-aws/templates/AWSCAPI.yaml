@@ -21,6 +21,26 @@ spec:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSManagedMachinePool
         - controlplane.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
         - bootstrap.cluster.x-k8s.io/v1alpha3/EKSConfigTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSCluster
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSClusterControllerIdentity
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSClusterRoleIdentity
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSClusterStaticIdentity
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSMachine
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSMachinePool
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSManagedMachinePool
+        - controlplane.cluster.x-k8s.io/v1alpha4/AWSManagedControlPlane
+        - bootstrap.cluster.x-k8s.io/v1alpha4/EKSConfigTemplate
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSCluster
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSClusterControllerIdentity
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSClusterRoleIdentity
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSClusterStaticIdentity
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSMachine
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSMachinePool
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSManagedMachinePool
+        - controlplane.cluster.x-k8s.io/v1beta1/AWSManagedControlPlane
+        - bootstrap.cluster.x-k8s.io/v1beta1/EKSConfigTemplate
     exclude:
       resources:
         selector:
@@ -49,6 +69,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSCluster
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSCluster
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSCluster
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -65,6 +87,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSCluster
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSCluster
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSCluster
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -83,6 +107,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSCluster
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSCluster
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSCluster
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -104,6 +130,8 @@ spec:
       resources:
         kinds:
         - controlplane.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
+        - controlplane.cluster.x-k8s.io/v1alpha4/AWSManagedControlPlane
+        - controlplane.cluster.x-k8s.io/v1beta1/AWSManagedControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -120,6 +148,8 @@ spec:
       resources:
         kinds:
         - controlplane.cluster.x-k8s.io/v1alpha3/AWSManagedControlPlane
+        - controlplane.cluster.x-k8s.io/v1alpha4/AWSManagedControlPlane
+        - controlplane.cluster.x-k8s.io/v1beta1/AWSManagedControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -138,6 +168,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSClusterRoleIdentity
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSClusterRoleIdentity
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSClusterRoleIdentity
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -159,6 +191,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSClusterRoleIdentity
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSClusterRoleIdentity
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSClusterRoleIdentity
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -180,6 +214,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSMachineTemplate
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -196,6 +232,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSMachineTemplate
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -213,6 +251,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSMachineTemplate
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -245,6 +285,8 @@ spec:
       resources:
         kinds:
         - infrastructure.cluster.x-k8s.io/v1alpha3/AWSMachinePool
+        - infrastructure.cluster.x-k8s.io/v1alpha4/AWSMachinePool
+        - infrastructure.cluster.x-k8s.io/v1beta1/AWSMachinePool
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi

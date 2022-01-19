@@ -19,6 +19,15 @@ spec:
         - infrastructure.cluster.x-k8s.io/v1alpha4/AzureManagedControlplane
         - infrastructure.cluster.x-k8s.io/v1alpha4/AzureManagedMachinePool
         - infrastructure.cluster.x-k8s.io/v1alpha4/AzureClusterIdentity
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureCluster
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureMachine
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureMachineTemplate
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureMachinePool
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureMachinePoolMachine
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureManagedCluster
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureManagedControlplane
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureManagedMachinePool
+        - infrastructure.cluster.x-k8s.io/v1beta1/AzureClusterIdentity
     context:
     - name: releaseVersion
       apiCall:
@@ -41,6 +50,7 @@ spec:
         kinds:
           - controlplane.cluster.x-k8s.io/v1alpha3/KubeadmControlPlane
           - controlplane.cluster.x-k8s.io/v1alpha4/KubeadmControlPlane
+          - controlplane.cluster.x-k8s.io/v1beta1/KubeadmControlPlane
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -57,7 +67,9 @@ spec:
       resources:
         kinds:
           - infrastructure.cluster.x-k8s.io/v1alpha4/AzureCluster
+          - infrastructure.cluster.x-k8s.io/v1beta1/AzureCluster
           - infrastructure.cluster.x-k8s.io/v1alpha4/AzureMachinePool
+          - infrastructure.cluster.x-k8s.io/v1beta1/AzureMachinePool
         selector:
           matchLabels:
             cluster.x-k8s.io/watch-filter: capi
@@ -69,6 +81,8 @@ spec:
     match:
       resources:
         kinds:
+          - infrastructure.cluster.x-k8s.io/v1alpha3/AzureCluster
+          - infrastructure.cluster.x-k8s.io/v1alpha4/AzureCluster
           - infrastructure.cluster.x-k8s.io/v1beta1/AzureCluster
         selector:
           matchLabels:
@@ -86,6 +100,8 @@ spec:
     match:
       resources:
         kinds:
+          - infrastructure.cluster.x-k8s.io/v1alpha3/AzureCluster
+          - infrastructure.cluster.x-k8s.io/v1alpha4/AzureCluster
           - infrastructure.cluster.x-k8s.io/v1beta1/AzureCluster
         selector:
           matchLabels:
