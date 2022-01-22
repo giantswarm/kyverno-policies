@@ -137,7 +137,7 @@ workflows:
       # Common
       - architect/push-to-app-catalog:
           name: push-policies-common-to-catalog
-          app_catalog: control-plane-test-catalog
+          app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-common
@@ -153,7 +153,7 @@ workflows:
       # AWS
       - architect/push-to-app-catalog:
           name: push-policies-aws-to-catalog
-          app_catalog: control-plane-test-catalog
+          app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-aws
@@ -169,7 +169,7 @@ workflows:
       # Azure
       - architect/push-to-app-catalog:
           name: push-policies-azure-to-catalog
-          app_catalog: control-plane-test-catalog
+          app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-azure
@@ -185,7 +185,7 @@ workflows:
       # Openstack
       - architect/push-to-app-catalog:
           name: push-policies-openstack-to-catalog
-          app_catalog: control-plane-test-catalog
+          app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-openstack
@@ -201,7 +201,7 @@ workflows:
       # VSphere
       - architect/push-to-app-catalog:
           name: push-policies-vsphere-to-catalog
-          app_catalog: control-plane-test-catalog
+          app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: policies-vsphere
