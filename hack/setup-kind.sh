@@ -4,7 +4,7 @@
 kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.com/giantswarm/apiextensions/15836a106059cc8d201e1237adf44aec340bbab6/helm/crds-common/templates/giantswarm.yaml
 
 # Prometheus operator CRDs
-kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.com/giantswarm/prometheus-operator-app/master/helm/prometheus-operator-app/crds/crd-servicemonitors.yaml
+# kubectl create --context kind-kyverno-cluster -f https://raw.githubusercontent.com/giantswarm/prometheus-operator-app/master/helm/prometheus-operator-app/crds/crd-servicemonitors.yaml
 
 MOCK_CREDENTIALS=$(echo -n "something" | base64)
 
