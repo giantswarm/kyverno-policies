@@ -11,6 +11,7 @@ from textwrap import dedent
 
 from ensure import release
 from ensure import cluster
+# from ensure import cluster_v1alpha4
 from ensure import machinedeployment
 from ensure import kubeadmconfig
 from ensure import kubeadmconfig_controlplane
@@ -30,14 +31,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.smoke
-def test_cluster_policy(release, cluster) -> None:
+def test_cluster_policy(cluster) -> None:
     """
     test_cluster_policy tests defaulting of a Cluster where all required values are empty strings.
 
-    :param release: Release CR which is used by the Cluster.
     :param cluster: Cluster CR which uses the release.
     """
-    assert cluster['metadata']['labels']['cluster-apps-operator.giantswarm.io/version'] == ensure.cluster_apps_operator_version
     assert cluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
 
 
@@ -174,3 +173,22 @@ def test_kubeadmconfig_auditpolicy(kubeadmconfig_with_audit_file) -> None:
     :param kubeadmconfig_with_audit_file: KubeadmConfig CR which includes an existing audit file
     """
     assert len(kubeadmconfig_with_audit_file['spec']['files']) == 1
+
+# @pytest.mark.smoke
+# def test_kubeadm_control_plane_azure_config(release, cluster_v1alpha4, kubeadm_control_plane) -> None:
+#     """
+#     test_kubeadm_control_plane_azure_config tests defaulting of an AzureMachinePool where all required values are empty strings.
+#
+#     :param release: Release CR which is used by the Cluster.
+#     :param cluster_v1alpha4: Cluster CR which uses the release and matches the AzureCluster.
+#     :param azuremachinepool: AzureMachinePool CR with empty strings which matches the Cluster CR.
+#     """
+#     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['cloud-config'] == "/etc/kubernetes/azure.json"
+#     assert kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraArgs']['cloud-provider'] == "azure"
+#
+#     found = False
+#     for volumes in kubeadm_control_plane['spec']['kubeadmConfigSpec']['clusterConfiguration']['apiServer']['extraVolumes']:
+#         if volumes['hostPath'] == "/etc/kubernetes/azure.json":
+#             found = True
+#
+#     assert found == True
