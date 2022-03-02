@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Policies no longer the `cluster-apps-operator.giantswarm.io/version` label since `cluster-apps-operator` don't use it.
+
 ## [0.15.0] - 2022-02-28
 
 ### Changed
