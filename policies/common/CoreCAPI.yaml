@@ -12,11 +12,6 @@ spec:
         - cluster.x-k8s.io/v1alpha3/Cluster
         - cluster.x-k8s.io/v1alpha4/Cluster
         - cluster.x-k8s.io/v1beta1/Cluster
-    context:
-    - name: release
-      apiCall:
-        urlPath: "/apis/release.giantswarm.io/v1alpha1/releases"
-        jmesPath: "items[?metadata.name == 'v{{ request.object.metadata.labels.\"release.giantswarm.io/version\" }}'] | [0]"
     preconditions:
       any:
       - key: "{{ request.object.metadata.labels.\"release.giantswarm.io/version\" }}"
@@ -28,8 +23,6 @@ spec:
           labels:
             +(cluster.x-k8s.io/watch-filter): "capi"
             cluster.x-k8s.io/watch-filter: "capi"
-            +(cluster-apps-operator.giantswarm.io/version): "{{ release.spec.components | [?name == 'cluster-apps-operator'].version | [0]}}"
-            cluster-apps-operator.giantswarm.io/version: "{{ release.spec.components | [?name == 'cluster-apps-operator'].version | [0]}}"
             +(cluster-apps-operator.giantswarm.io/watching): ""
             cluster-apps-operator.giantswarm.io/watching: ""
 

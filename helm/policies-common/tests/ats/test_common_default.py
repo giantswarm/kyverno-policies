@@ -30,14 +30,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.smoke
-def test_cluster_policy(release, cluster) -> None:
+def test_cluster_policy(cluster) -> None:
     """
     test_cluster_policy tests defaulting of a Cluster where all required values are empty strings.
 
-    :param release: Release CR which is used by the Cluster.
     :param cluster: Cluster CR which uses the release.
     """
-    assert cluster['metadata']['labels']['cluster-apps-operator.giantswarm.io/version'] == ensure.cluster_apps_operator_version
     assert cluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
 
 
