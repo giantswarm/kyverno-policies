@@ -302,3 +302,32 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+
+      # vsphere
+      - architect/push-to-app-collection:
+          name: push-policies-vsphere-to-vsphere-app-collection
+          context: architect
+          app_name: "policies-vsphere"
+          app_namespace: "giantswarm"
+          app_collection_repo: "vsphere-app-collection"
+          requires:
+            - push-policies-vsphere-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          name: push-policies-shared-to-vsphere-app-collection
+          context: architect
+          app_name: "policies-shared"
+          app_namespace: "giantswarm"
+          app_collection_repo: "vsphere-app-collection"
+          requires:
+            - push-policies-shared-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
