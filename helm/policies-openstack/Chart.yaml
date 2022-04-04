@@ -1,9 +1,0 @@
-apiVersion: v1
-appVersion: master
-description: Giant Swarm Kyverno policies for OpenStack.
-home: https://github.com/giantswarm/kyverno-policies
-name: policies-openstack
-annotations:
-  application.giantswarm.io/team: "honeybadger"
-  config.giantswarm.io/version: 1.x.x
-version: [[ .Version ]]

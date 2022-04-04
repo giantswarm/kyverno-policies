@@ -1,9 +1,0 @@
-apiVersion: v1
-name: policies-azure
-appVersion: master
-description: Giant Swarm policies for azure.
-home: https://github.com/giantswarm/kyverno-policies
-annotations:
-  application.giantswarm.io/team: "honeybadger"
-  config.giantswarm.io/version: 1.x.x
-version: [[ .Version ]]

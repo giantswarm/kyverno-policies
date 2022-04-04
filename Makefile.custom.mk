@@ -44,10 +44,4 @@ kind-get-kubeconfig:
 
 .PHONY: dabs
 dabs: generate
-	dabs.sh --generate-metadata --chart-dir helm/policies-aws
-	dabs.sh --generate-metadata --chart-dir helm/policies-azure
-	dabs.sh --generate-metadata --chart-dir helm/policies-common
-	dabs.sh --generate-metadata --chart-dir helm/policies-openstack
-	dabs.sh --generate-metadata --chart-dir helm/policies-shared
-	dabs.sh --generate-metadata --chart-dir helm/policies-vsphere
 	dabs.sh --generate-metadata --chart-dir helm/kyverno-policies
