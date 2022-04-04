@@ -1,6 +1,6 @@
 # kyverno-policies
 
-This repository contains kyverno policies which Giant Swarm uses.
+This repository tracks the [upstream Kyverno PSS policies](https://github.com/kyverno/kyverno/tree/main/charts/kyverno-policies) and is used for deploying PSS policies alongside our [kyverno-app](https://github.com/giantswarm/kyverno-app).
 
 ## Repository structure
 

@@ -90,23 +90,8 @@ jobs:
           command: |
             make dabs
       - run-ats:
-          chart_archive_prefix: "policies-aws"
-          tests_dir: "helm/policies-aws/tests/ats"
-      - run-ats:
-          chart_archive_prefix: "policies-azure"
-          tests_dir: "helm/policies-azure/tests/ats"
-      - run-ats:
-          chart_archive_prefix: "policies-common"
-          tests_dir: "helm/policies-common/tests/ats"
-      - run-ats:
-          chart_archive_prefix: "policies-openstack"
-          tests_dir: "helm/policies-openstack/tests/ats"
-      - run-ats:
-          chart_archive_prefix: "policies-shared"
-          tests_dir: "helm/policies-shared/tests/ats"
-      - run-ats:
-          chart_archive_prefix: "policies-vsphere"
-          tests_dir: "helm/policies-vsphere/tests/ats"
+          chart_archive_prefix: "kyverno-policies"
+          tests_dir: "helm/kyverno-policies/tests/ats"
       - run:
           name: Export kind logs
           when: always
@@ -118,17 +103,17 @@ jobs:
 workflows:
   workflow:
     jobs:
-      - verify:
-          # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
+      # - verify:
+      #     # Needed to trigger job also on git tag.
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
 
-      - validate:
-          # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
+      # - validate:
+      #     # Needed to trigger job also on git tag.
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
 
       - test-policies:
           # Needed to trigger job also on git tag.
@@ -136,94 +121,13 @@ workflows:
             tags:
               only: /^v.*/
 
-      # Common
+      # Push PSS policies to catalog
       - architect/push-to-app-catalog:
-          name: push-policies-common-to-catalog
+          name: push-kyverno-policies-to-catalog
           app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
-          chart: policies-common
-          context: "architect"
-          explicit_allow_chart_name_mismatch: true
-          on_tag: false
-          requires:
-            - test-policies
-          # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
-      # AWS
-      - architect/push-to-app-catalog:
-          name: push-policies-aws-to-catalog
-          app_catalog: control-plane-catalog
-          app_catalog_test: control-plane-test-catalog
-          attach_workspace: true
-          chart: policies-aws
-          context: "architect"
-          explicit_allow_chart_name_mismatch: true
-          on_tag: false
-          requires:
-            - test-policies
-          # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
-      # Azure
-      - architect/push-to-app-catalog:
-          name: push-policies-azure-to-catalog
-          app_catalog: control-plane-catalog
-          app_catalog_test: control-plane-test-catalog
-          attach_workspace: true
-          chart: policies-azure
-          context: "architect"
-          explicit_allow_chart_name_mismatch: true
-          on_tag: false
-          requires:
-            - test-policies
-          # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
-      # Openstack
-      - architect/push-to-app-catalog:
-          name: push-policies-openstack-to-catalog
-          app_catalog: control-plane-catalog
-          app_catalog_test: control-plane-test-catalog
-          attach_workspace: true
-          chart: policies-openstack
-          context: "architect"
-          explicit_allow_chart_name_mismatch: true
-          on_tag: false
-          requires:
-            - test-policies
-          # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
-      # VSphere
-      - architect/push-to-app-catalog:
-          name: push-policies-vsphere-to-catalog
-          app_catalog: control-plane-catalog
-          app_catalog_test: control-plane-test-catalog
-          attach_workspace: true
-          chart: policies-vsphere
-          context: "architect"
-          explicit_allow_chart_name_mismatch: true
-          on_tag: false
-          requires:
-            - test-policies
-          # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
-
-      # Shared
-      - architect/push-to-app-catalog:
-          name: push-policies-shared-to-catalog
-          app_catalog: control-plane-catalog
-          app_catalog_test: control-plane-test-catalog
-          attach_workspace: true
-          chart: policies-shared
+          chart: kyverno-policies
           context: "architect"
           explicit_allow_chart_name_mismatch: true
           requires:
@@ -233,72 +137,72 @@ workflows:
             tags:
               only: /^v.*/
 
-      - architect/push-to-app-collection:
-          name: push-policies-shared-to-aws-app-collection
-          context: architect
-          app_name: "policies-shared"
-          app_namespace: "giantswarm"
-          app_collection_repo: "aws-app-collection"
-          requires:
-            - push-policies-shared-to-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+      # - architect/push-to-app-collection:
+      #     name: push-policies-shared-to-aws-app-collection
+      #     context: architect
+      #     app_name: "policies-shared"
+      #     app_namespace: "giantswarm"
+      #     app_collection_repo: "aws-app-collection"
+      #     requires:
+      #       - push-policies-shared-to-catalog
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^v.*/
 
-      - architect/push-to-app-collection:
-          name: push-policies-shared-to-azure-app-collection
-          context: architect
-          app_name: "policies-shared"
-          app_namespace: "giantswarm"
-          app_collection_repo: "azure-app-collection"
-          requires:
-            - push-policies-shared-to-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+      # - architect/push-to-app-collection:
+      #     name: push-policies-shared-to-azure-app-collection
+      #     context: architect
+      #     app_name: "policies-shared"
+      #     app_namespace: "giantswarm"
+      #     app_collection_repo: "azure-app-collection"
+      #     requires:
+      #       - push-policies-shared-to-catalog
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^v.*/
 
-      - architect/push-to-app-collection:
-          name: push-policies-shared-to-kvm-app-collection
-          context: architect
-          app_name: "policies-shared"
-          app_namespace: "giantswarm"
-          app_collection_repo: "kvm-app-collection"
-          requires:
-            - push-policies-shared-to-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+      # - architect/push-to-app-collection:
+      #     name: push-policies-shared-to-kvm-app-collection
+      #     context: architect
+      #     app_name: "policies-shared"
+      #     app_namespace: "giantswarm"
+      #     app_collection_repo: "kvm-app-collection"
+      #     requires:
+      #       - push-policies-shared-to-catalog
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^v.*/
 
-      - architect/push-to-app-collection:
-          name: push-policies-openstack-to-openstack-app-collection
-          context: architect
-          app_name: "policies-openstack"
-          app_namespace: "giantswarm"
-          app_collection_repo: "openstack-app-collection"
-          requires:
-            - push-policies-openstack-to-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+      # - architect/push-to-app-collection:
+      #     name: push-policies-openstack-to-openstack-app-collection
+      #     context: architect
+      #     app_name: "policies-openstack"
+      #     app_namespace: "giantswarm"
+      #     app_collection_repo: "openstack-app-collection"
+      #     requires:
+      #       - push-policies-openstack-to-catalog
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^v.*/
 
-      - architect/push-to-app-collection:
-          name: push-policies-shared-to-openstack-app-collection
-          context: architect
-          app_name: "policies-shared"
-          app_namespace: "giantswarm"
-          app_collection_repo: "openstack-app-collection"
-          requires:
-            - push-policies-shared-to-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+      # - architect/push-to-app-collection:
+      #     name: push-policies-shared-to-openstack-app-collection
+      #     context: architect
+      #     app_name: "policies-shared"
+      #     app_namespace: "giantswarm"
+      #     app_collection_repo: "openstack-app-collection"
+      #     requires:
+      #       - push-policies-shared-to-catalog
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^v.*/

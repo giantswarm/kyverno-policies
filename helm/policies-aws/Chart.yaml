@@ -1,9 +1,0 @@
-apiVersion: v1
-appVersion: master
-description: Giant Swarm policies for aws.
-home: https://github.com/giantswarm/kyverno-policies
-name: policies-aws
-annotations:
-  application.giantswarm.io/team: "honeybadger"
-  config.giantswarm.io/version: 1.x.x
-version: [[ .Version ]]
