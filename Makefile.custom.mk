@@ -43,5 +43,5 @@ kind-get-kubeconfig:
 	kind get kubeconfig --name $(KIND_CLUSTER_NAME) > $(PWD)/kube.config
 
 .PHONY: dabs
-dabs: generate
+dabs:  # generate
 	dabs.sh --generate-metadata --chart-dir helm/kyverno-policies
