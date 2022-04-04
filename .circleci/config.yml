@@ -91,7 +91,7 @@ jobs:
             make dabs
       - run-ats:
           chart_archive_prefix: "kyverno-policies"
-          tests_dir: "helm/kyverno-policies/tests/ats"
+          tests_dir: "helm/kyverno-policies/charts/kyverno-policies/tests/ats"
       - run:
           name: Export kind logs
           when: always
