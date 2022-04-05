@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Track upstream PSS policies with a subtree.
-- Remove push to catalog for AWS, Azure, KVM, OpenStack, VSphere, common, and shared policies.
+- Push PSS policies to AWS, Azure, KVM, OpenStack, and VSphere catalogs and collections.
+- Remove catalog and collections push for common and shared policies.
 
 ## [0.16.0] - 2022-03-02
 
