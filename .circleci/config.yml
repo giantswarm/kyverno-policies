@@ -137,72 +137,85 @@ workflows:
             tags:
               only: /^v.*/
 
-      # - architect/push-to-app-collection:
-      #     name: push-policies-shared-to-aws-app-collection
-      #     context: architect
-      #     app_name: "policies-shared"
-      #     app_namespace: "giantswarm"
-      #     app_collection_repo: "aws-app-collection"
-      #     requires:
-      #       - push-policies-shared-to-catalog
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: /^v.*/
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-shared-app-collection
+          context: architect
+          app_name: "kyverno-policies"
+          app_namespace: giantswarm
+          app_collection_repo: "shared-app-collection"
+          requires:
+            - push-kyverno-policies-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
 
-      # - architect/push-to-app-collection:
-      #     name: push-policies-shared-to-azure-app-collection
-      #     context: architect
-      #     app_name: "policies-shared"
-      #     app_namespace: "giantswarm"
-      #     app_collection_repo: "azure-app-collection"
-      #     requires:
-      #       - push-policies-shared-to-catalog
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: /^v.*/
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-aws-app-collection
+          context: architect
+          app_name: "kyverno-policies"
+          app_namespace: "giantswarm"
+          app_collection_repo: "aws-app-collection"
+          requires:
+            - push-kyverno-policies-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
 
-      # - architect/push-to-app-collection:
-      #     name: push-policies-shared-to-kvm-app-collection
-      #     context: architect
-      #     app_name: "policies-shared"
-      #     app_namespace: "giantswarm"
-      #     app_collection_repo: "kvm-app-collection"
-      #     requires:
-      #       - push-policies-shared-to-catalog
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: /^v.*/
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-azure-app-collection
+          context: architect
+          app_name: "kyverno-policies"
+          app_namespace: "giantswarm"
+          app_collection_repo: "azure-app-collection"
+          requires:
+            - push-kyverno-policies-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
 
-      # - architect/push-to-app-collection:
-      #     name: push-policies-openstack-to-openstack-app-collection
-      #     context: architect
-      #     app_name: "policies-openstack"
-      #     app_namespace: "giantswarm"
-      #     app_collection_repo: "openstack-app-collection"
-      #     requires:
-      #       - push-policies-openstack-to-catalog
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: /^v.*/
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-kvm-app-collection
+          context: architect
+          app_name: "kyverno-policies"
+          app_namespace: "giantswarm"
+          app_collection_repo: "kvm-app-collection"
+          requires:
+            - push-kyverno-policies-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
 
-      # - architect/push-to-app-collection:
-      #     name: push-policies-shared-to-openstack-app-collection
-      #     context: architect
-      #     app_name: "policies-shared"
-      #     app_namespace: "giantswarm"
-      #     app_collection_repo: "openstack-app-collection"
-      #     requires:
-      #       - push-policies-shared-to-catalog
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: /^v.*/
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-openstack-app-collection
+          context: architect
+          app_name: "kyverno-policies"
+          app_namespace: "giantswarm"
+          app_collection_repo: "openstack-app-collection"
+          requires:
+            - push-kyverno-policies-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+              
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-vmware-app-collection
+          context: "architect"
+          app_name: "kyverno-policies"
+          app_collection_repo: "vmware-app-collection"
+          requires:
+            - push-kyverno-policies-to-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
