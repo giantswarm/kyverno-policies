@@ -123,7 +123,7 @@ workflows:
 
       # Push PSS policies to catalogs
       - architect/push-to-app-catalog:
-          name: push-kyverno-policies-to-catalog
+          name: push-kyverno-policies-to-control-plane-catalog
           app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
@@ -158,7 +158,7 @@ workflows:
           app_namespace: giantswarm
           app_collection_repo: "shared-app-collection"
           requires:
-            - push-kyverno-policies-to-catalog
+            - push-kyverno-policies-to-control-plane-catalog
           filters:
             branches:
               ignore: /.*/
@@ -172,7 +172,7 @@ workflows:
           app_namespace: "giantswarm"
           app_collection_repo: "aws-app-collection"
           requires:
-            - push-kyverno-policies-to-catalog
+            - push-kyverno-policies-to-control-plane-catalog
           filters:
             branches:
               ignore: /.*/
@@ -186,7 +186,7 @@ workflows:
           app_namespace: "giantswarm"
           app_collection_repo: "azure-app-collection"
           requires:
-            - push-kyverno-policies-to-catalog
+            - push-kyverno-policies-to-control-plane-catalog
           filters:
             branches:
               ignore: /.*/
@@ -200,7 +200,7 @@ workflows:
           app_namespace: "giantswarm"
           app_collection_repo: "kvm-app-collection"
           requires:
-            - push-kyverno-policies-to-catalog
+            - push-kyverno-policies-to-control-plane-catalog
           filters:
             branches:
               ignore: /.*/
@@ -214,7 +214,7 @@ workflows:
           app_namespace: "giantswarm"
           app_collection_repo: "openstack-app-collection"
           requires:
-            - push-kyverno-policies-to-catalog
+            - push-kyverno-policies-to-control-plane-catalog
           filters:
             branches:
               ignore: /.*/
@@ -227,7 +227,7 @@ workflows:
           app_name: "kyverno-policies"
           app_collection_repo: "vmware-app-collection"
           requires:
-            - push-kyverno-policies-to-catalog
+            - push-kyverno-policies-to-control-plane-catalog
           filters:
             branches:
               ignore: /.*/
