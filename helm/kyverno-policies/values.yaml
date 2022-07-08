@@ -1,0 +1,48 @@
+kyverno-policies:
+  policyExclude:
+    disallow-host-path:
+      any:
+      - resources:
+          kinds:
+          - Deployment
+          - StatefulSet
+          selector:
+            matchLabels:
+              "policy.security.giantswarm.io/disallow-host-path": exempt
+      - resources:
+          kinds:
+          - Pod
+          namespaces:
+          - giantswarm
+      - subjects:
+        - kind: ServiceAccount
+          name: cert-operator
+      # policyExclude:
+      #   disallow-capabilities-strict:
+      #     any:
+      #     - resources:
+      #         kinds:
+      #         - Pod
+      #         namespaces:
+      #         - giantswarm
+      #   restrict-seccomp-strict:
+      #     any:
+      #     - resources:
+      #         kinds:
+      #         - Pod
+      #         namespaces:
+      #         - giantswarm
+      #   require-run-as-nonroot:
+      #     any:
+      #     - resources:
+      #         kinds:
+      #         - Pod
+      #         namespaces:
+      #         - giantswarm
+      #   disallow-privilege-escalation:
+      #     any:
+      #     - resources:
+      #         kinds:
+      #         - Pod
+      #         namespaces:
+      #         - giantswarm
