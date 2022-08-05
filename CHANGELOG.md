@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.2] - 2022-08-05
+
 ## [0.17.1] - 2022-04-06
 
 ### Added
@@ -276,7 +278,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.17.1...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.17.2...HEAD
+[0.17.2]: https://github.com/giantswarm/kyverno-policies/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.15.0...v0.16.0
