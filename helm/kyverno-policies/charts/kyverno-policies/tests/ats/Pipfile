@@ -13,7 +13,7 @@ pytest = "==6.2.2"
 pykube-ng = "==21.3.0"
 pyyaml = "==5.4.1"
 pytest-rerunfailures = "==9.1.1"
-requests = "==2.25.1"
+requests = "==2.28.1"
 setuptools = "==54.0.0"
 
 [requires]
