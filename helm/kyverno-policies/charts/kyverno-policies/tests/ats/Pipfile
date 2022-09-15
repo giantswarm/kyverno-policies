@@ -12,7 +12,7 @@ pytest-kube = {git = "https://github.com/giantswarm/pytest-kube.git", editable =
 pytest = "==6.2.2"
 pykube-ng = "==21.3.0"
 pyyaml = "==5.4.1"
-pytest-rerunfailures = "==9.1.1"
+pytest-rerunfailures = "==10.2"
 requests = "==2.25.1"
 setuptools = "==54.0.0"
 
