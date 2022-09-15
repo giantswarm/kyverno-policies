@@ -24,7 +24,7 @@ commands:
 jobs:
   verify:
     docker:
-      - image: cimg/base:2021.10
+      - image: cimg/base:2021.12
     steps:
       - checkout
       - run:
