@@ -9,7 +9,7 @@ setuptools = "==54.0.0"
 
 [packages]
 pytest-kube = {git = "https://github.com/giantswarm/pytest-kube.git", editable = false, ref = "kubectl"}
-pytest = "==6.2.2"
+pytest = "==6.2.5"
 pykube-ng = "==21.3.0"
 pyyaml = "==5.4.1"
 pytest-rerunfailures = "==9.1.1"
