@@ -5,7 +5,7 @@ annotations:
   config.giantswarm.io/version: 1.x.x
 dependencies:
   - name: kyverno-policies
-    version: v2.3.2
+    version: v2.5.5
 description: |
   Kubernetes Pod Security Standards implemented as Kyverno policies
 engine: gotpl
