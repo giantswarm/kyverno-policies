@@ -1,11 +1,11 @@
 apiVersion: v2
-appVersion: v1.6.2
+appVersion: v1.7.5
 annotations:
   application.giantswarm.io/team: team-honeybadger
   config.giantswarm.io/version: 1.x.x
 dependencies:
   - name: kyverno-policies
-    version: v2.3.2
+    version: v2.5.5
 description: |
   Kubernetes Pod Security Standards implemented as Kyverno policies
 engine: gotpl
