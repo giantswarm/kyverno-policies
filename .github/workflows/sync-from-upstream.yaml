@@ -1,0 +1,37 @@
+name: Update from fork
+
+on:
+  schedule:
+    - cron: '0 8 */7 * *' # At 08:00 on every 7th day-of-month
+
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+env:
+  fork_repo: https://github.com/giantswarm/kyverno-upstream
+  branch: 'main#update-chart'
+jobs:
+  sync-app-with-fork:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: |
+          # Get the last tag from fork repo
+          LAST_TAG=$(git ls-remote --tags --sort='v:refname' --refs $fork_repo \
+           | tail -1 | cut -d '/' -f3)
+          echo "Last tag found is $LAST_TAG"
+          # Setup git config
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
+          git checkout -b $branch
+          # Modify the version in Vendir config
+          sed -i -r "s/(ref:).*/\1 $LAST_TAG/g" vendir.yml
+          git add vendir.yml
+          git commit -m "Update app version from fork repo"
+          git push origin $branch
+  call-update-chart:
+    uses: ./.github/workflows/zz_generated.update_chart.yaml
+    needs: sync-app-with-fork
+    with:
+      branch: 'main#update-chart'
