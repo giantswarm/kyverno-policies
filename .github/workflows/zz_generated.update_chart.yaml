@@ -1,6 +1,6 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@5.15.0
+#    devctl@5.18.2
 #
 
 #
@@ -126,4 +126,4 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           base: "${{ needs.gather_facts.outputs.base }}"
         run: |
-          hub pull-request -f -m "Update chart" -a ${{ github.actor }} -b ${{ env.base }} -h ${{ needs.gather_facts.outputs.branch }}
+          hub pull-request -f -m "Update chart from upstream" -m "This PR was created by the \`update-chart\` automated workflow." -m "**:warning: Make sure all tests have passed before merging.**" -l "automated-update" -a ${{ github.actor }} -b ${{ env.base }} -h ${{ needs.gather_facts.outputs.branch }}
