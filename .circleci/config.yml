@@ -258,3 +258,16 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-capz-app-collection
+          context: architect
+          app_name: "kyverno-policies"
+          app_namespace: "giantswarm"
+          app_collection_repo: "capz-app-collection"
+          requires:
+            - push-kyverno-policies-to-control-plane-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
