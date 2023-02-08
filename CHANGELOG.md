@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Push to `cloud-director` app collection.
+- Push to `capz` app collection.
 
 ## [0.18.0] - 2022-11-16
 
