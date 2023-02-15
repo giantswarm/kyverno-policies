@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.1] - 2023-02-15
+
 ### Added
 
 - Push to `cloud-director` app collection.
@@ -289,7 +291,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.18.1...HEAD
+[0.18.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.17.2...v0.18.0
 [0.17.2]: https://github.com/giantswarm/kyverno-policies/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.17.0...v0.17.1
