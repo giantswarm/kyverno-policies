@@ -152,20 +152,6 @@ workflows:
 
       # Push PSS policies to collections
       - architect/push-to-app-collection:
-          name: push-kyverno-policies-to-shared-app-collection
-          context: architect
-          app_name: "kyverno-policies"
-          app_namespace: giantswarm
-          app_collection_repo: "shared-app-collection"
-          requires:
-            - push-kyverno-policies-to-control-plane-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
-      - architect/push-to-app-collection:
           name: push-kyverno-policies-to-aws-app-collection
           context: architect
           app_name: "kyverno-policies"
