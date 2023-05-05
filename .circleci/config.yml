@@ -135,7 +135,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-              
       - architect/push-to-app-catalog:
           name: push-kyverno-policies-to-giantswarm-catalog
           app_catalog: giantswarm-catalog
@@ -206,20 +205,6 @@ workflows:
               only: /^v.*/
 
       - architect/push-to-app-collection:
-          name: push-kyverno-policies-to-openstack-app-collection
-          context: architect
-          app_name: "kyverno-policies"
-          app_namespace: "giantswarm"
-          app_collection_repo: "openstack-app-collection"
-          requires:
-            - push-kyverno-policies-to-control-plane-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-              
-      - architect/push-to-app-collection:
           name: push-kyverno-policies-to-vmware-app-collection
           context: "architect"
           app_name: "kyverno-policies"
@@ -231,7 +216,6 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
-              
       - architect/push-to-app-collection:
           name: push-kyverno-policies-to-cloud-director-app-collection
           context: "architect"
