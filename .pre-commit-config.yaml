@@ -34,7 +34,7 @@ repos:
 
     # static type checking with mypy
     - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v1.2.0
+      rev: v1.3.0
       hooks:
           - id: mypy
 
@@ -51,7 +51,7 @@ repos:
             args: [ --format=json ]
 
     - repo: https://github.com/igorshubovych/markdownlint-cli
-      rev: v0.33.0
+      rev: v0.34.0
       hooks:
           - id: markdownlint
 
