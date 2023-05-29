@@ -1,0 +1,2 @@
+kyverno-policies:
+  podSecurityStandard: restricted
