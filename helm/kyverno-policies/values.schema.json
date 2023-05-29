@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "kyverno-policies": {
+            "type": "object",
+            "properties": {
+                "podSecurityStandard": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
