@@ -119,6 +119,7 @@ workflows:
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: kyverno-policies
+          executor: "app-build-suite"
           context: "architect"
           requires:
             - test-policies
@@ -132,6 +133,7 @@ workflows:
           app_catalog_test: giantswarm-test-catalog
           attach_workspace: true
           chart: kyverno-policies
+          executor: "app-build-suite"
           context: "architect"
           requires:
             - test-policies
