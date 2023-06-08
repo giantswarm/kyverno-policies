@@ -91,7 +91,8 @@ jobs:
             make dabs
       - run-ats:
           chart_archive_prefix: "kyverno-policies"
-          tests_dir: "helm/kyverno-policies/charts/kyverno-policies/tests/ats"
+          tests_dir: "tests/ats"
+          ats_version: 0.3.0
       - run:
           name: Export kind logs
           when: always
@@ -128,6 +129,7 @@ workflows:
           app_catalog_test: control-plane-test-catalog
           attach_workspace: true
           chart: kyverno-policies
+          executor: "app-build-suite"
           context: "architect"
           requires:
             - test-policies
@@ -141,6 +143,8 @@ workflows:
           app_catalog_test: giantswarm-test-catalog
           attach_workspace: true
           chart: kyverno-policies
+          executor: "app-build-suite"
+          persist_chart_archive: true
           context: "architect"
           requires:
             - test-policies
