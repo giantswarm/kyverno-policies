@@ -93,6 +93,7 @@ jobs:
       - run-ats:
           chart_archive_prefix: "kyverno-policies"
           tests_dir: "tests/ats"  # helm/kyverno-policies/charts/kyverno-policies/
+          ats_version: 0.3.0
       - run:
           name: Export kind logs
           when: always
