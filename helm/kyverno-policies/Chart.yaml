@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: v1.7.5
 annotations:
   application.giantswarm.io/team: team-honeybadger
-  config.giantswarm.io/version: 1.x.x
+  config.giantswarm.io/version: "first-pss-gauss"
 dependencies:
   - name: kyverno-policies
     version: v2.5.5
@@ -21,4 +21,4 @@ restrictions:
   clusterSingleton: true
 sources:
 - https://github.com/giantswarm/kyverno-policies
-version: 0.19.0
+version: [[ .Version ]]
