@@ -134,6 +134,7 @@ workflows:
           attach_workspace: true
           chart: kyverno-policies
           executor: "app-build-suite"
+          persist_chart_archive: true
           context: "architect"
           requires:
             - test-policies
