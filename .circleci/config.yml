@@ -4,7 +4,6 @@ version: 2.1
 orbs:
   architect: giantswarm/architect@4.29.0
 
-
 commands:
   run-ats:
     parameters:
@@ -92,7 +91,7 @@ jobs:
             make dabs
       - run-ats:
           chart_archive_prefix: "kyverno-policies"
-          tests_dir: "tests/ats"  # helm/kyverno-policies/charts/kyverno-policies/
+          tests_dir: "tests/ats"
           ats_version: 0.3.0
       - run:
           name: Export kind logs
@@ -122,17 +121,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-
-      # Run app-test-suite tests.
-      # - architect/run-tests-with-ats:
-      #     name: execute chart tests
-      #     filters:
-      #       # Do not trigger the job on merge to main.
-      #       branches:
-      #         ignore:
-      #           - main
-      #     requires:
-      #       - push-kyverno-policies-to-giantswarm-catalog
 
       # Push PSS policies to catalogs
       - architect/push-to-app-catalog:
