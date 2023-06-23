@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update to upstream `Kyverno Policies` version 1.10.0.
 - Update CI to use newer `ats` and the `abs` executor.
 
 ## [0.19.0] - 2023-05-31
