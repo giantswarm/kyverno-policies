@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: v1.7.5
 annotations:
   application.giantswarm.io/team: team-honeybadger
-  config.giantswarm.io/version: 1.x.x
+  config.giantswarm.io/version: "non-root-user-legacy-test"
 dependencies:
   - name: kyverno-policies
     version: 3.0.0
