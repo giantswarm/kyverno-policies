@@ -2,7 +2,7 @@
 
 Kubernetes Pod Security Standards implemented as Kyverno policies
 
-![Version: 3.0.4](https://img.shields.io/badge/Version-3.0.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.3](https://img.shields.io/badge/AppVersion-v1.10.3-informational?style=flat-square)
+![Version: 3.1.0-beta.4](https://img.shields.io/badge/Version-3.1.0--beta.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.11.0-beta.4](https://img.shields.io/badge/AppVersion-v1.11.0--beta.4-informational?style=flat-square)
 
 ## About
 
@@ -69,7 +69,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | includeOtherPolicies | list | `[]` | Additional policies to include from `other`. |
 | includeRestrictedPolicies | list | `[]` | Additional policies to include from `restricted`. |
 | failurePolicy | string | `"Fail"` | API server behavior if the webhook fails to respond ('Ignore', 'Fail') For more info: https://kyverno.io/docs/writing-policies/policy-settings/ |
-| validationFailureAction | string | `"audit"` | Validation failure action (`audit`, `enforce`). For more info https://kyverno.io/docs/writing-policies/validate. |
+| validationFailureAction | string | `"Audit"` | Validation failure action (`Audit`, `Enforce`). For more info https://kyverno.io/docs/writing-policies/validate. |
 | validationFailureActionByPolicy | object | `{}` | Define validationFailureActionByPolicy for specific policies. Override the defined `validationFailureAction` with a individual validationFailureAction for individual Policies. |
 | validationFailureActionOverrides | object | `{"all":[]}` | Define validationFailureActionOverrides for specific policies. The overrides for `all` will apply to all policies. |
 | policyExclude | object | `{}` | Exclude resources from individual policies. Policies with multiple rules can have individual rules excluded by using the name of the rule as the key in the `policyExclude` map. |
