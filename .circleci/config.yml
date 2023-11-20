@@ -245,3 +245,29 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-gcp-app-collection
+          context: architect
+          app_name: "kyverno-policies"
+          app_namespace: "giantswarm"
+          app_collection_repo: "gcp-app-collection"
+          requires:
+            - push-kyverno-policies-to-control-plane-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+      - architect/push-to-app-collection:
+          name: push-kyverno-policies-to-vsphere-app-collection
+          context: architect
+          app_name: "kyverno-policies"
+          app_namespace: "giantswarm"
+          app_collection_repo: "vsphere-app-collection"
+          requires:
+            - push-kyverno-policies-to-control-plane-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
