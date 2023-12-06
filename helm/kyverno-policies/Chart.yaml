@@ -1,7 +1,7 @@
 apiVersion: v2
 appVersion: v1.7.5
 annotations:
-  application.giantswarm.io/team: team-honeybadger
+  application.giantswarm.io/team: shield
   config.giantswarm.io/version: 1.x.x
 dependencies:
   - name: kyverno-policies
