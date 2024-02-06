@@ -7,7 +7,7 @@ verify_ssl = true
 pytest-helm-charts = "~=0.6.0"
 pytest = "~=6.2.5"
 pykube-ng = "~=21.10.0"
-pytest-rerunfailures = "~=10.2"
+pytest-rerunfailures = "~=13.0"
 requests = "~=2.31.0"
 pyopenssl = "~=23.2.0"
 
