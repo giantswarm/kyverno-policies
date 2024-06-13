@@ -33,5 +33,6 @@ jobs:
   call-update-chart:
     uses: ./.github/workflows/zz_generated.update_chart.yaml
     needs: sync-app-with-fork
+    secrets: inherit
     with:
       branch: 'main#update-chart'
