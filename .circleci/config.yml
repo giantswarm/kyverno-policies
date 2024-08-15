@@ -131,8 +131,6 @@ workflows:
           chart: kyverno-policies
           executor: "app-build-suite"
           context: "architect"
-          requires:
-            - test-policies
           # Needed to trigger job also on git tag.
           filters:
             tags:
@@ -146,8 +144,6 @@ workflows:
           executor: "app-build-suite"
           persist_chart_archive: true
           context: "architect"
-          requires:
-            - test-policies
           # Needed to trigger job also on git tag.
           filters:
             tags:
