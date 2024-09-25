@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update to upstream `Kyverno Polcicies` version 1.12.5.
 - Don't push to vsphere-app-collection, capz-app-collection, capa-app-collection or cloud-director-app-collection. We started to consume kyverno-policies from security-bundle.
 
 ## [0.20.2] - 2023-12-06
