@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Add `application.giantswarm.io/team` label to policies.
+
 ## [0.21.0] - 2024-09-25
 
 ### Changed
