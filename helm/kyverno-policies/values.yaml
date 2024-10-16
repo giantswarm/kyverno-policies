@@ -1,2 +1,4 @@
 kyverno-policies:
   podSecurityStandard: restricted
+  customLabels:
+    application.giantswarm.io/team: shield
