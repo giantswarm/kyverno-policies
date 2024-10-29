@@ -1,4 +1,3 @@
-
 version: 2.1
 
 orbs:
@@ -15,26 +14,27 @@ commands:
       tests_dir:
         type: string
     steps:
-      - architect/run-tests-with-ats:
-          chart_archive_prefix: "<< parameters.chart_archive_prefix >>"
-          app-test-suite_version: "v<< parameters.ats_version >>"
-          app-test-suite_container_tag: "<< parameters.ats_version >>"
-          additional_app-test-suite_flags: "--external-cluster-version $KUBERNETES_VERSION --app-tests-pytest-tests-dir << parameters.tests_dir >>"
+    - architect/run-tests-with-ats:
+        chart_archive_prefix: << parameters.chart_archive_prefix >>
+        app-test-suite_version: v<< parameters.ats_version >>
+        app-test-suite_container_tag: << parameters.ats_version >>
+        additional_app-test-suite_flags: --external-cluster-version $KUBERNETES_VERSION
+          --app-tests-pytest-tests-dir << parameters.tests_dir >>
 
 jobs:
   verify:
     docker:
-      - image: cimg/base:2022.11
+    - image: cimg/base:2022.11
     steps:
-      - checkout
-      - run:
-          name: Install Make
-          command: |
-            sudo apt-get update && sudo apt-get install make
-      - run:
-          name: Make verify
-          command: |
-            make verify
+    - checkout
+    - run:
+        name: Install Make
+        command: |
+          sudo apt-get update && sudo apt-get install make
+    - run:
+        name: Make verify
+        command: |
+          make verify
 
   validate:
     machine:
@@ -42,15 +42,15 @@ jobs:
     environment:
       KYVERNO_VERSION: v1.5.0-rc3
     steps:
-      - checkout
-      - run:
-          name: Download kyverno cli
-          command: |
-            curl -sL https://github.com/kyverno/kyverno/releases/download/${KYVERNO_VERSION}/kyverno-cli_${KYVERNO_VERSION}_linux_x86_64.tar.gz | tar -xz -m kyverno && chmod +x kyverno && sudo mv kyverno /usr/bin
-      - run:
-          name: Validate policies
-          command: |
-            kyverno validate ./policies
+    - checkout
+    - run:
+        name: Download kyverno cli
+        command: |
+          curl -sL https://github.com/kyverno/kyverno/releases/download/${KYVERNO_VERSION}/kyverno-cli_${KYVERNO_VERSION}_linux_x86_64.tar.gz | tar -xz -m kyverno && chmod +x kyverno && sudo mv kyverno /usr/bin
+    - run:
+        name: Validate policies
+        command: |
+          kyverno validate ./policies
 
   test-policies:
     machine:
@@ -60,46 +60,46 @@ jobs:
       KUBERNETES_VERSION: v1.24.7
       DABS_VERSION: v1.0.4
     steps:
-      - checkout
-      - run:
-          name: Download kind
-          command: |
-            curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/bin
-      - run:
-          name: Download kubectl
-          command: |
-            curl -sLO https://storage.googleapis.com/kubernetes-release/release/$KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl  && sudo mv kubectl /usr/bin
-      - run:
-          name: Download dabs.sh
-          command: |
-            wget -O dabs.sh https://github.com/giantswarm/app-build-suite/releases/download/$DABS_VERSION/dabs.sh && chmod +x dabs.sh && sudo mv dabs.sh /usr/bin
-      - run:
-          name: Install Make
-          command: |
-            sudo apt-get update && sudo apt-get install make
-      - run:
-          name: Install clusterctl
-          command: |
-            curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.3.3/clusterctl-linux-amd64 -o clusterctl && chmod +x clusterctl && sudo mv clusterctl /usr/bin
-      - run:
-          name: Create kind cluster and install kyverno
-          command: |
-            make kind-create kind-get-kubeconfig install-kyverno
-      - run:
-          name: Make chart archives
-          command: |
-            make dabs
-      - run-ats:
-          chart_archive_prefix: "kyverno-policies"
-          tests_dir: "tests/ats"
-          ats_version: 0.3.0
-      - run:
-          name: Export kind logs
-          when: always
-          command: |
-            kind export logs --name kyverno-cluster logs
-      - store_artifacts:
-          path: logs
+    - checkout
+    - run:
+        name: Download kind
+        command: |
+          curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/bin
+    - run:
+        name: Download kubectl
+        command: |
+          curl -sLO https://storage.googleapis.com/kubernetes-release/release/$KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl  && sudo mv kubectl /usr/bin
+    - run:
+        name: Download dabs.sh
+        command: |
+          wget -O dabs.sh https://github.com/giantswarm/app-build-suite/releases/download/$DABS_VERSION/dabs.sh && chmod +x dabs.sh && sudo mv dabs.sh /usr/bin
+    - run:
+        name: Install Make
+        command: |
+          sudo apt-get update && sudo apt-get install make
+    - run:
+        name: Install clusterctl
+        command: |
+          curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.3.3/clusterctl-linux-amd64 -o clusterctl && chmod +x clusterctl && sudo mv clusterctl /usr/bin
+    - run:
+        name: Create kind cluster and install kyverno
+        command: |
+          make kind-create kind-get-kubeconfig install-kyverno
+    - run:
+        name: Make chart archives
+        command: |
+          make dabs
+    - run-ats:
+        chart_archive_prefix: kyverno-policies
+        tests_dir: tests/ats
+        ats_version: 0.3.0
+    - run:
+        name: Export kind logs
+        when: always
+        command: |
+          kind export logs --name kyverno-cluster logs
+    - store_artifacts:
+        path: logs
 
 workflows:
   workflow:
@@ -116,63 +116,71 @@ workflows:
       #       tags:
       #         only: /^v.*/
 
-      - test-policies:
+    - test-policies:
           # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
+        filters:
+          tags:
+            only: /^v.*/
 
       # Push PSS policies to catalogs
-      - architect/push-to-app-catalog:
-          name: push-kyverno-policies-to-control-plane-catalog
-          app_catalog: control-plane-catalog
-          app_catalog_test: control-plane-test-catalog
-          attach_workspace: true
-          chart: kyverno-policies
-          executor: "app-build-suite"
-          context: "architect"
+    - architect/push-to-app-catalog:
+        name: push-kyverno-policies-to-control-plane-catalog
+        app_catalog: control-plane-catalog
+        app_catalog_test: control-plane-test-catalog
+        attach_workspace: true
+        chart: kyverno-policies
+        executor: app-build-suite
+        context: architect
           # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
-      - architect/push-to-app-catalog:
-          name: push-kyverno-policies-to-giantswarm-catalog
-          app_catalog: giantswarm-catalog
-          app_catalog_test: giantswarm-test-catalog
-          attach_workspace: true
-          chart: kyverno-policies
-          executor: "app-build-suite"
-          persist_chart_archive: true
-          context: "architect"
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+    - architect/push-to-app-catalog:
+        name: push-kyverno-policies-to-giantswarm-catalog
+        app_catalog: giantswarm-catalog
+        app_catalog_test: giantswarm-test-catalog
+        attach_workspace: true
+        chart: kyverno-policies
+        executor: app-build-suite
+        persist_chart_archive: true
+        context: architect
           # Needed to trigger job also on git tag.
-          filters:
-            tags:
-              only: /^v.*/
+        filters:
+          tags:
+            only: /^v.*/
 
       # Push PSS policies to collections
-      - architect/push-to-app-collection:
-          name: push-kyverno-policies-to-aws-app-collection
-          context: architect
-          app_name: "kyverno-policies"
-          app_namespace: "giantswarm"
-          app_collection_repo: "aws-app-collection"
-          requires:
-            - push-kyverno-policies-to-control-plane-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-      - architect/push-to-app-collection:
-          name: push-kyverno-policies-to-azure-app-collection
-          context: architect
-          app_name: "kyverno-policies"
-          app_namespace: "giantswarm"
-          app_collection_repo: "azure-app-collection"
-          requires:
-            - push-kyverno-policies-to-control-plane-catalog
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+          branches:
+            ignore:
+            - main
+            - master
+    - architect/push-to-app-collection:
+        name: push-kyverno-policies-to-aws-app-collection
+        context: architect
+        app_name: kyverno-policies
+        app_namespace: giantswarm
+        app_collection_repo: aws-app-collection
+        requires:
+        - push-kyverno-policies-to-control-plane-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
+    - architect/push-to-app-collection:
+        name: push-kyverno-policies-to-azure-app-collection
+        context: architect
+        app_name: kyverno-policies
+        app_namespace: giantswarm
+        app_collection_repo: azure-app-collection
+        requires:
+        - push-kyverno-policies-to-control-plane-catalog
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
