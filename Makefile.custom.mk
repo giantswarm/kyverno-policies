@@ -3,19 +3,9 @@ SHELL:=/usr/bin/env bash
 # Kind cluster name to use
 KIND_CLUSTER_NAME ?= "kyverno-cluster"
 
-# If not already set through env
-KUBERNETES_VERSION ?= v1.21.1
-
-##@ Generate
-
-.PHONY: generate
-generate: ## Replace variables on Helm manifests.
-	./hack/template.sh
-
-.PHONY: verify
-verify:
-	@$(MAKE) generate
-	git diff --exit-code
+# These values should be set by the outer environment / CircleCI environment config.
+KUBERNETES_VERSION ?= v1.29.8
+KYVERNO_VERSION ?= v1.12.6
 
 ##@ Test
 
@@ -35,8 +25,8 @@ tilt-up: ## Start Tilt
 # If you change kyverno version here remember to change it in the Tiltfile too
 .PHONY: install-kyverno
 install-kyverno:
-	kubectl create --context kind-$(KIND_CLUSTER_NAME) -f https://github.com/kyverno/kyverno/releases/download/v1.8.5/install.yaml 
-	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=ready pod -l app=kyverno -nkyverno
+	kubectl create --context kind-$(KIND_CLUSTER_NAME) -f https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml 
+	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -nkyverno
 
 .PHONY: kind-get-kubeconfig
 kind-get-kubeconfig:
@@ -44,4 +34,4 @@ kind-get-kubeconfig:
 
 .PHONY: dabs
 dabs:  # generate
-	dabs.sh --generate-metadata --chart-dir helm/kyverno-policies/charts/kyverno-policies
+	dabs.sh --generate-metadata --chart-dir helm/kyverno-policies

@@ -8,7 +8,7 @@ commands:
     parameters:
       ats_version:
         type: string
-        default: 0.1.4
+        default: 0.10.2
       chart_archive_prefix:
         type: string
       tests_dir:
@@ -22,43 +22,15 @@ commands:
           --app-tests-pytest-tests-dir << parameters.tests_dir >>
 
 jobs:
-  verify:
-    docker:
-      - image: cimg/base:current-22.04
-    steps:
-    - checkout
-    - run:
-        name: Install Make
-        command: |
-          sudo apt-get update && sudo apt-get install make
-    - run:
-        name: Make verify
-        command: |
-          make verify
-
-  validate:
-    machine:
-      image: ubuntu-2204:current
-    environment:
-      KYVERNO_VERSION: v1.5.0-rc3
-    steps:
-    - checkout
-    - run:
-        name: Download kyverno cli
-        command: |
-          curl -sL https://github.com/kyverno/kyverno/releases/download/${KYVERNO_VERSION}/kyverno-cli_${KYVERNO_VERSION}_linux_x86_64.tar.gz | tar -xz -m kyverno && chmod +x kyverno && sudo mv kyverno /usr/bin
-    - run:
-        name: Validate policies
-        command: |
-          kyverno validate ./policies
-
   test-policies:
     machine:
       image: ubuntu-2204:current
     environment:
-      KIND_VERSION: v0.17.0
-      KUBERNETES_VERSION: v1.24.7
-      DABS_VERSION: v1.0.4
+      CLUSTERCTL_VERSION: v1.8.4
+      KIND_VERSION: v0.24.0
+      KUBERNETES_VERSION: v1.29.8
+      KYVERNO_VERSION: v1.12.6
+      DABS_VERSION: v1.2.6
     steps:
     - checkout
     - run:
@@ -80,7 +52,7 @@ jobs:
     - run:
         name: Install clusterctl
         command: |
-          curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.3.3/clusterctl-linux-amd64 -o clusterctl && chmod +x clusterctl && sudo mv clusterctl /usr/bin
+          curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/$CLUSTERCTL_VERSION/clusterctl-linux-amd64 -o clusterctl && chmod +x clusterctl && sudo mv clusterctl /usr/bin
     - run:
         name: Create kind cluster and install kyverno
         command: |
@@ -92,7 +64,6 @@ jobs:
     - run-ats:
         chart_archive_prefix: kyverno-policies
         tests_dir: tests/ats
-        ats_version: 0.3.0
     - run:
         name: Export kind logs
         when: always
@@ -104,18 +75,6 @@ jobs:
 workflows:
   workflow:
     jobs:
-      # - verify:
-      #     # Needed to trigger job also on git tag.
-      #     filters:
-      #       tags:
-      #         only: /^v.*/
-
-      # - validate:
-      #     # Needed to trigger job also on git tag.
-      #     filters:
-      #       tags:
-      #         only: /^v.*/
-
     - test-policies:
           # Needed to trigger job also on git tag.
         filters:
