@@ -12,4 +12,4 @@ requests = "~=2.32.3"
 pyopenssl = "~=24.2.1"
 
 [requires]
-python_version = "3.9"
+python_version = "3"
