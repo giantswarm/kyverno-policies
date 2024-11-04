@@ -111,11 +111,11 @@ workflows:
       #       tags:
       #         only: /^v.*/
 
-      # - validate:
-      #     # Needed to trigger job also on git tag.
-      #     filters:
-      #       tags:
-      #         only: /^v.*/
+    - validate:
+        # Needed to trigger job also on git tag.
+        filters:
+          tags:
+            only: /^v.*/
 
     - test-policies:
           # Needed to trigger job also on git tag.
