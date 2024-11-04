@@ -57,7 +57,7 @@ jobs:
       image: ubuntu-2204:current
     environment:
       KIND_VERSION: v0.17.0
-      KUBERNETES_VERSION: v1.24.7
+      KUBERNETES_VERSION: v1.29.8
       DABS_VERSION: v1.0.4
     steps:
     - checkout
