@@ -3,3 +3,5 @@ external-cluster-type: kind
 functional-tests-cluster-type: external
 skip-steps: [functional]
 smoke-tests-cluster-type: external
+upgrade-tests-cluster-type: kind
+upgrade-tests-app-catalog-url: https://giantswarm.github.io/giantswarm-catalog
