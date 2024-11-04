@@ -8,7 +8,7 @@ commands:
     parameters:
       ats_version:
         type: string
-        default: 0.1.4
+        default: 0.10.2
       chart_archive_prefix:
         type: string
       tests_dir:
