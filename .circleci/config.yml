@@ -36,22 +36,6 @@ jobs:
         command: |
           make verify
 
-  validate:
-    machine:
-      image: ubuntu-2204:current
-    environment:
-      KYVERNO_VERSION: v1.12.6
-    steps:
-    - checkout
-    - run:
-        name: Download kyverno cli
-        command: |
-          curl -sL https://github.com/kyverno/kyverno/releases/download/${KYVERNO_VERSION}/kyverno-cli_${KYVERNO_VERSION}_linux_x86_64.tar.gz | tar -xz -m kyverno && chmod +x kyverno && sudo mv kyverno /usr/bin
-    - run:
-        name: Validate policies
-        command: |
-          kyverno validate ./policies
-
   test-policies:
     machine:
       image: ubuntu-2204:current
@@ -105,13 +89,7 @@ jobs:
 workflows:
   workflow:
     jobs:
-      # - verify:
-      #     # Needed to trigger job also on git tag.
-      #     filters:
-      #       tags:
-      #         only: /^v.*/
-
-    - validate:
+    - verify:
         # Needed to trigger job also on git tag.
         filters:
           tags:
