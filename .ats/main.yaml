@@ -1,5 +1,5 @@
 external-cluster-kubeconfig-path: kube.config
 external-cluster-type: kind
 functional-tests-cluster-type: external
-skip-steps: [functional, upgrade]
+skip-steps: [functional]
 smoke-tests-cluster-type: external
