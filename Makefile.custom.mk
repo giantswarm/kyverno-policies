@@ -34,4 +34,4 @@ kind-get-kubeconfig:
 
 .PHONY: dabs
 dabs:  # generate
-	dabs.sh --generate-metadata --chart-dir helm/kyverno-policies/charts/kyverno-policies
+	dabs.sh --generate-metadata --chart-dir helm/kyverno-policies

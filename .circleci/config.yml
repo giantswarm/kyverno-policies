@@ -6,9 +6,6 @@ orbs:
 commands:
   run-ats:
     parameters:
-      ats_version:
-        type: string
-        default: 0.10.2
       chart_archive_prefix:
         type: string
       tests_dir:
