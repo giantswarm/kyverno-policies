@@ -27,10 +27,10 @@ jobs:
       image: ubuntu-2204:current
     environment:
       CLUSTERCTL_VERSION: v1.8.4
-      KIND_VERSION: v0.17.0
+      KIND_VERSION: v0.24.0
       KUBERNETES_VERSION: v1.29.8
       KYVERNO_VERSION: v1.12.6
-      DABS_VERSION: v1.0.4
+      DABS_VERSION: v1.2.6
     steps:
     - checkout
     - run:
