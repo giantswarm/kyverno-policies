@@ -7,17 +7,6 @@ KIND_CLUSTER_NAME ?= "kyverno-cluster"
 KUBERNETES_VERSION ?= v1.29.8
 KYVERNO_VERSION ?= v1.12.6
 
-##@ Generate
-
-.PHONY: generate
-generate: ## Replace variables on Helm manifests.
-	./hack/template.sh
-
-.PHONY: verify
-verify:
-	@$(MAKE) generate
-	git diff --exit-code
-
 ##@ Test
 
 .PHONY: clean

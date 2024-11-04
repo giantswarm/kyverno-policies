@@ -22,20 +22,6 @@ commands:
           --app-tests-pytest-tests-dir << parameters.tests_dir >>
 
 jobs:
-  verify:
-    docker:
-      - image: cimg/base:current-22.04
-    steps:
-    - checkout
-    - run:
-        name: Install Make
-        command: |
-          sudo apt-get update && sudo apt-get install make
-    - run:
-        name: Make verify
-        command: |
-          make verify
-
   test-policies:
     machine:
       image: ubuntu-2204:current
@@ -89,12 +75,6 @@ jobs:
 workflows:
   workflow:
     jobs:
-    - verify:
-        # Needed to trigger job also on git tag.
-        filters:
-          tags:
-            only: /^v.*/
-
     - test-policies:
           # Needed to trigger job also on git tag.
         filters:
