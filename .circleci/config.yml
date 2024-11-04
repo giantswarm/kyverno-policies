@@ -8,7 +8,7 @@ commands:
     parameters:
       ats_version:
         type: string
-        default: 0.1.4
+        default: 0.10.2
       chart_archive_prefix:
         type: string
       tests_dir:
@@ -58,6 +58,7 @@ jobs:
     environment:
       KIND_VERSION: v0.17.0
       KUBERNETES_VERSION: v1.29.8
+      KYVERNO_VERSION: v1.12.6
       DABS_VERSION: v1.0.4
     steps:
     - checkout
@@ -92,7 +93,7 @@ jobs:
     - run-ats:
         chart_archive_prefix: kyverno-policies
         tests_dir: tests/ats
-        ats_version: 0.3.0
+        ats_version: 0.10.2
     - run:
         name: Export kind logs
         when: always

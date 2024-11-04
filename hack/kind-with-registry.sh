@@ -53,7 +53,7 @@ fi
 echo "Registry Host: ${reg_host}"
 
 # create a cluster with the local registry enabled in containerd
-cat <<EOF | kind create cluster --name "${KIND_CLUSTER_NAME}" --image="kindest/node:v1.29.8@sha256:b69a150f9951ef41158ec76de381a920df2be3582fd16fc19cf4757eef0dded9" --config=-
+cat <<EOF | kind create cluster --name "${KIND_CLUSTER_NAME}" --image="kindest/node:$KUBERNETES_VERSION" --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:

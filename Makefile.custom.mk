@@ -3,8 +3,9 @@ SHELL:=/usr/bin/env bash
 # Kind cluster name to use
 KIND_CLUSTER_NAME ?= "kyverno-cluster"
 
-# If not already set through env
-KUBERNETES_VERSION ?= v1.21.1
+# These values should be set by the outer environment / CircleCI environment config.
+KUBERNETES_VERSION ?= v1.29.8
+KYVERNO_VERSION ?= v1.12.6
 
 ##@ Generate
 
@@ -35,7 +36,7 @@ tilt-up: ## Start Tilt
 # If you change kyverno version here remember to change it in the Tiltfile too
 .PHONY: install-kyverno
 install-kyverno:
-	kubectl create --context kind-$(KIND_CLUSTER_NAME) -f https://github.com/kyverno/kyverno/releases/download/v1.12.6/install.yaml 
+	kubectl create --context kind-$(KIND_CLUSTER_NAME) -f https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml 
 	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -nkyverno
 
 .PHONY: kind-get-kubeconfig
