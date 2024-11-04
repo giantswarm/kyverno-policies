@@ -24,7 +24,7 @@ commands:
 jobs:
   verify:
     docker:
-    - image: cimg/base:2022.11
+      - image: cimg/base:current-22.04
     steps:
     - checkout
     - run:
@@ -38,7 +38,7 @@ jobs:
 
   validate:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:current
     environment:
       KYVERNO_VERSION: v1.5.0-rc3
     steps:
@@ -54,7 +54,7 @@ jobs:
 
   test-policies:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:current
     environment:
       KIND_VERSION: v0.17.0
       KUBERNETES_VERSION: v1.24.7
@@ -139,6 +139,7 @@ workflows:
             ignore:
             - main
             - master
+    
     - architect/push-to-app-catalog:
         name: push-kyverno-policies-to-giantswarm-catalog
         app_catalog: giantswarm-catalog
@@ -152,12 +153,12 @@ workflows:
         filters:
           tags:
             only: /^v.*/
-
-      # Push PSS policies to collections
           branches:
             ignore:
             - main
             - master
+
+# Push PSS policies to collections
     - architect/push-to-app-collection:
         name: push-kyverno-policies-to-aws-app-collection
         context: architect
