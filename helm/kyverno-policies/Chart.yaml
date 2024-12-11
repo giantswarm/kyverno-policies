@@ -20,4 +20,4 @@ restrictions:
   clusterSingleton: true
 sources:
   - https://github.com/giantswarm/kyverno-policies
-version: 0.21.0
+version: 0.21.1
