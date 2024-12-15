@@ -4,7 +4,7 @@ annotations:
   application.giantswarm.io/team: shield
 dependencies:
   - name: kyverno-policies
-    version: 3.2.3
+    version: 3.3.0
 description: |
   Kubernetes Pod Security Standards implemented as Kyverno policies
 engine: gotpl
