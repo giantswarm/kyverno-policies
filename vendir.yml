@@ -6,7 +6,7 @@ directories:
   - path: .
     git:
       url: https://github.com/giantswarm/kyverno
-      ref: v1.12.5
+      ref: v1.13.0
     includePaths:
       - charts/kyverno-policies/**
     newRootPath: charts/kyverno-policies
