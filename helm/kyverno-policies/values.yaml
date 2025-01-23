@@ -6,7 +6,6 @@ kyverno-policies:
     application.giantswarm.io/team: shield
 
 supplementalPolicies:
-  enabled: true
   policies:
     require-ro-rootfs:
       enabled: true
