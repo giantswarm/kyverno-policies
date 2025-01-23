@@ -6,6 +6,6 @@ kyverno-policies:
 supplementalPolicies:
   enabled: true
   policies:
-    - name: require-ro-rootfs
+    require-ro-rootfs:
       enabled: true
       mode: Audit
