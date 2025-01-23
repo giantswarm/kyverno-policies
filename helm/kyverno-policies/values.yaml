@@ -11,6 +11,6 @@ supplementalPolicies:
     require-ro-rootfs:
       enabled: true
       mode: Audit
-    require-non-root-groups:
+    restrict-external-ips:
       enabled: true
       mode: Audit
