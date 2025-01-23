@@ -1,5 +1,6 @@
 {{- $name := "require-ro-rootfs" }}
-{{- if and (has .name .Values.supplementalPolicies.policies) (index .Values.supplementalPolicies.policies .name).enabled }}
+{{- range .Values.supplementalPolicies.policies }}
+{{- if and (eq .name $name) .enabled }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -33,4 +34,5 @@ spec:
           containers:
           - securityContext:
               readOnlyRootFilesystem: true
+{{- end }}
 {{- end }}
