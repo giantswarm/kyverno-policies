@@ -2,3 +2,10 @@ kyverno-policies:
   podSecurityStandard: restricted
   customLabels:
     application.giantswarm.io/team: shield
+
+supplementalPolicies:
+  enabled: true
+  policies:
+    - name: require-ro-rootfs
+      enabled: true
+      mode: Audit
