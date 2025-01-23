@@ -7,9 +7,9 @@ kyverno-policies:
 
 supplementalPolicies:
   policies:
-    require-ro-rootfs:
+    restrict-external-ips:
       enabled: true
       mode: Audit
-    restrict-external-ips:
+    require-ro-rootfs:
       enabled: true
       mode: Audit

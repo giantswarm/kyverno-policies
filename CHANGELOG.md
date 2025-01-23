@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add supplemental policies `restrict-external-ips`, `require-ro-rootfs`, and enable upstream policy `require-non-root-groups`.
+
 ## [0.21.1] - 2024-12-11
 
 ### Changed
