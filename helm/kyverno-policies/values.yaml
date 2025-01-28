@@ -1,4 +1,15 @@
 kyverno-policies:
   podSecurityStandard: restricted
+  includeOtherPolicies:
+    - require-non-root-groups
   customLabels:
     application.giantswarm.io/team: shield
+
+supplementalPolicies:
+  policies:
+    restrict-external-ips:
+      enabled: true
+      mode: Audit
+    require-ro-rootfs:
+      enabled: true
+      mode: Audit
