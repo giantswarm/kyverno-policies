@@ -11,11 +11,11 @@ supplementalPolicies:
     restrict-external-ips:
       enabled: true
       mode: Audit
-    # require-ro-rootfs ensures that the root filesystem is mounted as read-only.
+    # require-ro-rootfs ensures that container root filesystems are mounted as read-only.
     require-ro-rootfs:
       enabled: true
       mode: Audit
-    # add-default-deny-network-policy generates a new NetworkPolicy resource named `default-deny` in every newly created Namespace which will deny all traffic.
+    # add-default-deny-network-policy generates a new NetworkPolicy resource in every newly created Namespace which will deny all traffic.
     add-default-deny-network-policy:
       enabled: true
       # Whether to keep or delete all generated Network Policies when the Kyverno generate policy is deleted.
