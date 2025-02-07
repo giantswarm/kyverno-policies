@@ -17,7 +17,7 @@ supplementalPolicies:
       mode: Audit
     # add-default-deny-network-policy generates a new NetworkPolicy resource in every newly created Namespace which will deny all traffic.
     add-default-deny-network-policy:
-      enabled: true
+      enabled: false
       # Whether to keep or delete all generated Network Policies when the Kyverno generate policy is deleted.
       deleteNetworkPolicyOnKyvernoPolicyDeletion: false
       # Whether to generate Network Policies in Namespaces that already exist when the Kyverno Policy is deployed.
