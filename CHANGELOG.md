@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update to upstream `Kyverno Policies` version 1.13.4.
+
 ### Added
 
 - Add supplemental policies `restrict-external-ips`, `require-ro-rootfs`, and enable upstream policy `require-non-root-groups`.
