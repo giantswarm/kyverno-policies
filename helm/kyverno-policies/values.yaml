@@ -7,9 +7,22 @@ kyverno-policies:
 
 supplementalPolicies:
   policies:
+    # restrict-external-ips prevents the use of Services of type ExternalIP.
     restrict-external-ips:
-      enabled: true
+      enabled: false
       mode: Audit
+    # require-ro-rootfs ensures that container root filesystems are mounted as read-only.
     require-ro-rootfs:
-      enabled: true
+      enabled: false
       mode: Audit
+    # add-default-deny-network-policy generates a new NetworkPolicy resource in every newly created Namespace which will deny all traffic.
+    add-default-deny-network-policy:
+      enabled: false
+      # Whether to keep or delete all generated Network Policies when the Kyverno generate policy is deleted.
+      deleteNetworkPolicyOnKyvernoPolicyDeletion: false
+      # Whether to generate Network Policies in Namespaces that already exist when the Kyverno Policy is deployed.
+      generateForExistingNamespaces: false
+      networkPolicy:
+        policyName: default-deny
+        blockIngress: true
+        blockEgress: true
