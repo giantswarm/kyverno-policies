@@ -8,17 +8,17 @@ kyverno-policies:
 policyNamePrefix: "gs"  # Prefix to add to the name of all custom policies. Does not apply to PSS policies. Example: "gs"
 
 supplementalSecurityPolicies:
-  policies:    
+  policies:
     # restrict-external-ips prevents the use of Services of type ExternalIP.
     restrict-external-ips:
       enabled: true
       mode: Audit
-    
+
     # require-ro-rootfs ensures that container root filesystems are mounted as read-only.
     require-ro-rootfs:
       enabled: false
       mode: Audit
-    
+
     # add-default-deny-network-policy generates a new NetworkPolicy resource in every newly created Namespace which will deny all traffic.
     add-default-deny-network-policy:
       enabled: false
@@ -37,12 +37,12 @@ bestPracticesPolicies:
     check-resources-request-and-limits-ratio:
       enabled: true
       mode: Audit
-    
+
     # require-container-requests-limits ensures that all containers have resource requests and limits defined.
     require-container-requests-and-limits:
       enabled: true
       mode: Audit
-    
+
     # require-emptydir-requests-and-limits ensures that all emptyDir volumes have resource requests and limits defined.
     require-emptydir-requests-and-limits:
       enabled: true
