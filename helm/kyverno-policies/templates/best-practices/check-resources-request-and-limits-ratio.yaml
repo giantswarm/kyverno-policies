@@ -29,7 +29,7 @@ spec:
           - Pod
     preconditions:
       any:
-      - key: "{{ request.operation || 'BACKGROUND' }}"
+      - key: {{ `{{` }}request.operation || 'BACKGROUND' {{ `}}` }}
         operator: AnyIn
         value:
         - CREATE
@@ -44,7 +44,7 @@ spec:
               # Set resources.limits.memory equal to zero if not present and resources.requests.memory equal to 1m rather than zero
               # to avoid undefined division error. No memory request in this case is basically the same as 1m. Kubernetes API server
               # will automatically set requests=limits if only limits is defined.
-            - key: "{{ divide('{{ element.resources.limits.memory || '0' }}', '{{ element.resources.requests.memory || '1m' }}') }}"
+            - key: {{ `{{` }}divide('{{ element.resources.limits.memory || '0' }}', '{{ element.resources.requests.memory || '1m' }}') {{ `}}` }}
               operator: GreaterThan
               value: 2.5
 {{- end }}

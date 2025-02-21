@@ -35,10 +35,10 @@ spec:
           jmesPath: request.object.spec.volumes[?contains(keys(@), 'emptyDir') && !contains(keys(emptyDir), 'sizeLimit')].name
       preconditions:
         all:
-          - key: "{{ request.object.spec.volumes[?contains(keys(@), 'emptyDir')] || `[]` | length(@) }}"
+          - key: {{ `{{` }}request.object.spec.volumes[?contains(keys(@), 'emptyDir')] || `[]` | length(@) {{ `}}` }}
             operator: GreaterThanOrEquals
             value: 1
-          - key: "{{request.operation || 'BACKGROUND'}}"
+          - key: "{{request.operation || 'BACKGROUND'{{ `}}` }}
             operator: AnyIn
             value:
               - CREATE
@@ -49,9 +49,9 @@ spec:
           - list: "request.object.spec.[initContainers, containers][]"
             preconditions:
               any:
-              - key: "{{ element.volumeMounts[].name }}"
+              - key: {{ `{{` }}element.volumeMounts[].name {{ `}}` }}
                 operator: AnyIn
-                value: "{{ emptydirnames }}"
+                value: {{ `{{` }}emptydirnames {{ `}}` }}
             pattern:
               resources:
                 requests:
