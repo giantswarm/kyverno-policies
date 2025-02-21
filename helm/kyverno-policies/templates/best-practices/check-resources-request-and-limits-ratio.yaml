@@ -7,7 +7,7 @@ metadata:
   labels: {{ include "labels.common" . | nindent 4 }}
   annotations:
     policies.kyverno.io/title: Enforce Resources as Ratio
-    policies.kyverno.io/category: Workload Best Practices, Cost Optimization
+    policies.kyverno.io/category: Cost Optimization, Workload Best Practices
     policies.kyverno.io/severity: medium
     kyverno.io/kyverno-version: 1.6.0
     policies.kyverno.io/minversion: 1.6.0
