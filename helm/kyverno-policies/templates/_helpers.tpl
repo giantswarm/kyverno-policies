@@ -26,8 +26,13 @@ Common labels
 */}}
 {{- define "labels.common" -}}
 {{ include "labels.selector" . }}
+app.kubernetes.io/component: kyverno-policies
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+app.kubernetes.io/part-of: {{ template "name" . }}
+app.kubernetes.io/version: "{{ .Chart.Version | replace "+" "_" }}"
 application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | default "shield" | quote }}
 helm.sh/chart: {{ include "chart" . | quote }}
+{{- if .Values.customLabels }}
+{{ toYaml .Values.customLabels }}
+{{- end }}
 {{- end -}}
