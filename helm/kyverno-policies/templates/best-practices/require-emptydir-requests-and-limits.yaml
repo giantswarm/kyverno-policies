@@ -38,7 +38,7 @@ spec:
           - key: {{ `{{` }}request.object.spec.volumes[?contains(keys(@), 'emptyDir')] || `[]` | length(@) {{ `}}` }}
             operator: GreaterThanOrEquals
             value: 1
-          - key: "{{request.operation || 'BACKGROUND'{{ `}}` }}
+          - key: "{{ `{{` }} request.operation || 'BACKGROUND'{{ `}}` }}
             operator: AnyIn
             value:
               - CREATE
