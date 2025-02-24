@@ -3,7 +3,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: {{ printf "%s-%s" .Values.policyNamePrefix $name }}
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
   labels: {{ include "labels.common" . | nindent 4 }}
   annotations:
     pod-policies.kyverno.io/autogen-controllers: DaemonSet,Deployment,StatefulSet
