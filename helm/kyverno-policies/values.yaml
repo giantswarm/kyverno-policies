@@ -5,7 +5,7 @@ kyverno-policies:
   customLabels:
     application.giantswarm.io/team: shield
 
-policyNamePrefix: ""  # Prefix to add to the name of all custom policies. Does not apply to PSS policies. Example: "gs"
+policyNamePrefix: ""  # Prefix to add to the name of all custom policies. Does not apply to PSS policies. Example: "gs-"
 
 bestPracticesPolicies:
   policies:
