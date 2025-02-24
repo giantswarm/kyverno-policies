@@ -20,7 +20,7 @@ metadata:
       ephemeral-storage requests and limits set. Policy will be skipped if
       the volume has already a sizeLimit set.      
 spec:
-  background: false
+  background: true
   validationFailureAction: {{ (get .Values.bestPracticesPolicies.policies $name).mode }}
   rules:
     - name: check-emptydir-requests-limits
