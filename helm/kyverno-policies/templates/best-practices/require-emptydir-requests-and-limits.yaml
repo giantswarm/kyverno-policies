@@ -7,7 +7,7 @@ metadata:
   labels: {{ include "labels.common" . | nindent 4 }}
   annotations:
     policies.kyverno.io/title: Require Requests and Limits for emptyDir
-    policies.kyverno.io/category: Cost Optimization, Workload Best Practices
+    policies.kyverno.io/category: Cost and Resource Optimization
     policies.kyverno.io/severity: medium
     policies.kyverno.io/minversion: 1.9.0
     kyverno.io/kyverno-version: 1.11.1
