@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add supplemental security and best practices policies `check-resources-request-and-limits-ratio`, `disallow-latest-tag`, `require-container-requests-and-limits`, `require-emptydir-requests-and-limits`, `require-pod-probes`, `disallow-gitrepo-volume`, `restrict-binding-clusteradmin`, and `restrict-binding-system-groups`.
+
 ## [0.22.0] - 2025-02-20
 
 ### Changed
