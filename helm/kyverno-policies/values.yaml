@@ -19,6 +19,11 @@ bestPracticesPolicies:
       enabled: true
       mode: Audit
 
+    # prevent-bare-pods ensures that all Pods are created by workload controllers such as Deployments.
+    prevent-bare-pods:
+      enabled: true
+      mode: Audit
+
     # require-container-requests-limits ensures that all containers have resource requests and limits defined.
     require-container-requests-and-limits:
       enabled: false
@@ -48,6 +53,11 @@ supplementalSecurityPolicies:
         blockIngress: true
         blockEgress: true
 
+    # check-serviceaccount-secrets ensures that ServiceAccounts do not use long-lived tokens.
+    check-serviceaccount-secrets:
+      enabled: false
+      mode: Audit
+
     # disallow-gitrepo-volume prevents the use of the gitRepo volume type.
     disallow-gitrepo-volume:
       enabled: true
@@ -71,4 +81,9 @@ supplementalSecurityPolicies:
     # restrict-external-ips prevents the use of Services of type ExternalIP.
     restrict-external-ips:
       enabled: true
+      mode: Audit
+
+    # restrict-sa-automount-sa-token ensures that ServiceAccounts do not automatically mount ServiceAccount tokens.
+    restrict-sa-automount-sa-token:
+      enabled: false
       mode: Audit

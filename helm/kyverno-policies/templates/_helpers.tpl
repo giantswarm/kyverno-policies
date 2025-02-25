@@ -36,3 +36,8 @@ helm.sh/chart: {{ include "chart" . | quote }}
 {{ toYaml .Values.customLabels }}
 {{- end }}
 {{- end -}}
+
+{{/* Build a full prefixed name for a policy, if one is set */}}
+{{- define "prefixedName" -}}
+{{- printf "%s%s" .Values.policyNamePrefix .name -}}
+{{- end -}}
