@@ -31,7 +31,7 @@ bestPracticesPolicies:
 
     # require-emptydir-requests-and-limits ensures that all emptyDir volumes have resource requests and limits defined.
     require-emptydir-requests-and-limits:
-      enabled: false
+      enabled: true
       mode: Audit
 
     # require-pod-probes ensures that all Pods have liveness, readiness, or startup probes defined.
