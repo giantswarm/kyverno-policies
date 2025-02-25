@@ -1,5 +1,4 @@
 apiVersion: v2
-appVersion: v1.12.5
 annotations:
   application.giantswarm.io/team: shield
 dependencies:
