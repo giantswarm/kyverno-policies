@@ -1,5 +1,4 @@
 apiVersion: v2
-appVersion: v1.12.5
 annotations:
   application.giantswarm.io/team: shield
 dependencies:
@@ -20,4 +19,4 @@ restrictions:
   clusterSingleton: true
 sources:
   - https://github.com/giantswarm/kyverno-policies
-version: 0.22.0
+version: 0.23.0
