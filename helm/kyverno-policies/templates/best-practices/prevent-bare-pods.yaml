@@ -1,5 +1,5 @@
 {{- $name := "prevent-bare-pods" }}
-{{- if and (hasKey .Values.supplementalPolicies.policies $name) (get .Values.supplementalPolicies.policies $name).enabled }}
+{{- if and (hasKey .Values.bestPracticesPolicies.policies $name) (get .Values.bestPracticesPolicies.policies $name).enabled }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -31,7 +31,7 @@ spec:
           - Pod
     preconditions:
       all:
-      - key: "{{request.operation || 'BACKGROUND'}}"
+      - key: "{{ `{{` }}request.operation || 'BACKGROUND' {{ `}}` }}"
         operator: NotEquals
         value: DELETE
     validate:
@@ -41,5 +41,5 @@ spec:
           any:
           - key: ownerReferences
             operator: AnyNotIn
-            value: "{{request.object.metadata.keys(@)}}"
+            value: "{{ `{{` }}request.object.metadata.keys(@){{ `}}` }}"
 {{- end }}

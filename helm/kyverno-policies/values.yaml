@@ -5,13 +5,13 @@ kyverno-policies:
   customLabels:
     application.giantswarm.io/team: shield
 
-policyNamePrefix: ""  # Prefix to add to the name of all custom policies. Does not apply to PSS policies. Example: "gs-"
+policyNamePrefix: "gs-"  # Prefix to add to the name of all custom policies. Does not apply to PSS policies. Example: "gs-"
 
 bestPracticesPolicies:
   policies:
     # check-resources-request-and-limits-ratio ensures that the resource limits are no more than 2.5x requests.
     check-resources-request-and-limits-ratio:
-      enabled: false
+      enabled: true
       mode: Audit
 
     # disallow-latest-tag ensures that the latest tag is not used in container images.
@@ -26,7 +26,7 @@ bestPracticesPolicies:
 
     # require-container-requests-limits ensures that all containers have resource requests and limits defined.
     require-container-requests-and-limits:
-      enabled: false
+      enabled: true
       mode: Audit
 
     # require-emptydir-requests-and-limits ensures that all emptyDir volumes have resource requests and limits defined.
@@ -36,7 +36,7 @@ bestPracticesPolicies:
 
     # require-pod-probes ensures that all Pods have liveness, readiness, or startup probes defined.
     require-pod-probes:
-      enabled: false
+      enabled: true
       mode: Audit
 
 supplementalSecurityPolicies:
@@ -55,7 +55,7 @@ supplementalSecurityPolicies:
 
     # check-serviceaccount-secrets ensures that ServiceAccounts do not use long-lived tokens.
     check-serviceaccount-secrets:
-      enabled: false
+      enabled: true
       mode: Audit
 
     # disallow-gitrepo-volume prevents the use of the gitRepo volume type.
@@ -65,17 +65,17 @@ supplementalSecurityPolicies:
 
     # require-ro-rootfs ensures that container root filesystems are mounted as read-only.
     require-ro-rootfs:
-      enabled: false
+      enabled: true
       mode: Audit
 
     # restrict-binding-clusteradmin prevents creating bindings to the cluster-admin ClusterRole.
     restrict-binding-clusteradmin:
-      enabled: false
+      enabled: true
       mode: Audit
 
     # restrict-binding-system-groups prevents creating bindings to system groups including system:anonymous, system:unauthenticated, and system:masters.
     restrict-binding-system-groups:
-      enabled: false
+      enabled: true
       mode: Audit
 
     # restrict-external-ips prevents the use of Services of type ExternalIP.
@@ -85,5 +85,5 @@ supplementalSecurityPolicies:
 
     # restrict-sa-automount-sa-token ensures that ServiceAccounts do not automatically mount ServiceAccount tokens.
     restrict-sa-automount-sa-token:
-      enabled: false
+      enabled: true
       mode: Audit

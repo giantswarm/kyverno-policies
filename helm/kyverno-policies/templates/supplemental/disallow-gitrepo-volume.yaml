@@ -3,8 +3,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  # name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
-  name: {{ include prefixedName (dict "name" $name) }}  
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
   labels: {{ include "labels.common" . | nindent 4 }}
   annotations:
     policies.kyverno.io/title: Disallow gitRepo Volume Type
