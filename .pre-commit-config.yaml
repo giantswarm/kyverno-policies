@@ -1,3 +1,6 @@
+# This file is maintained centrally at
+# https://github.com/giantswarm/github/blob/main/languages/python/.pre-commit-config.yaml
+
 minimum_pre_commit_version: 1.21.0
 repos:
     - repo: meta
@@ -6,7 +9,7 @@ repos:
 
     # format Python code with black
     - repo: https://github.com/psf/black
-      rev: 24.8.0
+      rev: 25.1.0
       hooks:
           - id: black
             language_version: python3
@@ -27,19 +30,19 @@ repos:
           - id: python-check-blanket-noqa
     # bandit
     - repo: https://github.com/PyCQA/bandit
-      rev: '1.7.9'
+      rev: '1.8.3'
       hooks:
           - id: bandit
             args: [ "-c", ".bandit" ]
 
     # static type checking with mypy
     - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v1.11.2
+      rev: v1.15.0
       hooks:
           - id: mypy
 
     - repo: https://github.com/pycqa/flake8
-      rev: '7.1.1'  # pick a git hash / tag to point to
+      rev: '7.2.0'  # pick a git hash / tag to point to
       hooks:
           - id: flake8
 
@@ -51,12 +54,12 @@ repos:
             args: [ --format=json ]
 
     - repo: https://github.com/igorshubovych/markdownlint-cli
-      rev: v0.41.0
+      rev: v0.44.0
       hooks:
           - id: markdownlint
 
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.6.0
+      rev: v5.0.0
       hooks:
           - id: check-added-large-files
           - id: check-docstring-first
