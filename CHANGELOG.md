@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update to upstream `Kyverno Policies` version v1.14.2.
+
+### Notes
+
+This release includes an upstream update. Please refer to the following Release Notes from upstream for the latest changes:
+
+- [v1.14.0](https://github.com/kyverno/kyverno/releases/tag/v1.14.0)
+- [v1.14.1](https://github.com/kyverno/kyverno/releases/tag/v1.14.1)
+- [v1.14.2](https://github.com/kyverno/kyverno/releases/tag/v1.14.2)
+
 ## [0.23.0] - 2025-02-25
 
 ### Added

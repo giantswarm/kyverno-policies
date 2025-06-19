@@ -2,7 +2,7 @@
 
 Kubernetes Pod Security Standards implemented as Kyverno policies
 
-![Version: 3.3.4](https://img.shields.io/badge/Version-3.3.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.13.4](https://img.shields.io/badge/AppVersion-v1.13.4-informational?style=flat-square)
+![Version: 3.4.2](https://img.shields.io/badge/Version-3.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.14.2](https://img.shields.io/badge/AppVersion-v1.14.2-informational?style=flat-square)
 
 ## About
 
@@ -84,15 +84,17 @@ The command removes all the Kubernetes components associated with the chart and 
 | validationFailureAction | string | `"Audit"` | Validation failure action (`Audit`, `Enforce`). For more info https://kyverno.io/docs/writing-policies/validate. |
 | validationFailureActionByPolicy | object | `{}` | Define validationFailureActionByPolicy for specific policies. Override the defined `validationFailureAction` with a individual validationFailureAction for individual Policies. |
 | validationFailureActionOverrides | object | `{"all":[]}` | Define validationFailureActionOverrides for specific policies. The overrides for `all` will apply to all policies. |
-| validationAllowExistingViolations | bool | `true` | Validate already existing resources. For more info https://kyverno.io/docs/writing-policies/validate. |
+| validationAllowExistingViolations | bool | `true` | Validate already existing resources. For more info https://kyverno.io/docs/policy-types/. |
 | policyExclude | object | `{}` | Exclude resources from individual policies. Policies with multiple rules can have individual rules excluded by using the name of the rule as the key in the `policyExclude` map. |
 | policyPreconditions | object | `{}` | Add preconditions to individual policies. Policies with multiple rules can have individual rules excluded by using the name of the rule as the key in the `policyPreconditions` map. |
 | autogenControllers | string | `""` | Customize the target Pod controllers for the auto-generated rules. (Eg. `none`, `Deployment`, `DaemonSet,Deployment,StatefulSet`) For more info https://kyverno.io/docs/writing-policies/autogen/. |
 | nameOverride | string | `nil` | Name override. |
+| customAnnotations | object | `{}` | Additional Annotations. |
 | customLabels | object | `{}` | Additional labels. |
 | background | bool | `true` | Policies background mode |
 | skipBackgroundRequests | bool | `nil` | SkipBackgroundRequests bypasses admission requests that are sent by the background controller |
 | kyvernoVersion | string | `"autodetect"` | Kyverno version The default of "autodetect" will try to determine the currently installed version from the deployment |
+| kubeVersionOverride | string | `nil` | Kubernetes version override Override default value of kubeVersion set by release team taken from Chart.yaml with custom value. Ideally range of versions no more than two prior (ex., 1.28-1.31), must be enclosed in quotes. |
 
 ## Source Code
 
