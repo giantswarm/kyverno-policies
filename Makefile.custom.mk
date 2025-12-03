@@ -5,7 +5,7 @@ KIND_CLUSTER_NAME ?= "kyverno-cluster"
 
 # These values should be set by the outer environment / CircleCI environment config.
 KUBERNETES_VERSION ?= v1.30.13
-KYVERNO_VERSION ?= v1.14.2
+KYVERNO_VERSION ?= v1.16.0
 
 ##@ Test
 
@@ -16,7 +16,7 @@ clean: ## Delete test manifests from kind cluster.
 .PHONY: kind-create
 kind-create: ## create kind cluster if needed
 	KIND_CLUSTER_NAME=$(KIND_CLUSTER_NAME) ./hack/kind-with-registry.sh
-	./hack/setup-kind.sh
+# 	./hack/setup-kind.sh
 
 .PHONY: tilt-up
 tilt-up: ## Start Tilt
@@ -26,7 +26,11 @@ tilt-up: ## Start Tilt
 .PHONY: install-kyverno
 install-kyverno:
 	kubectl create --context kind-$(KIND_CLUSTER_NAME) -f https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml
-	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -nkyverno
+	kubectl wait --context kind-$(KIND_CLUSTER_NAME) --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -n kyverno
+
+.PHONY: install-policies
+install-policies:
+	helm upgrade --install kyverno-policies ./helm/kyverno-policies
 
 .PHONY: kind-get-kubeconfig
 kind-get-kubeconfig:
