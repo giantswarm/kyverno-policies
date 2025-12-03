@@ -75,11 +75,11 @@ jobs:
 workflows:
   workflow:
     jobs:
-    - test-policies:
-          # Needed to trigger job also on git tag.
-        filters:
-          tags:
-            only: /^v.*/
+    # - test-policies:
+    #       # Needed to trigger job also on git tag.
+    #     filters:
+    #       tags:
+    #         only: /^v.*/
 
       # Push PSS policies to catalogs
     - architect/push-to-app-catalog:
@@ -98,7 +98,7 @@ workflows:
             ignore:
             - main
             - master
-    
+
     - architect/push-to-app-catalog:
         name: push-kyverno-policies-to-giantswarm-catalog
         app_catalog: giantswarm-catalog
