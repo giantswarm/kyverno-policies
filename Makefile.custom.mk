@@ -30,7 +30,7 @@ install-kyverno:
 
 .PHONY: install-policies
 install-policies:
-	helm upgrade --install kyverno-policies ./helm/kyverno-policies
+	helm upgrade --install kyverno-policies ./helm/kyverno-policies --set "kyverno-policies.validationFailureAction=Enforce"
 
 .PHONY: kind-get-kubeconfig
 kind-get-kubeconfig:

@@ -34,6 +34,9 @@ jobs:
       - name: Install Kyverno Policies
         run: |
           make install-policies
-      # - name: Run Chainsaw tests
-      #   run: |
-      #     chainsaw test run --kubeconfig ~/.kube/config --policies ./policies
+      - name: Check Cluster Policy Status
+        run: |
+          kubectl get cpol
+      - name: Run Chainsaw tests
+        run: |
+          chainsaw test ./tests/chainsaw
