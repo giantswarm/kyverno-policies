@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+      - name: Install Chainsaw
+        uses: kyverno/action-install-chainsaw@v0.2.13
       - name: Download kind
         run: |
           curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/bin
@@ -31,4 +33,7 @@ jobs:
           make kind-create kind-get-kubeconfig install-kyverno
       - name: Install Kyverno Policies
         run: |
-          make install-kyverno-policies
+          make install-policies
+      # - name: Run Chainsaw tests
+      #   run: |
+      #     chainsaw test run --kubeconfig ~/.kube/config --policies ./policies
