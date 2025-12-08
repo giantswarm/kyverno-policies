@@ -2,10 +2,10 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: release v1.16.0 (#14314)...
-      sha: 18f9549cb2af30ec0537cd97f3200228d9f42d4b
+      commitTitle: release v1.16.1 (#14435)...
+      sha: 67f7f8c3f58d64e3c7b103de5f11ffe268250c55
       tags:
-      - v1.16.0
+      - v1.16.1
     path: .
   path: helm/kyverno-policies/charts/kyverno-policies
 kind: LockConfig
