@@ -1,0 +1,50 @@
+# DO NOT EDIT. Generated with:
+#
+#    devctl
+#
+#    https://github.com/giantswarm/devctl/blob/81cdf8c488f860faa1f635b5b9f73c50de363304/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
+#
+
+name: "Test Kyverno Policies with Chainsaw"
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+env:
+  KYVERNO_POLICIES_APP_NAME: kyverno-policies
+  # repository: kubernetes-sigs/kind
+  KIND_VERSION: v0.25.0
+  # repository: kindest/node
+  KUBERNETES_VERSION: v1.33.7
+  # repository: giantswarm/kyverno-crds
+  KYVERNO_VERSION: v1.16.0
+  HELM_VERSION: 4
+jobs:
+  test-policies:
+    name: "Test Kyverno Policies"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Install Chainsaw
+        uses: kyverno/action-install-chainsaw@v0.2.13
+      - name: Download kind
+        run: |
+          curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/bin
+      - name: Download kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - name: Download Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-$HELM_VERSION && chmod +x get_helm.sh && ./get_helm.sh
+      - name: Install Make
+        run: |
+          sudo apt-get update && sudo apt-get install make
+      - name: Create kind cluster and install kyverno
+        run: |
+          make kind-create kind-get-kubeconfig install-kyverno
+      - name: Install Kyverno Policies
+        run: |
+          make install-policies
+      - name: Run Chainsaw tests
+        run: |
+          chainsaw test ./tests/chainsaw
