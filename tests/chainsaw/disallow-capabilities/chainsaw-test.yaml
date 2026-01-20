@@ -1,0 +1,20 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-capabilities
+spec:
+  steps:
+  - name: create a bad pod
+    try:
+    - apply:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod.yaml
+  - name: create a good pod
+    try:
+    - apply:
+        expect:
+        - check:
+            ($error == null): false
+        file: good-pod.yaml
