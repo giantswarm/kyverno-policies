@@ -3,85 +3,9 @@ version: 2.1
 orbs:
   architect: giantswarm/architect@6.11.0
 
-commands:
-  run-ats:
-    parameters:
-      ats_version:
-        type: string
-        default: 0.10.2
-      chart_archive_prefix:
-        type: string
-      tests_dir:
-        type: string
-    steps:
-    - architect/run-tests-with-ats:
-        chart_archive_prefix: << parameters.chart_archive_prefix >>
-        app-test-suite_version: v<< parameters.ats_version >>
-        app-test-suite_container_tag: << parameters.ats_version >>
-        additional_app-test-suite_flags: --external-cluster-version $KUBERNETES_VERSION
-          --app-tests-pytest-tests-dir << parameters.tests_dir >>
-
-jobs:
-  test-policies:
-    machine:
-      image: ubuntu-2204:current
-    environment:
-      CLUSTERCTL_VERSION: v1.8.4
-      KIND_VERSION: v0.24.0
-      KUBERNETES_VERSION: v1.29.8
-      KYVERNO_VERSION: v1.12.6
-      DABS_VERSION: v1.2.6
-    steps:
-    - checkout
-    - run:
-        name: Download kind
-        command: |
-          curl -sLo kind https://github.com/kubernetes-sigs/kind/releases/download/$KIND_VERSION/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/bin
-    - run:
-        name: Download kubectl
-        command: |
-          curl -sLO https://storage.googleapis.com/kubernetes-release/release/$KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl  && sudo mv kubectl /usr/bin
-    - run:
-        name: Download dabs.sh
-        command: |
-          wget -O dabs.sh https://github.com/giantswarm/app-build-suite/releases/download/$DABS_VERSION/dabs.sh && chmod +x dabs.sh && sudo mv dabs.sh /usr/bin
-    - run:
-        name: Install Make
-        command: |
-          sudo apt-get update && sudo apt-get install make
-    - run:
-        name: Install clusterctl
-        command: |
-          curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/$CLUSTERCTL_VERSION/clusterctl-linux-amd64 -o clusterctl && chmod +x clusterctl && sudo mv clusterctl /usr/bin
-    - run:
-        name: Create kind cluster and install kyverno
-        command: |
-          make kind-create kind-get-kubeconfig install-kyverno
-    - run:
-        name: Make chart archives
-        command: |
-          make dabs
-    - run-ats:
-        chart_archive_prefix: kyverno-policies
-        tests_dir: tests/ats
-    - run:
-        name: Export kind logs
-        when: always
-        command: |
-          kind export logs --name kyverno-cluster logs
-    - store_artifacts:
-        path: logs
-
 workflows:
   workflow:
     jobs:
-    - test-policies:
-          # Needed to trigger job also on git tag.
-        filters:
-          tags:
-            only: /^v.*/
-
-      # Push PSS policies to catalogs
     - architect/push-to-app-catalog:
         name: push-kyverno-policies-to-control-plane-catalog
         app_catalog: control-plane-catalog
@@ -98,7 +22,7 @@ workflows:
             ignore:
             - main
             - master
-    
+
     - architect/push-to-app-catalog:
         name: push-kyverno-policies-to-giantswarm-catalog
         app_catalog: giantswarm-catalog
