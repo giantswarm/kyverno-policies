@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - run: |
           # Get the last tag from fork repo
           LAST_TAG=$(git ls-remote --tags --sort='v:refname' --refs $fork_repo \
