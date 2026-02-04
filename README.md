@@ -14,118 +14,108 @@ These scripts enable us to easily set up a local testing environment.
 
 ## Development
 
-There are only very few prerequists for local testing:
-1. `make` has to be installed
-2. `kubectl` has to be installed
-3. `kind` has to be installed
-4. [dabs.sh](https://raw.githubusercontent.com/giantswarm/app-build-suite/v1.0.4/dabs.sh) has to be accessible.
-5. [dats.sh](https://raw.githubusercontent.com/giantswarm/app-test-suite/v0.1.4/dats.sh) has to be accessible.
+### Prerequisites
 
-Tests are implemented with [pytest](https://docs.pytest.org) with plugin [pytest-helm-charts](https://github.com/giantswarm/pytest-helm-charts).
+1. `make` installed
+2. `kubectl` installed
+3. `kind` installed
+4. `helm` installed
+5. `chainsaw` installed ([Chainsaw installation guide](https://kyverno.github.io/chainsaw/latest/quick-start/install/))
 
-Executing the integration tests can be done with this simple set of commands:
-```bash
-make setup # Creates the kind cluster and installs all dependencies.
-dabs.sh --generate-metadata -c ./helm/policies-aws # Builds helm chart archive to be tested.
-./dats.sh --chart-file $(ls -1 -t policies-aws*.tgz | head -n 1) # Executes the tests related to the AWS policies against the kind cluster.
-```
+### Generate policies
 
-To only generate the policies in the `helm` folder structure:
+To generate the policies in the `helm` folder structure:
 ```bash
 make generate
 ```
 
-### Adding tests
+## Testing
 
-This repository uses the [app-build-suite](https://github.com/giantswarm/app-build-suite/) and the related testing setup.
-We have tried to make the test setup as simple as possible but some python knowledge is required.
+Tests are implemented using [Chainsaw](https://kyverno.github.io/chainsaw/), a declarative testing framework for Kubernetes.
 
-The tests use [python fixtures](https://docs.pytest.org/en/6.2.x/fixture.html) extensively to set up any resources we need in our tests.
+### Test structure
 
-All fixtures can be found in [ensure.py](https://github.com/giantswarm/kyverno-policies/blob/main/helm/tests/ensure.py).
-Each fixtures should be structured in a similar way. Let's follow an example for `AWSCluster`:
-```python
-@pytest.fixture
-def awscluster(kubernetes_cluster):
-    # Yaml of whatever resource you want to create.
-    # The cluster_name variable is defined globally in ensure.py - so we always reuse the same names.
-    c = dedent(f"""
-        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-        kind: AWSCluster
-        metadata:
-          name: {cluster_name}
-          namespace: default
-          labels:
-            giantswarm.io/cluster: {cluster_name}
-            cluster.x-k8s.io/cluster-name: {cluster_name}
-        spec:
-          region: ""
-          sshKeyName: ""
-    """)
+Tests are located in `tests/chainsaw/` with the following structure:
 
-    # Creating the resource for our test.
-    kubernetes_cluster.kubectl("apply", input=c, output=None)
-    LOGGER.info(f"AWSCluster {cluster_name} applied")
-
-    # Get the resource back from Kubernetes after it has been applied / defaulted.
-    raw = kubernetes_cluster.kubectl(
-        f"get awscluster {cluster_name}", output="yaml")
-
-    awscluster = yaml.safe_load(raw)
-
-    # yield returns the object to our test case.
-    yield awscluster
-
-    # Do cleanup after our testcase has ended.
-    kubernetes_cluster.kubectl(f"delete awscluster {cluster_name}", output=None)
-    LOGGER.info(f"AWSCluster {cluster_name} deleted")
+```
+tests/chainsaw/
+├── _steps-templates/           # Reusable test step templates
+│   └── cluster-policy-ready.yaml
+├── check-policy-ready/         # Test that verifies all policies are ready
+│   └── chainsaw-test.yaml
+├── values.yaml                 # Helm values for test configuration
+└── <policy-name>/              # Individual policy tests
+    ├── chainsaw-test.yaml      # Test definition
+    ├── good-pod.yaml           # Resource that should be allowed
+    └── bad-pod.yaml            # Resource that should be blocked
 ```
 
-The testcases can now look very simple as we only need to assert that the resources were created as we expected.
-Here is an example for a AWSCluster policy:
-```python
-# We have to mark the test as smoke for app-build-suite.
-@pytest.mark.smoke
-# We request 3 resources from fixtures: a Release CR, a Cluster CR and an AWSCluster CR.
-# The input parameters are named the same as the fixture functions to make it work.
-def test_aws_cluster_policy(release, cluster, awscluster) -> None:
-    """
-    test_aws_cluster_policy tests defaulting of an AWSCluster where all required values are empty strings.
+### Running tests
 
-    :param release: Release CR which is used by the Cluster.
-    :param cluster: Cluster CR which uses the release and matches the AWSCluster.
-    :param awscluster: AWSCluster CR with empty strings which matches the Cluster CR.
-    """
-    # At this point the release CR, cluster CR and awscluster CR have all been created in our KIND setup.
-    # We now only need to assert that the awscluster CR looks like we expect it to!
-    assert awscluster['metadata']['labels']['cluster.x-k8s.io/watch-filter'] == ensure.watch_label
-    assert awscluster['spec']['region'] == "eu-west-1"
-    assert awscluster['spec']['sshKeyName'] == "ssh-key"
-    # We don't need to clean up anything as the fixture does that for us already!
+1. Create a Kind cluster and install Kyverno:
+```bash
+make kind-create
+make install-kyverno
 ```
-To make this example work in a new file we need to also remember to import our fixtures correctly:
-```python
-# Importing the path to the ensure.py file.
-import sys
-sys.path.append('../../../tests')
-# Import the fixtures we need for our test cases!
-from ensure import release
-from ensure import cluster
-from ensure import awscluster
-```
-And then we should be good to go!
 
-The output of our testcase then also shows the different setup and teardown stages in the logs:
+2. Install the policies with test configuration:
+```bash
+make install-policies
 ```
-test_aws_default.py::test_aws_cluster_policy
-------------------------------------- live log setup ----------------------------------------------------
-INFO     ensure:ensure.py:55 Release v20.0.0 applied
-INFO     ensure:ensure.py:92 Cluster test-cluster applied
-INFO     ensure:ensure.py:193 AWSCluster test-cluster applied
-PASSED                                                                                              [ 20%]
------------------------------------- live log teardown ---------------------------------------------------
-INFO     ensure:ensure.py:203 AWSCluster test-cluster deleted
-INFO     ensure:ensure.py:102 Cluster test-cluster deleted
+
+3. Run all Chainsaw tests:
+```bash
+chainsaw test --test-dir tests/chainsaw/
+```
+
+To run a specific test:
+```bash
+chainsaw test --test-dir tests/chainsaw/disallow-capabilities/
+```
+
+### Writing tests
+
+Each policy test follows a simple pattern:
+
+1. Create a directory under `tests/chainsaw/<policy-name>/`
+2. Add a `chainsaw-test.yaml` that defines the test steps
+3. Add resource files for both allowed and blocked scenarios
+
+Example test (`chainsaw-test.yaml`):
+```yaml
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-privileged-containers
+spec:
+  steps:
+  - name: create a bad pod
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod.yaml
+  - name: create a good pod
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml
+```
+
+The test uses `create` to attempt resource creation and checks:
+- `($error != null): true` - expects the policy to **block** the resource
+- `($error != null): false` - expects the policy to **allow** the resource
+
+### Test configuration
+
+The `tests/chainsaw/values.yaml` file configures policies for testing. Policies should be set to `Enforce` mode to verify blocking behavior:
+
+```yaml
+kyverno-policies:
+  validationFailureAction: Enforce
 ```
 
 ### Tilt
