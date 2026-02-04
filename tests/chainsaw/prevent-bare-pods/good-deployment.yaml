@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: good-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: good-deployment
+  template:
+    metadata:
+      labels:
+        app: good-deployment
+    spec:
+      containers:
+      - name: container01
+        image: busybox:1.35
+        args:
+        - sleep
+        - 1d
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+            - ALL

@@ -1,3 +1,28 @@
-# Placeholder for extra testing values
+# Values for testing Kyverno policies with Chainsaw
+# Set all policies to Enforce mode so tests can verify blocking behavior
+
 kyverno-policies:
   validationFailureAction: Enforce
+
+# Best practices policies
+bestPracticesPolicies:
+  policies:
+    disallow-latest-tag:
+      enabled: true
+      mode: Enforce
+    prevent-bare-pods:
+      enabled: true
+      mode: Enforce
+    require-emptydir-requests-and-limits:
+      enabled: true
+      mode: Enforce
+
+# Supplemental security policies
+supplementalSecurityPolicies:
+  policies:
+    disallow-gitrepo-volume:
+      enabled: true
+      mode: Enforce
+    restrict-external-ips:
+      enabled: true
+      mode: Enforce

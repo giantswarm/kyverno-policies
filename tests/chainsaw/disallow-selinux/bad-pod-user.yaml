@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod-selinux-user
+  namespace: default
+spec:
+  containers:
+  - name: container01
+    image: busybox:1.35
+    args:
+    - sleep
+    - 1d
+    securityContext:
+      seLinuxOptions:
+        user: system_u

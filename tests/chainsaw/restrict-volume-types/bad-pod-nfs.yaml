@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod-nfs-volume
+  namespace: default
+spec:
+  containers:
+  - name: container01
+    image: busybox:1.35
+    args:
+    - sleep
+    - 1d
+    volumeMounts:
+    - name: nfs
+      mountPath: /nfs
+  volumes:
+  - name: nfs
+    nfs:
+      server: nfs-server.example.com
+      path: /exports

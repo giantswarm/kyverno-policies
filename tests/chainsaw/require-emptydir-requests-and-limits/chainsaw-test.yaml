@@ -1,0 +1,27 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: require-emptydir-requests-and-limits
+spec:
+  steps:
+  - name: create a bad pod with emptyDir without limits
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod.yaml
+  - name: create a good pod with emptyDir and limits
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml
+  - name: create a good pod with emptyDir sizeLimit
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-sizelimit.yaml

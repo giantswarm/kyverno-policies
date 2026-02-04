@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: good-pod-no-host-ns
+  namespace: default
+spec:
+  hostNetwork: false
+  hostPID: false
+  hostIPC: false
+  containers:
+  - name: container01
+    image: busybox:1.35
+    args:
+    - sleep
+    - 1d
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL
