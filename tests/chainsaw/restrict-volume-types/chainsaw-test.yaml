@@ -1,0 +1,27 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restrict-volume-types
+spec:
+  steps:
+  - name: create a bad pod with nfs volume
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-nfs.yaml
+  - name: create a bad pod with hostPath volume
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-hostpath.yaml
+  - name: create a good pod with allowed volumes
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml

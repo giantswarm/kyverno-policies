@@ -1,0 +1,34 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-host-namespaces
+spec:
+  steps:
+  - name: create a bad pod with hostNetwork
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-hostnetwork.yaml
+  - name: create a bad pod with hostPID
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-hostpid.yaml
+  - name: create a bad pod with hostIPC
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-hostipc.yaml
+  - name: create a good pod
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml

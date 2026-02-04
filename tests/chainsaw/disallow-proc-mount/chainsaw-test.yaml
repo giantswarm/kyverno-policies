@@ -1,0 +1,20 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-proc-mount
+spec:
+  steps:
+  - name: create a bad pod with Unmasked procMount
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod.yaml
+  - name: create a good pod with Default procMount
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml

@@ -1,0 +1,20 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restrict-external-ips
+spec:
+  steps:
+  - name: create a bad service with externalIPs
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-service.yaml
+  - name: create a good service without externalIPs
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-service.yaml
