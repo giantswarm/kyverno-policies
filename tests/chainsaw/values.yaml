@@ -1,1 +1,3 @@
 # Placeholder for extra testing values
+kyverno-policies:
+  validationFailureAction: Enforce
