@@ -5,6 +5,9 @@
         "kyverno-policies": {
             "type": "object",
             "properties": {
+                "policyType": {
+                    "type": "string"
+                },
                 "podSecurityStandard": {
                     "type": "string"
                 }
