@@ -1,4 +1,5 @@
 kyverno-policies:
+  policyType: ClusterPolicy
   podSecurityStandard: restricted
   # includeOtherPolicies:
   #   - require-non-root-groups
