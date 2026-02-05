@@ -1,8 +1,9 @@
 apiVersion: v2
 annotations:
-  application.giantswarm.io/team: shield
   io.giantswarm.application.audience: all
   io.giantswarm.application.managed: "true"
+  io.giantswarm.application.restrictions.cluster-singleton: "true"
+  io.giantswarm.application.team: shield
 dependencies:
   - name: kyverno-policies
     version: 3.7.0
@@ -17,8 +18,6 @@ keywords:
   - validating-webhook
   - admission-controller
 name: kyverno-policies
-restrictions:
-  clusterSingleton: true
 sources:
   - https://github.com/giantswarm/kyverno-policies
 version: 0.25.0
