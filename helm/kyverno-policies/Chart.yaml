@@ -1,6 +1,8 @@
 apiVersion: v2
 annotations:
   application.giantswarm.io/team: shield
+  io.giantswarm.application.audience: all
+  io.giantswarm.application.managed: "true"
 dependencies:
   - name: kyverno-policies
     version: 3.7.0
