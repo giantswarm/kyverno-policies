@@ -40,3 +40,19 @@ workflows:
             ignore:
             - main
             - master
+
+    - architect/push-to-app-catalog:
+        context: architect
+        executor: app-build-suite
+        name: push-kyverno-policies-chart-to-default-catalog
+        app_catalog: default-catalog
+        app_catalog_test: default-test-catalog
+        attach_workspace: true
+        persist_chart_archive: true
+        chart: kyverno-policies
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            ignore:
+            - main
