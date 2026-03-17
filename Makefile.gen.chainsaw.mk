@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/81cdf8c488f860faa1f635b5b9f73c50de363304/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
+#    https://github.com/giantswarm/devctl/blob/d0c8f03c86ad4cfaef54d2315dc6f6d402be716d/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
 #
 
 SHELL:=/usr/bin/env bash
@@ -34,6 +34,10 @@ install-kyverno:
 install-policies:
 	touch tests/chainsaw/values.yaml
 	helm upgrade --install $(KYVERNO_POLICIES_APP_NAME) ./helm/$(KYVERNO_POLICIES_APP_NAME) --values ./tests/chainsaw/values.yaml
+
+.PHONY: install-extras
+install-extras:
+	hack/chainsaw-extra-resources.sh
 
 .PHONY: kind-get-kubeconfig
 kind-get-kubeconfig:
