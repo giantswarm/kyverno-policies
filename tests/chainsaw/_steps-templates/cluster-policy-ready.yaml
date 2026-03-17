@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/81cdf8c488f860faa1f635b5b9f73c50de363304/pkg/gen/input/makefile/internal/file/chainsaw-tests-steps-template.yaml.template
+#    https://github.com/giantswarm/devctl/blob/d0c8f03c86ad4cfaef54d2315dc6f6d402be716d/pkg/gen/input/makefile/internal/file/chainsaw-tests-steps-template.yaml.template
 #
 
 # This is a reusable policy template that will be called from the cluster-policy-ready test.

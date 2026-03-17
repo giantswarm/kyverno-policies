@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/bee59541b24dd2c772b79ab1da0a56d41e950747/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
+#    https://github.com/giantswarm/devctl/blob/d0c8f03c86ad4cfaef54d2315dc6f6d402be716d/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
 #
 
 name: "Test Kyverno Policies with Chainsaw"
@@ -47,6 +47,9 @@ jobs:
       - name: Create kind cluster and install kyverno
         run: |
           make kind-create kind-get-kubeconfig install-kyverno
+      - name: Install extra resources
+        run: |
+          make install-extras
       - name: Install Kyverno Policies
         run: |
           make install-policies
