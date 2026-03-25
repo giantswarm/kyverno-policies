@@ -107,8 +107,8 @@ debugAccessPolicies:
   - namespaces: []
     allDeployments: false
     deployments: []
-    allowedDebugContainerImages: &allowedDebugContainerImages []
-    authorizedDebuggerGroups: &authorizedDebuggerGroups []
+    allowedDebugContainerImages: *allowedDebugContainerImages
+    authorizedDebuggerGroups: *authorizedDebuggerGroups
 
   policies:
     # disallow-ephemeral-containers blocks the use of ephemeral containers.
@@ -117,6 +117,8 @@ debugAccessPolicies:
       mode: Audit
 
     # disallow-unapproved-debug-access blocks the use of debug access to unauthorized deployments.
+    # This policy is a ValidatingPolicy (policies.kyverno.io/v1) using CEL expressions.
+    # Mode mapping: "Audit" -> Audit, "Enforce" -> Deny (ValidatingPolicy terminology).
     disallow-unapproved-debug-access:
       enabled: true
       mode: Audit

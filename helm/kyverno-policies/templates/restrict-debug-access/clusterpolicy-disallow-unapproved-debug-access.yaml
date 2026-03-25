@@ -1,7 +1,7 @@
 {{ $name := "disallow-unapproved-debug-access" }}
 {{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
   labels: {{ include "labels.common" . | nindent 4 }}
@@ -10,58 +10,79 @@ metadata:
     policies.kyverno.io/category: Security
     policies.kyverno.io/severity: medium
     policies.kyverno.io/subject: Pod
-    policies.kyverno.io/description: Blocks the use of debug access to unauthorized deployments or using unauthorized container images.
+    policies.kyverno.io/description: >-
+      Blocks the use of debug access to unauthorized deployments
+      or using unauthorized container images.
 spec:
-  validationFailureAction: {{ (get .Values.debugAccessPolicies.policies $name).mode }}
-  background: false
-  rules:
-    - name: disallow-unauthorized-ephemeral-containers
-      match:
-        any:
-          - resources:
-              kinds: [Pod/ephemeralcontainers]
-              operations: [UPDATE]
-      celPreconditions:
-        - name: "is-adding-ephemeral-container"
-          expression: >-
-            (has(object.spec.ephemeralContainers) ? object.spec.ephemeralContainers.size() : 0)
-            >
-            ((oldObject != null && has(oldObject.spec) && has(oldObject.spec.ephemeralContainers))
-              ? oldObject.spec.ephemeralContainers.size()
-              : 0)
-      context:
-        - name: rsName
-          variable:
-            jmesPath: "request.object.metadata.ownerReferences[?kind=='ReplicaSet'].name | [0] || ''"
-            default: ""
-        - name: deploymentName
-          apiCall:
-            urlPath: "/apis/apps/v1/namespaces/{{`{{ request.namespace }}`}}/replicasets/{{`{{ rsName }}`}}"
-            jmesPath: "metadata.ownerReferences[?kind=='Deployment'].name | [0] || ''"
-      validate:
-        message: "Debug access is not authorized for this target, image, or user group."
-        deny:
-          conditions:
-            all:
-{{- range $target := .Values.debugAccessPolicies.authorizedDebugTargets }}              
-              - any:
-                - key: "{{`{{ request.namespace }}`}}"
-                  operator: AnyNotIn
-                  value: {{ $target.namespaces | default list | toJson }}
+  {{- $mode := (get .Values.debugAccessPolicies.policies $name).mode }}
+  validationActions:
+    - {{ if eq $mode "Enforce" }}Deny{{ else }}{{ $mode }}{{ end }}
+  evaluation:
+    background:
+      enabled: false
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: [v1]
+        operations: [UPDATE]
+        resources: [pods/ephemeralcontainers]
+  matchConditions:
+    - name: is-adding-ephemeral-container
+      expression: >-
+        (has(object.spec.ephemeralContainers) ? object.spec.ephemeralContainers.size() : 0)
+        >
+        ((oldObject != null && has(oldObject.spec) && has(oldObject.spec.ephemeralContainers))
+          ? oldObject.spec.ephemeralContainers.size()
+          : 0)
+  variables:
+    - name: rsName
+      expression: >-
+        object.metadata.?ownerReferences.orValue([])
+          .filter(ref, ref.kind == 'ReplicaSet')
+          .map(ref, ref.name)
+          .size() > 0
+        ? object.metadata.ownerReferences
+            .filter(ref, ref.kind == 'ReplicaSet')[0].name
+        : ''
+    - name: deploymentName
+      expression: >-
+        variables.rsName != ''
+        ? resource.Get("apps/v1", "replicasets",
+            object.metadata.namespace, variables.rsName)
+            .metadata.?ownerReferences.orValue([])
+            .filter(ref, ref.kind == 'Deployment')
+            .map(ref, ref.name)
+            .size() > 0
+          ? resource.Get("apps/v1", "replicasets",
+              object.metadata.namespace, variables.rsName)
+              .metadata.ownerReferences
+              .filter(ref, ref.kind == 'Deployment')[0].name
+          : ''
+        : ''
+    - name: ephemeralImages
+      expression: >-
+        object.spec.?ephemeralContainers.orValue([]).map(c, c.image)
+    - name: userGroups
+      expression: "request.userInfo.?groups.orValue([])"
+  validations:
+    - expression: >-
+{{- range $i, $target := .Values.debugAccessPolicies.authorizedDebugTargets }}
+{{ if $i }}        ||{{ end }}
+        (
+          object.metadata.namespace in {{ $target.namespaces | default list | toJson }}
 {{- if not $target.allDeployments }}
-                - key: "{{`{{ deploymentName }}`}}"
-                  operator: AnyNotIn
-                  value: {{ $target.deployments | default list | toJson }}
+          && variables.deploymentName in {{ $target.deployments | default list | toJson }}
 {{- end }}
 {{- if $target.allowedDebugContainerImages }}
-                - key: "{{`{{ request.object.spec.ephemeralContainers[].image }}`}}"
-                  operator: AnyNotIn
-                  value: {{ $target.allowedDebugContainerImages | toJson }}
+          && variables.ephemeralImages.all(img,
+               img in {{ $target.allowedDebugContainerImages | toJson }})
 {{- end }}
 {{- if $target.authorizedDebuggerGroups }}
-                - key: "{{`{{ request.userInfo.groups }}`}}"
-                  operator: AllNotIn
-                  value: {{ $target.authorizedDebuggerGroups | toJson }}
+          && variables.userGroups.exists(g,
+               g in {{ $target.authorizedDebuggerGroups | toJson }})
 {{- end }}
+        )
 {{- end }}
+      message: >-
+        Debug access is not authorized for this target, image, or user group.
 {{ end }}
