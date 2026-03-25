@@ -17,10 +17,11 @@ spec:
     any:
       - resources:
           kinds:
-            - PolicyException
+            - "policies.kyverno.io/*/PolicyException"
+            - "kyverno.io/*/PolicyException"
   conditions:
     all:
-      - key: "{{`{{ time_since('', target.metadata.annotations.\"policy.giantswarm.io/exception-expires-at\", '') }}`}}"
+      - key: "{{ printf `{{ time_since('', target.metadata.annotations.\"%s\", '') }}` (get .Values.debugAccessPolicies.policies $name).targetAnnotation }}"
         operator: GreaterThan
         value: "0s"
 ---
@@ -33,6 +34,7 @@ metadata:
 rules:
   - apiGroups:
       - kyverno.io
+      - policies.kyverno.io
     resources:
       - policyexceptions
     verbs:

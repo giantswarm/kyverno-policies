@@ -104,9 +104,9 @@ debugAccessPolicies:
   # authorizedDebugTargets defines which namespaces or deployments can be debugged using this mechanism.
   # Empty values will "fail closed" and match no targets.
   authorizedDebugTargets:
-  - namespaces: [<namespace1>, <namespace2>, ...]
+  - namespaces: []
     allDeployments: false
-    deployments: [<deployment1>, <deployment2>, ...]
+    deployments: []
     allowedDebugContainerImages: &allowedDebugContainerImages []
     authorizedDebuggerGroups: &authorizedDebuggerGroups []
 
@@ -118,7 +118,7 @@ debugAccessPolicies:
 
     # block-unapproved-debug-access blocks the use of debug access to unauthorized deployments.
     block-unapproved-debug-access:
-      enabled: false
+      enabled: true
       mode: Audit
 
     # purge-expired-exceptions removes expired temporary PolicyExceptions.
@@ -126,3 +126,4 @@ debugAccessPolicies:
       enabled: false
       mode: Audit
       cleanupSchedule: "*/27 * * * *"  # Every 27 minutes
+      targetAnnotation: "policy.giantswarm.io/exception-expires-at"

@@ -15,7 +15,7 @@ spec:
   validationFailureAction: {{ (get .Values.debugAccessPolicies.policies $name).mode }}
   background: true
   rules:
-    - name: block-ephemeral-containers-cel
+    - name: block-ephemeral-containers
       match:
         any:
           - resources:
