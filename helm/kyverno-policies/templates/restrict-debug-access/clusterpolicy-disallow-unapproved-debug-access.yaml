@@ -43,8 +43,7 @@ spec:
         deny:
           conditions:
             all:
-{{- range $target := .Values.debugAccessPolicies.authorizedDebugTargets }}
-              # Target block: Evaluates to true if the request does NOT match this configuration
+{{- range $target := .Values.debugAccessPolicies.authorizedDebugTargets }}              
               - any:
                 - key: "{{`{{ request.namespace }}`}}"
                   operator: AnyNotIn

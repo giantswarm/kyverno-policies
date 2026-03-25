@@ -111,13 +111,13 @@ debugAccessPolicies:
     authorizedDebuggerGroups: &authorizedDebuggerGroups []
 
   policies:
-    # block-ephemeral-containers blocks the use of ephemeral containers.
-    block-ephemeral-containers:
+    # disallow-ephemeral-containers blocks the use of ephemeral containers.
+    disallow-ephemeral-containers:
       enabled: false
       mode: Audit
 
-    # block-unapproved-debug-access blocks the use of debug access to unauthorized deployments.
-    block-unapproved-debug-access:
+    # disallow-unapproved-debug-access blocks the use of debug access to unauthorized deployments.
+    disallow-unapproved-debug-access:
       enabled: true
       mode: Audit
 
