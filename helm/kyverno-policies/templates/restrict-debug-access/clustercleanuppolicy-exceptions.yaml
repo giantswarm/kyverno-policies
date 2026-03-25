@@ -1,0 +1,43 @@
+{{ $name := "purge-expired-exceptions" }}
+{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
+apiVersion: kyverno.io/v2
+kind: ClusterCleanupPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Purge Expired PolicyExceptions
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: PolicyException
+    policies.kyverno.io/description: Cleans up expired temporary PolicyExceptions.
+spec:
+  schedule: "{{ (get .Values.debugAccessPolicies.policies $name).cleanupSchedule }}"
+  match:
+    any:
+      - resources:
+          kinds:
+            - PolicyException
+  conditions:
+    all:
+      - key: "{{`{{ time_since('', target.metadata.annotations.\"policy.giantswarm.io/exception-expires-at\", '') }}`}}"
+        operator: GreaterThan
+        value: "0s"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:cleanup-controller:cleanup-policyexceptions
+  labels:
+    rbac.kyverno.io/aggregate-to-cleanup-controller: "true"
+rules:
+  - apiGroups:
+      - kyverno.io
+    resources:
+      - policyexceptions
+    verbs:
+      - get
+      - list
+      - watch
+      - delete
+{{ end }}

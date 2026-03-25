@@ -1,0 +1,68 @@
+{{ $name := "block-unapproved-debug-access" }}
+{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Block Unapproved Debug Access
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: Blocks the use of debug access to unauthorized deployments or using unauthorized container images.
+spec:
+  validationFailureAction: {{ (get .Values.debugAccessPolicies.policies $name).mode }}
+  background: false
+  rules:
+    - name: block-unauthorized-ephemeral-containers
+      match:
+        any:
+          - resources:
+              kinds: [Pod/ephemeralcontainers]
+              operations: [UPDATE]
+      celPreconditions:
+        - name: "is-adding-ephemeral-container"
+          expression: >-
+            (has(object.spec.ephemeralContainers) ? object.spec.ephemeralContainers.size() : 0)
+            >
+            ((oldObject != null && has(oldObject.spec) && has(oldObject.spec.ephemeralContainers))
+              ? oldObject.spec.ephemeralContainers.size()
+              : 0)
+      context:
+        - name: rsName
+          variable:
+            jmesPath: "request.object.metadata.ownerReferences[?kind=='ReplicaSet'].name | [0] || ''"
+            default: ""
+        - name: deploymentName
+          apiCall:
+            urlPath: "/apis/apps/v1/namespaces/{{`{{ request.namespace }}`}}/replicasets/{{`{{ rsName }}`}}"
+            jmesPath: "metadata.ownerReferences[?kind=='Deployment'].name | [0] || ''"
+      validate:
+        message: "Debug access is not authorized for this target, image, or user group."
+        deny:
+          conditions:
+            all:
+{{- range $target := .Values.debugAccessPolicies.authorizedDebugTargets }}
+              # Target block: Evaluates to true if the request does NOT match this configuration
+              - any:
+                - key: "{{`{{ request.namespace }}`}}"
+                  operator: AnyNotIn
+                  value: {{ $target.namespaces | default list | toJson }}
+{{- if not $target.allDeployments }}
+                - key: "{{`{{ deploymentName }}`}}"
+                  operator: AnyNotIn
+                  value: {{ $target.deployments | default list | toJson }}
+{{- end }}
+{{- if $target.allowedDebugContainerImages }}
+                - key: "{{`{{ request.object.spec.ephemeralContainers[].image }}`}}"
+                  operator: AnyNotIn
+                  value: {{ $target.allowedDebugContainerImages | toJson }}
+{{- end }}
+{{- if $target.authorizedDebuggerGroups }}
+                - key: "{{`{{ request.userInfo.groups }}`}}"
+                  operator: AllNotIn
+                  value: {{ $target.authorizedDebuggerGroups | toJson }}
+{{- end }}
+{{- end }}
+{{ end }}

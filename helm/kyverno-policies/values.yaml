@@ -88,3 +88,41 @@ supplementalSecurityPolicies:
     restrict-sa-automount-sa-token:
       enabled: false
       mode: Audit
+
+# debugAccessPolicies are a set of policies that are used to allow selective usage of ephemeral containers and interactive sessions.
+# These policies should be used in combination with RBAC limiting the users who are permitted to use `kubectl exec` and `kubectl debug`.
+# This feature should NOT be considered a replacement for RBAC.
+# See the README.md for more information.
+debugAccessPolicies:
+
+  # authorizedDebuggerGroups is a list of groups that are authorized to use the debug functionality.
+  authorizedDebuggerGroups: &authorizedDebuggerGroups []
+
+  # allowedDebugContainerImages is a list of images that are allowed to be used in the debug container.
+  allowedDebugContainerImages: &allowedDebugContainerImages []
+
+  # authorizedDebugTargets defines which namespaces or deployments can be debugged using this mechanism.
+  # Empty values will "fail closed" and match no targets.
+  authorizedDebugTargets:
+  - namespaces: [<namespace1>, <namespace2>, ...]
+    allDeployments: false
+    deployments: [<deployment1>, <deployment2>, ...]
+    allowedDebugContainerImages: &allowedDebugContainerImages []
+    authorizedDebuggerGroups: &authorizedDebuggerGroups []
+
+  policies:
+    # block-ephemeral-containers blocks the use of ephemeral containers.
+    block-ephemeral-containers:
+      enabled: false
+      mode: Audit
+
+    # block-unapproved-debug-access blocks the use of debug access to unauthorized deployments.
+    block-unapproved-debug-access:
+      enabled: false
+      mode: Audit
+
+    # purge-expired-exceptions removes expired temporary PolicyExceptions.
+    purge-expired-exceptions:
+      enabled: false
+      mode: Audit
+      cleanupSchedule: "*/27 * * * *"  # Every 27 minutes
