@@ -1,4 +1,4 @@
-{{ $name := "block-unapproved-debug-access" }}
+{{ $name := "disallow-unapproved-debug-access" }}
 {{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
@@ -15,7 +15,7 @@ spec:
   validationFailureAction: {{ (get .Values.debugAccessPolicies.policies $name).mode }}
   background: false
   rules:
-    - name: block-unauthorized-ephemeral-containers
+    - name: disallow-unauthorized-ephemeral-containers
       match:
         any:
           - resources:

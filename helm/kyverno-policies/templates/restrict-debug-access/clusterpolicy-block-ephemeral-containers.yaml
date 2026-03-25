@@ -1,4 +1,4 @@
-{{ $name := "block-ephemeral-containers" }}
+{{ $name := "disallow-ephemeral-containers" }}
 {{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
@@ -15,7 +15,7 @@ spec:
   validationFailureAction: {{ (get .Values.debugAccessPolicies.policies $name).mode }}
   background: true
   rules:
-    - name: block-ephemeral-containers
+    - name: disallow-ephemeral-containers
       match:
         any:
           - resources:
