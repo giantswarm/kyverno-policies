@@ -1,6 +1,6 @@
 {{ $name := "disallow-unapproved-debug-access" }}
 {{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
-apiVersion: policies.kyverno.io/v1
+apiVersion: policies.kyverno.io/v1alpha1
 kind: ValidatingPolicy
 metadata:
   name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
