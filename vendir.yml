@@ -6,7 +6,7 @@ directories:
   - path: .
     git:
       url: https://github.com/kyverno/kyverno
-      # renovate: datasource=github-tags depName=giantswarm/kyverno
+      # renovate: datasource=github-tags depName=kyverno/kyverno
       ref: v1.17.0
     includePaths:
       - charts/kyverno-policies/**
