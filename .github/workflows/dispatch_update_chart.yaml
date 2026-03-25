@@ -1,0 +1,30 @@
+name: Dispatch update-chart to security-bundle
+
+on:
+  push:
+    branches:
+      - 'main#update-chart'
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.HERALD_APP_ID }}
+          private-key: ${{ secrets.HERALD_APP_KEY }}
+          owner: giantswarm
+          repositories: security-bundle
+
+      - name: Dispatch to security-bundle
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          repository: giantswarm/security-bundle
+          event-type: update-chart
+          client-payload: '{"sha": "${{ github.sha }}", "repo": "${{ github.repository }}"}'
