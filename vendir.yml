@@ -5,7 +5,7 @@ directories:
   contents:
   - path: .
     git:
-      url: https://github.com/giantswarm/kyverno
+      url: https://github.com/kyverno/kyverno
       # renovate: datasource=github-tags depName=giantswarm/kyverno
       ref: v1.17.0
     includePaths:
