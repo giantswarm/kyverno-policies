@@ -1,5 +1,5 @@
-{{- $disallowEphemeral := (hasKey .Values.debugAccessPolicies.policies "disallow-ephemeral-containers") and (get .Values.debugAccessPolicies.policies "disallow-ephemeral-containers").enabled -}}
-{{- $disallowUnapproved := (hasKey .Values.debugAccessPolicies.policies "disallow-unapproved-debug-access") and (get .Values.debugAccessPolicies.policies "disallow-unapproved-debug-access").enabled -}}
+{{- $disallowEphemeral := and (hasKey .Values.debugAccessPolicies.policies "disallow-ephemeral-containers") (get .Values.debugAccessPolicies.policies "disallow-ephemeral-containers").enabled -}}
+{{- $disallowUnapproved := and (hasKey .Values.debugAccessPolicies.policies "disallow-unapproved-debug-access") (get .Values.debugAccessPolicies.policies "disallow-unapproved-debug-access").enabled -}}
 {{- if or $disallowEphemeral $disallowUnapproved }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
