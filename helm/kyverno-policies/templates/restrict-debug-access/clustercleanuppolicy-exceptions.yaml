@@ -28,7 +28,7 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kyverno:cleanup-controller:cleanup-policyexceptions
+  name: kyverno:kyverno-policies:cleanup-policyexceptions
   labels:
     rbac.kyverno.io/aggregate-to-cleanup-controller: "true"
 rules:

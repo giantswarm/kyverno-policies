@@ -81,6 +81,24 @@ spec:
 {{- end }}
         )
 {{- end }}
+      messageExpression: >-
+        "Debug access denied for namespace '" + object.metadata.namespace
+        + "', deployment '" + variables.deploymentName
+        + "'. Criteria:"
+{{- range $i, $target := .Values.debugAccessPolicies.authorizedDebugTargets }}
+        + " [target-{{ $i }}:"
+        + (object.metadata.namespace in {{ $target.namespaces | default list | toJson }} ? " ns=ok" : " ns=DENIED")
+{{- if not $target.allDeployments }}
+        + (variables.deploymentName in {{ $target.deployments | default list | toJson }} ? " deploy=ok" : " deploy=DENIED")
+{{- end }}
+{{- if $target.allowedDebugContainerImages }}
+        + (variables.ephemeralImages.all(img, img in {{ $target.allowedDebugContainerImages | toJson }}) ? " images=ok" : " images=DENIED")
+{{- end }}
+{{- if $target.authorizedDebuggerGroups }}
+        + (variables.userGroups.exists(g, g in {{ $target.authorizedDebuggerGroups | toJson }}) ? " groups=ok" : " groups=DENIED")
+{{- end }}
+        + "]"
+{{- end }}
       message: >-
         Debug access is not authorized for this target, image, or user group.
 {{ end }}
