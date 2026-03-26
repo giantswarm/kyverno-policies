@@ -1,3 +1,4 @@
+{{- include "debugAccessPolicies.validate" . -}}
 {{ $name := "block-expired-exceptions" }}
 {{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
 {{- $annotationKey := (get .Values.debugAccessPolicies.policies "purge-expired-exceptions").targetAnnotation -}}
@@ -38,7 +39,14 @@ spec:
       expression: >-
         object.metadata.annotations['{{ $annotationKey }}']
   validations:
-    - expression: "timestamp(variables.expiryValue) >= now"
+    - expression: >-
+        variables.expiryValue.matches('^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$')
+      messageExpression: >-
+        "Invalid timestamp format in annotation '{{ $annotationKey }}': "
+        + "expected RFC 3339 (e.g., '2026-01-15T12:00:00Z'), got '" + variables.expiryValue + "'."
+      message: >-
+        The expiry annotation does not contain a valid RFC 3339 timestamp.
+    - expression: "timestamp(variables.expiryValue) >= time.now()"
       messageExpression: >-
         "PolicyException is expired: annotation '{{ $annotationKey }}' "
         + "has value '" + variables.expiryValue + "' which is in the past. "
