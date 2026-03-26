@@ -26,3 +26,18 @@ supplementalSecurityPolicies:
     restrict-external-ips:
       enabled: true
       mode: Enforce
+
+# Debug access policies
+debugAccessPolicies:
+  policies:
+    block-expired-exceptions:
+      enabled: true
+      mode: Enforce
+    disallow-ephemeral-containers:
+      enabled: true
+      mode: Enforce
+    purge-expired-exceptions:
+      enabled: true
+      mode: Enforce
+      cleanupSchedule: "*/5 * * * *"
+      targetAnnotation: "policy.giantswarm.io/exception-expires-at"

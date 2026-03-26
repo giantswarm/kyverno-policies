@@ -96,10 +96,10 @@ supplementalSecurityPolicies:
 debugAccessPolicies:
 
   # authorizedDebuggerGroups is a list of groups that are authorized to use the debug functionality.
-  authorizedDebuggerGroups: &authorizedDebuggerGroups []
+  authorizedDebuggerGroups: &authorizedDebuggerGroups ["system:authenticated"]
 
   # allowedDebugContainerImages is a list of images that are allowed to be used in the debug container.
-  allowedDebugContainerImages: &allowedDebugContainerImages []
+  allowedDebugContainerImages: &allowedDebugContainerImages ["busybox:*"]
 
   # authorizedDebugTargets defines which namespaces or deployments can be debugged using this mechanism.
   # Empty values will "fail closed" and match no targets.
@@ -123,7 +123,15 @@ debugAccessPolicies:
       enabled: true
       mode: Audit
 
+    # block-expired-exceptions prevents deploying PolicyExceptions with expired timestamps.
+    # This policy is a ValidatingPolicy (policies.kyverno.io/v1alpha1) using CEL expressions.
+    # Mode mapping: "Audit" -> Audit, "Enforce" -> Deny (ValidatingPolicy terminology).
+    block-expired-exceptions:
+      enabled: false
+      mode: Audit
+
     # purge-expired-exceptions removes expired temporary PolicyExceptions.
+    # This policy should be used in combination with the block-expired-exceptions policy.
     purge-expired-exceptions:
       enabled: false
       mode: Audit

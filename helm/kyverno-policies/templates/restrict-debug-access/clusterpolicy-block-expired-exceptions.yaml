@@ -1,0 +1,48 @@
+{{ $name := "block-expired-exceptions" }}
+{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
+{{- $annotationKey := (get .Values.debugAccessPolicies.policies "purge-expired-exceptions").targetAnnotation -}}
+apiVersion: policies.kyverno.io/v1alpha1
+kind: ValidatingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Block Expired PolicyExceptions
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: PolicyException
+    policies.kyverno.io/description: >-
+      Prevents creation or update of PolicyExceptions with expiry
+      timestamp annotations in the past.
+spec:
+  {{- $mode := (get .Values.debugAccessPolicies.policies $name).mode }}
+  validationActions:
+    - {{ if eq $mode "Enforce" }}Deny{{ else }}{{ $mode }}{{ end }}
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['kyverno.io']
+        apiVersions: ['*']
+        operations: [CREATE, UPDATE]
+        resources: [policyexceptions]
+      - apiGroups: ['policies.kyverno.io']
+        apiVersions: ['*']
+        operations: [CREATE, UPDATE]
+        resources: [policyexceptions]
+  matchConditions:
+    - name: has-expiry-annotation
+      expression: >-
+        has(object.metadata.annotations) &&
+        '{{ $annotationKey }}' in object.metadata.annotations
+  variables:
+    - name: expiryValue
+      expression: >-
+        object.metadata.annotations['{{ $annotationKey }}']
+  validations:
+    - expression: "timestamp(variables.expiryValue) >= now"
+      messageExpression: >-
+        "PolicyException is expired: annotation '{{ $annotationKey }}' "
+        + "has value '" + variables.expiryValue + "' which is in the past. "
+        + "Remove or update the expiry annotation to deploy this PolicyException."
+      message: >-
+        PolicyException has an expired timestamp and cannot be deployed.
+{{ end }}
