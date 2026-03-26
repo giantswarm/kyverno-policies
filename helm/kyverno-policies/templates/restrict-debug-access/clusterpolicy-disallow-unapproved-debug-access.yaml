@@ -44,20 +44,18 @@ spec:
         ? object.metadata.ownerReferences
             .filter(ref, ref.kind == 'ReplicaSet')[0].name
         : ''
-    - name: deploymentName
+    - name: deploymentOwners
       expression: >-
         variables.rsName != ''
         ? resource.Get("apps/v1", "replicasets",
             object.metadata.namespace, variables.rsName)
             .metadata.?ownerReferences.orValue([])
             .filter(ref, ref.kind == 'Deployment')
-            .map(ref, ref.name)
-            .size() > 0
-          ? resource.Get("apps/v1", "replicasets",
-              object.metadata.namespace, variables.rsName)
-              .metadata.ownerReferences
-              .filter(ref, ref.kind == 'Deployment')[0].name
-          : ''
+        : []
+    - name: deploymentName
+      expression: >-
+        variables.deploymentOwners.size() > 0
+        ? variables.deploymentOwners[0].name
         : ''
     - name: ephemeralImages
       expression: >-
