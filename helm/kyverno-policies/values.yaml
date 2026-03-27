@@ -98,7 +98,9 @@ debugAccessPolicies:
   # authorizedDebuggerGroups is a list of groups that are authorized to use the debug functionality.
   authorizedDebuggerGroups: &authorizedDebuggerGroups ["system:authenticated"]
 
-  # allowedDebugContainerImages is a list of images that are allowed to be used in the debug container.
+  # allowedDebugContainerImages is a list of image patterns allowed in debug containers.
+  # Supports glob wildcards: '*' matches any sequence of characters.
+  # Examples: "busybox:*" (any busybox tag), "registry.io/tools/*:v1.*" (any v1.x image).
   allowedDebugContainerImages: &allowedDebugContainerImages ["busybox:*"]
 
   # authorizedDebugTargets defines which namespaces or deployments can be debugged using this mechanism.
@@ -126,15 +128,6 @@ debugAccessPolicies:
     # block-expired-exceptions prevents deploying PolicyExceptions with expired timestamps.
     # This policy MUST be co-enabled with purge-expired-exceptions (Helm will fail otherwise).
     block-expired-exceptions:
-      enabled: false
-      mode: Audit
-
-    # require-exception-ttl mandates that debug-access PolicyExceptions carry an expiry annotation.
-    # Strongly recommended when block-expired-exceptions and purge-expired-exceptions are enabled,
-    # to prevent bypass by removing the expiry annotation from a PolicyException.
-    # This policy is a ValidatingPolicy (policies.kyverno.io/v1alpha1) using CEL expressions.
-    # Mode mapping: "Audit" -> Audit, "Enforce" -> Deny (ValidatingPolicy terminology).
-    require-exception-ttl:
       enabled: false
       mode: Audit
 

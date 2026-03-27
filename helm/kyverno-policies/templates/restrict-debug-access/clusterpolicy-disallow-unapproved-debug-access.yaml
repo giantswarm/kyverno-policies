@@ -73,7 +73,7 @@ spec:
 {{- end }}
 {{- if $target.allowedDebugContainerImages }}
           && variables.ephemeralImages.all(img,
-               img in {{ $target.allowedDebugContainerImages | toJson }})
+               [{{ range $j, $img := $target.allowedDebugContainerImages }}{{ if $j }}, {{ end }}"{{ include "globToRegex" $img }}"{{ end }}].exists(pattern, img.matches(pattern)))
 {{- end }}
 {{- if $target.authorizedDebuggerGroups }}
           && variables.userGroups.exists(g,
@@ -92,7 +92,7 @@ spec:
         + (variables.deploymentName in {{ $target.deployments | default list | toJson }} ? " deploy=ok" : " deploy=DENIED")
 {{- end }}
 {{- if $target.allowedDebugContainerImages }}
-        + (variables.ephemeralImages.all(img, img in {{ $target.allowedDebugContainerImages | toJson }}) ? " images=ok" : " images=DENIED")
+        + (variables.ephemeralImages.all(img, [{{ range $j, $img := $target.allowedDebugContainerImages }}{{ if $j }}, {{ end }}"{{ include "globToRegex" $img }}"{{ end }}].exists(pattern, img.matches(pattern))) ? " images=ok" : " images=DENIED")
 {{- end }}
 {{- if $target.authorizedDebuggerGroups }}
         + (variables.userGroups.exists(g, g in {{ $target.authorizedDebuggerGroups | toJson }}) ? " groups=ok" : " groups=DENIED")
