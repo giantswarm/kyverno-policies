@@ -29,14 +29,11 @@ supplementalSecurityPolicies:
 
 # Debug access policies
 debugAccessPolicies:
-  authorizedDebuggerGroups: &authorizedDebuggerGroups []
-  allowedDebugContainerImages: &allowedDebugContainerImages []
   authorizedDebugTargets:
-  - namespaces: []
-    allDeployments: false
-    deployments: []
-    allowedDebugContainerImages: *allowedDebugContainerImages
-    authorizedDebuggerGroups: *authorizedDebuggerGroups
+  - namespaces: ["debug-access-test"]
+    allDeployments: true
+    allowedDebugContainerImages: ["busybox:*"]
+    authorizedDebuggerGroups: ["system:masters"]
   policies:
     block-expired-exceptions:
       enabled: true

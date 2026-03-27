@@ -4,15 +4,46 @@ metadata:
   name: disallow-unapproved-debug-access
 spec:
   steps:
-  - name: create a deployment to generate a target pod
+  - name: deploy target pods in both authorized and unauthorized namespaces
     try:
     - create:
-        file: deployment.yaml
-  - name: attempt kubectl debug on an unauthorized target
+        file: namespace.yaml
+    - create:
+        file: deployment-unauthorized.yaml
+    - create:
+        file: deployment-authorized.yaml
+    - script:
+        timeout: 120s
+        content: |
+          kubectl rollout status deployment/debug-target -n unauthorized-debug-access-test --timeout=90s
+          kubectl rollout status deployment/debug-target -n debug-access-test --timeout=90s
+  - name: attempt kubectl debug in unauthorized namespace
     try:
     - script:
         content: |
-          POD=$(kubectl get pods -l app=debug-target -n $NAMESPACE -o jsonpath='{.items[0].metadata.name}')
-          kubectl debug "$POD" -n $NAMESPACE --image=busybox:1.35 --target=main --attach=false 2>&1
+          POD=$(kubectl get pods -l app=debug-target -n unauthorized-debug-access-test -o jsonpath='{.items[0].metadata.name}')
+          kubectl debug "$POD" -n unauthorized-debug-access-test --image=busybox:1.35 --target=main --attach=false 2>&1
         check:
           ($error != null): true
+  - name: attempt kubectl debug in authorized namespace with allowed image
+    try:
+    - script:
+        content: |
+          POD=$(kubectl get pods -l app=debug-target -n debug-access-test -o jsonpath='{.items[0].metadata.name}')
+          kubectl debug "$POD" -n debug-access-test --image=busybox:1.35 --target=main --attach=false 2>&1
+        check:
+          ($error != null): false
+  - name: attempt kubectl debug in authorized namespace with disallowed image
+    try:
+    - script:
+        content: |
+          POD=$(kubectl get pods -l app=debug-target -n debug-access-test -o jsonpath='{.items[0].metadata.name}')
+          kubectl debug "$POD" -n debug-access-test --image=alpine:3.18 --target=main --attach=false 2>&1
+        check:
+          ($error != null): true
+  - name: cleanup authorized and unauthorized namespaces
+    try:
+    - script:
+        content: |
+          kubectl delete namespace debug-access-test --ignore-not-found
+          kubectl delete namespace unauthorized-debug-access-test --ignore-not-found
