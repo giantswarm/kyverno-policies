@@ -13,6 +13,14 @@ spec:
       labels:
         app: debug-target
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: main
         image: busybox:1.35
@@ -26,6 +34,7 @@ spec:
             memory: 40Mi
         securityContext:
           allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
           runAsNonRoot: true
           runAsUser: 1000
           seccompProfile:

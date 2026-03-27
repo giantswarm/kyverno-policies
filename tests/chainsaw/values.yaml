@@ -33,7 +33,6 @@ debugAccessPolicies:
   - namespaces: ["debug-access-test"]
     allDeployments: true
     allowedDebugContainerImages: ["busybox:*"]
-    authorizedDebuggerGroups: ["system:masters"]
   policies:
     block-expired-exceptions:
       enabled: true

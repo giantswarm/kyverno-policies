@@ -92,11 +92,8 @@ supplementalSecurityPolicies:
 # debugAccessPolicies are a set of policies that are used to allow selective usage of ephemeral containers and interactive sessions.
 # These policies should be used in combination with RBAC limiting the users who are permitted to use `kubectl exec` and `kubectl debug`.
 # This feature should NOT be considered a replacement for RBAC.
-# See the README.md for more information.
+# See the README for more information.
 debugAccessPolicies:
-
-  # authorizedDebuggerGroups is a list of RBAC groups that are authorized to use the debug functionality.
-  authorizedDebuggerGroups: &authorizedDebuggerGroups []
 
   # allowedDebugContainerImages is a list of image patterns allowed in debug containers.
   # Supports glob wildcards: '*' matches any sequence of characters.
@@ -110,7 +107,6 @@ debugAccessPolicies:
     allDeployments: false
     deployments: []
     allowedDebugContainerImages: *allowedDebugContainerImages
-    authorizedDebuggerGroups: *authorizedDebuggerGroups
 
   policies:
     # disallow-ephemeral-containers blocks the use of ephemeral containers.

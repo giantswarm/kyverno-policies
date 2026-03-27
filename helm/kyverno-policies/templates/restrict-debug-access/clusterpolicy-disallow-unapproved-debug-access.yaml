@@ -60,8 +60,6 @@ spec:
     - name: ephemeralImages
       expression: >-
         object.spec.?ephemeralContainers.orValue([]).map(c, c.image)
-    - name: userGroups
-      expression: "request.userInfo.?groups.orValue([])"
   validations:
     - expression: >-
 {{- range $i, $target := .Values.debugAccessPolicies.authorizedDebugTargets }}
@@ -74,10 +72,6 @@ spec:
 {{- if $target.allowedDebugContainerImages }}
           && variables.ephemeralImages.all(img,
                [{{ range $j, $img := $target.allowedDebugContainerImages }}{{ if $j }}, {{ end }}"{{ include "globToRegex" $img }}"{{ end }}].exists(pattern, img.matches(pattern)))
-{{- end }}
-{{- if $target.authorizedDebuggerGroups }}
-          && variables.userGroups.exists(g,
-               g in {{ $target.authorizedDebuggerGroups | toJson }})
 {{- end }}
         )
 {{- end }}
@@ -94,11 +88,8 @@ spec:
 {{- if $target.allowedDebugContainerImages }}
         + (variables.ephemeralImages.all(img, [{{ range $j, $img := $target.allowedDebugContainerImages }}{{ if $j }}, {{ end }}"{{ include "globToRegex" $img }}"{{ end }}].exists(pattern, img.matches(pattern))) ? " images=ok" : " images=DENIED")
 {{- end }}
-{{- if $target.authorizedDebuggerGroups }}
-        + (variables.userGroups.exists(g, g in {{ $target.authorizedDebuggerGroups | toJson }}) ? " groups=ok" : " groups=DENIED")
-{{- end }}
         + "]"
 {{- end }}
       message: >-
-        Debug access is not authorized for this target, image, or user group.
+        Debug access is not authorized for this target or ephemeral container image.
 {{ end }}

@@ -22,15 +22,29 @@ spec:
     - script:
         content: |
           POD=$(kubectl get pods -l app=debug-target -n unauthorized-debug-access-test -o jsonpath='{.items[0].metadata.name}')
-          kubectl debug "$POD" -n unauthorized-debug-access-test --image=busybox:1.35 --target=main --attach=false 2>&1
+          kubectl debug "$POD" -n unauthorized-debug-access-test --image=busybox:1.35 --target=main --attach=false --profile=restricted 2>&1
         check:
           ($error != null): true
-  - name: attempt kubectl debug in authorized namespace with allowed image
+  - name: attempt kubectl debug in authorized namespace with allowed image without policyexception
     try:
     - script:
         content: |
           POD=$(kubectl get pods -l app=debug-target -n debug-access-test -o jsonpath='{.items[0].metadata.name}')
-          kubectl debug "$POD" -n debug-access-test --image=busybox:1.35 --target=main --attach=false 2>&1
+          kubectl debug "$POD" -n debug-access-test --image=busybox:1.35 --target=main --attach=false --profile=restricted 2>&1
+        check:
+          ($error != null): true
+  - name: attempt kubectl debug in authorized namespace with allowed image with policyexception
+    try:
+    - create:
+        file: policyexception.yaml
+    - script:
+        timeout: 10s
+        content: |
+          sleep 5
+    - script:
+        content: |
+          POD=$(kubectl get pods -l app=debug-target -n debug-access-test -o jsonpath='{.items[0].metadata.name}')
+          kubectl debug "$POD" -n debug-access-test --image=busybox:1.35 --target=main --attach=false --profile=restricted 2>&1
         check:
           ($error != null): false
   - name: attempt kubectl debug in authorized namespace with disallowed image
@@ -38,12 +52,18 @@ spec:
     - script:
         content: |
           POD=$(kubectl get pods -l app=debug-target -n debug-access-test -o jsonpath='{.items[0].metadata.name}')
-          kubectl debug "$POD" -n debug-access-test --image=alpine:3.18 --target=main --attach=false 2>&1
+          kubectl debug "$POD" -n debug-access-test --image=alpine:3.18 --target=main --attach=false --profile=restricted 2>&1
         check:
           ($error != null): true
-  - name: cleanup authorized and unauthorized namespaces
+  - name: cleanup authorized namespace
     try:
     - script:
+        timeout: 120s
         content: |
           kubectl delete namespace debug-access-test --ignore-not-found
+  - name: cleanup unauthorized namespace
+    try:
+    - script:
+        timeout: 120s
+        content: |
           kubectl delete namespace unauthorized-debug-access-test --ignore-not-found
