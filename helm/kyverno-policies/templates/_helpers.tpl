@@ -36,3 +36,17 @@ helm.sh/chart: {{ include "chart" . | quote }}
 {{ toYaml .Values.customLabels }}
 {{- end }}
 {{- end -}}
+
+{{/*
+globToRegex converts a simple glob pattern to a regex pattern for use inside
+a CEL string literal. Dots are escaped and '*' becomes '.*'. The pattern is
+anchored with ^ and $. Backslashes are doubled for CEL string escaping.
+
+Example: "busybox:*"           -> "^busybox:.*$"
+         "registry.io/app:1.*" -> "^registry\\.io/app:1\\..*$"
+*/}}
+{{- define "globToRegex" -}}
+{{- $s := replace "." "\\\\." . -}}
+{{- $s = replace "*" ".*" $s -}}
+{{- printf "^%s$" $s -}}
+{{- end -}}
