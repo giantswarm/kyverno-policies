@@ -118,7 +118,7 @@ debugAccessPolicies:
     # This policy is a ValidatingPolicy (policies.kyverno.io/v1) using CEL expressions.
     # Mode mapping: "Audit" -> Audit, "Enforce" -> Deny (ValidatingPolicy terminology).
     disallow-unapproved-debug-access:
-      enabled: true
+      enabled: false
       mode: Audit
 
     # block-expired-exceptions prevents deploying PolicyExceptions with expired timestamps.
