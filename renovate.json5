@@ -4,6 +4,16 @@
     "github>giantswarm/renovate-presets:lang-go.json5",
     "github>giantswarm/renovate-presets:disable-vendir.json5"
   ],
+  "automerge": true,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)vendir\\.yml$"],
+      "matchStrings": ["# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\n]+)\\n\\s+ref: (?<currentValue>[^\\n]+)"],
+      "versioningTemplate": "semver"
+    }
+  ],
+  "ignorePaths": ["helm/*/charts/**"],
   "packageRules": [
     {
       "description": "Automerge architect updates",
@@ -15,6 +25,12 @@
       ],
       "groupName": "Architect",
       "automerge": true
+    },
+    {
+      "matchFileNames": ["vendir.yml"],
+      "branchPrefix": "renovate/vendir/",
+      "prCreation": "approval",
+      "groupName": "kyverno-policies-upstream"
     }
   ]
 }
