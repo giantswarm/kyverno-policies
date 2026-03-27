@@ -95,13 +95,13 @@ supplementalSecurityPolicies:
 # See the README.md for more information.
 debugAccessPolicies:
 
-  # authorizedDebuggerGroups is a list of groups that are authorized to use the debug functionality.
-  authorizedDebuggerGroups: &authorizedDebuggerGroups ["system:authenticated"]
+  # authorizedDebuggerGroups is a list of RBAC groups that are authorized to use the debug functionality.
+  authorizedDebuggerGroups: &authorizedDebuggerGroups []
 
   # allowedDebugContainerImages is a list of image patterns allowed in debug containers.
   # Supports glob wildcards: '*' matches any sequence of characters.
   # Examples: "busybox:*" (any busybox tag), "registry.io/tools/*:v1.*" (any v1.x image).
-  allowedDebugContainerImages: &allowedDebugContainerImages ["busybox:*"]
+  allowedDebugContainerImages: &allowedDebugContainerImages []
 
   # authorizedDebugTargets defines which namespaces or deployments can be debugged using this mechanism.
   # Empty values will "fail closed" and match no targets.

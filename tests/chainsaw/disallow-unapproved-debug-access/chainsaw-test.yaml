@@ -1,0 +1,22 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-unapproved-debug-access
+spec:
+  steps:
+  - name: create a deployment to generate a target pod
+    try:
+    - create:
+        file: deployment.yaml
+    - script:
+        timeout: 120s
+        content: |
+          kubectl rollout status deployment/debug-target -n $NAMESPACE --timeout=90s
+  - name: attempt kubectl debug on an unauthorized target
+    try:
+    - script:
+        content: |
+          POD=$(kubectl get pods -l app=debug-target -n $NAMESPACE -o jsonpath='{.items[0].metadata.name}')
+          kubectl debug "$POD" -n $NAMESPACE --image=busybox:1.35 --target=main --attach=false 2>&1
+        check:
+          ($error != null): true

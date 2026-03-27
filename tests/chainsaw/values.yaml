@@ -29,11 +29,22 @@ supplementalSecurityPolicies:
 
 # Debug access policies
 debugAccessPolicies:
+  authorizedDebuggerGroups: &authorizedDebuggerGroups []
+  allowedDebugContainerImages: &allowedDebugContainerImages []
+  authorizedDebugTargets:
+  - namespaces: []
+    allDeployments: false
+    deployments: []
+    allowedDebugContainerImages: *allowedDebugContainerImages
+    authorizedDebuggerGroups: *authorizedDebuggerGroups
   policies:
     block-expired-exceptions:
       enabled: true
       mode: Enforce
     disallow-ephemeral-containers:
+      enabled: true
+      mode: Enforce
+    disallow-unapproved-debug-access:
       enabled: true
       mode: Enforce
     purge-expired-exceptions:
