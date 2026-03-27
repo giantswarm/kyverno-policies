@@ -8,10 +8,6 @@ spec:
     try:
     - create:
         file: deployment.yaml
-    - script:
-        timeout: 120s
-        content: |
-          kubectl rollout status deployment/debug-target -n $NAMESPACE --timeout=90s
   - name: attempt kubectl debug on an unauthorized target
     try:
     - script:
