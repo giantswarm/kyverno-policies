@@ -7,7 +7,7 @@ spec:
   - name: deploy target pods in both authorized and unauthorized namespaces
     try:
     - create:
-        file: namespace.yaml
+        file: namespaces.yaml
     - create:
         file: deployment-unauthorized.yaml
     - create:
