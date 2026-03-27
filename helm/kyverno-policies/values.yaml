@@ -125,8 +125,6 @@ debugAccessPolicies:
 
     # block-expired-exceptions prevents deploying PolicyExceptions with expired timestamps.
     # This policy MUST be co-enabled with purge-expired-exceptions (Helm will fail otherwise).
-    # This policy is a ValidatingPolicy (policies.kyverno.io/v1alpha1) using CEL expressions.
-    # Mode mapping: "Audit" -> Audit, "Enforce" -> Deny (ValidatingPolicy terminology).
     block-expired-exceptions:
       enabled: false
       mode: Audit
