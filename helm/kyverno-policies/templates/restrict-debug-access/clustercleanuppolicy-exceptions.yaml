@@ -19,6 +19,8 @@ spec:
           kinds:
             - "policies.kyverno.io/*/PolicyException"
             - "kyverno.io/*/PolicyException"
+          annotations:
+            {{ (get .Values.debugAccessPolicies.policies $name).targetAnnotation }}: "?*"
   conditions:
     all:
       - key: "{{ printf `{{ time_since('', target.metadata.annotations.\"%s\", '') }}` (get .Values.debugAccessPolicies.policies $name).targetAnnotation }}"
