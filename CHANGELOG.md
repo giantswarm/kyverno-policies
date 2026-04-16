@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Migrate chart annotations to OCI-compatible format (change `application.giantswarm.io/team` to `io.giantswarm.application.team`, convert `restrictions` to annotations).
+- Updated `kyverno-policies` to upstream version `v1.17.1`.
 
 ## [0.25.0] - 2026-02-04
 
@@ -31,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Notes
 
 This release includes an upstream update. Please refer to the following Release Notes from upstream for the latest changes:
-
 - [v1.14.0](https://github.com/kyverno/kyverno/releases/tag/v1.14.0)
 - [v1.14.1](https://github.com/kyverno/kyverno/releases/tag/v1.14.1)
 - [v1.14.2](https://github.com/kyverno/kyverno/releases/tag/v1.14.2)
@@ -55,14 +55,14 @@ This release includes an upstream update. Please refer to the following Release 
 
 ## [0.22.0] - 2025-02-20
 
-### Changed
-
-- Update to upstream `Kyverno Policies` version 1.13.4.
-
 ### Added
 
 - Add supplemental policies `restrict-external-ips`, `require-ro-rootfs`, and enable upstream policy `require-non-root-groups`.
 - Add supplemental policy to generate default deny-all Network Policies in newly created namespaces.
+
+### Changed
+
+- Update to upstream `Kyverno Policies` version 1.13.4.
 
 ## [0.21.1] - 2024-12-11
 
@@ -197,13 +197,13 @@ This release includes an upstream update. Please refer to the following Release 
 
 ## [0.10.0] - 2021-11-19
 
-### Changed
-
-- Apply policies to v20 even when v20 contains suffixes in its name.
-
 ### Added
 
 - Policy to apply `audit-policy.yaml` to kubeadmconfig
+
+### Changed
+
+- Apply policies to v20 even when v20 contains suffixes in its name.
 
 ## [0.9.2] - 2021-10-26
 
