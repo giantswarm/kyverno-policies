@@ -2,7 +2,8 @@
   "extends": [
     "github>giantswarm/renovate-presets:default.json5",
     "github>giantswarm/renovate-presets:lang-go.json5",
-    "github>giantswarm/renovate-presets:disable-vendir.json5"
+    "github>giantswarm/renovate-presets:disable-vendir.json5",
+    "github>giantswarm/renovate-presets:disable-upstream-charts.json5"
   ],
   "automerge": true,
   "customManagers": [
@@ -13,7 +14,6 @@
       "versioningTemplate": "semver"
     }
   ],
-  "ignorePaths": ["helm/*/charts/**"],
   "packageRules": [
     {
       "description": "Automerge architect updates",
