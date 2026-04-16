@@ -1,0 +1,49 @@
+{{- $name := "add-default-deny-network-policy" }}
+{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled }}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Add Network Policy
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/subject: NetworkPolicy
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/description: >-
+      By default, Kubernetes allows communications across all Pods within a cluster.
+      The NetworkPolicy resource and a CNI plug-in that supports NetworkPolicy must be used to restrict
+      communications. A default NetworkPolicy should be configured for each Namespace to
+      default deny all ingress and egress traffic to the Pods in the Namespace. Application
+      teams can then configure additional NetworkPolicy resources to allow desired traffic
+      to application Pods from select sources. This policy will create a new NetworkPolicy resource
+      named `default-deny` which will deny all traffic anytime a new Namespace is created.      
+spec:
+  rules:
+  - name: default-deny
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+    generate:
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      generateExisting: {{ (get .Values.supplementalSecurityPolicies.policies $name).generateForExistingNamespaces }}
+      name: {{ (get .Values.supplementalSecurityPolicies.policies $name).networkPolicy.policyName }}
+      namespace: "{{ `{{` }}request.object.metadata.name{{ `}}` }}"
+      orphanDownstreamOnPolicyDelete: {{ (get .Values.supplementalSecurityPolicies.policies $name).deleteNetworkPolicyOnKyvernoPolicyDeletion }}
+      synchronize: true      
+      data:
+        spec:
+          # select all pods in the namespace
+          podSelector: {}
+          # deny all traffic
+          policyTypes:
+          {{ if (get .Values.supplementalSecurityPolicies.policies $name).networkPolicy.blockIngress }}
+          - Ingress
+          {{- end }}
+          {{ if (get .Values.supplementalSecurityPolicies.policies $name).networkPolicy.blockEgress }}
+          - Egress
+          {{- end }}
+{{- end }}

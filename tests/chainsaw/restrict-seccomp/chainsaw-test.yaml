@@ -1,0 +1,27 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restrict-seccomp
+spec:
+  steps:
+  - name: create a bad pod with Unconfined seccomp
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod.yaml
+  - name: create a good pod with RuntimeDefault seccomp
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml
+  - name: create a good pod with Localhost seccomp
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-localhost.yaml

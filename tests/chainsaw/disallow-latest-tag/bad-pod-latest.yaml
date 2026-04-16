@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod-latest-tag
+  namespace: default
+spec:
+  containers:
+  - name: container01
+    image: busybox:latest
+    args:
+    - sleep
+    - 1d

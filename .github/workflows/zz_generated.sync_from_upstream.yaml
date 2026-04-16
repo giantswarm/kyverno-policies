@@ -1,0 +1,22 @@
+# DO NOT EDIT. Generated with:
+#
+#    devctl
+#
+#    https://github.com/giantswarm/devctl/blob/c2dd604fd787d9aa63ec6c43c817c8596f1356f7/pkg/gen/input/workflows/internal/file/sync_from_upstream.yaml.template
+#
+name: Sync from upstream
+
+on:
+  push:
+    branches:
+      - 'renovate/vendir/**'
+  workflow_dispatch:
+
+jobs:
+  sync-from-upstream:
+    uses: giantswarm/github-workflows/.github/workflows/sync-from-upstream.yaml@main
+    permissions:
+      contents: write
+    with:
+      update_branch: 'main#update-chart'
+    secrets: inherit

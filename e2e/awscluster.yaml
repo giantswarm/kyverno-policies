@@ -1,0 +1,11 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+kind: AWSCluster
+metadata:
+  name: mycluster
+  namespace: default
+  labels:
+    giantswarm.io/cluster: mycluster
+    cluster.x-k8s.io/cluster-name: mycluster
+spec:
+  region: ""
+  sshKeyName: ""

@@ -1,0 +1,28 @@
+# DO NOT EDIT. Generated with:
+#
+#    devctl
+#
+#    https://github.com/giantswarm/devctl/blob/c2dd604fd787d9aa63ec6c43c817c8596f1356f7/pkg/gen/input/workflows/internal/file/dispatch_update_chart_events.yaml.template
+#
+name: Dispatch update-chart events to security-bundle
+
+on:
+  push:
+    branches:
+      - 'main#update-chart'
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  dispatch-events:
+    uses: giantswarm/github-workflows/.github/workflows/dispatch-update-chart-events.yaml@main
+    permissions:
+      actions: read
+      statuses: read
+    with:
+      target_repository: 'security-bundle'
+    secrets: inherit

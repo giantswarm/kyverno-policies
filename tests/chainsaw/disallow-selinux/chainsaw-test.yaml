@@ -1,0 +1,34 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-selinux
+spec:
+  steps:
+  - name: create a bad pod with custom SELinux type
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-type.yaml
+  - name: create a bad pod with SELinux user
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-user.yaml
+  - name: create a good pod without SELinux options
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml
+  - name: create a good pod with allowed SELinux type
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-allowed-type.yaml

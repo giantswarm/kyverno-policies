@@ -1,0 +1,90 @@
+kyverno-policies:
+  policyType: ClusterPolicy
+  podSecurityStandard: restricted
+  # includeOtherPolicies:
+  #   - require-non-root-groups
+  customLabels:
+    application.giantswarm.io/team: shield
+
+policyNamePrefix: ""  # Prefix to add to the name of all custom policies. Does not apply to PSS policies. Example: "gs-"
+
+bestPracticesPolicies:
+  policies:
+    # check-resources-request-and-limits-ratio ensures that the resource limits are no more than 2.5x requests.
+    check-resources-request-and-limits-ratio:
+      enabled: false
+      mode: Audit
+
+    # disallow-latest-tag ensures that the latest tag is not used in container images.
+    disallow-latest-tag:
+      enabled: true
+      mode: Audit
+
+    # prevent-bare-pods ensures that all Pods are created by workload controllers such as Deployments.
+    prevent-bare-pods:
+      enabled: true
+      mode: Audit
+
+    # require-container-requests-limits ensures that all containers have resource requests and limits defined.
+    require-container-requests-and-limits:
+      enabled: false
+      mode: Audit
+
+    # require-emptydir-requests-and-limits ensures that all emptyDir volumes have resource requests and limits defined.
+    require-emptydir-requests-and-limits:
+      enabled: true
+      mode: Audit
+
+    # require-pod-probes ensures that all Pods have liveness, readiness, or startup probes defined.
+    require-pod-probes:
+      enabled: false
+      mode: Audit
+
+supplementalSecurityPolicies:
+  policies:
+    # add-default-deny-network-policy generates a new NetworkPolicy resource in every newly created Namespace which will deny all traffic.
+    add-default-deny-network-policy:
+      enabled: false
+      # Whether to keep or delete all generated Network Policies when the Kyverno generate policy is deleted.
+      deleteNetworkPolicyOnKyvernoPolicyDeletion: false
+      # Whether to generate Network Policies in Namespaces that already exist when the Kyverno Policy is deployed.
+      generateForExistingNamespaces: false
+      networkPolicy:
+        policyName: default-deny
+        blockIngress: true
+        blockEgress: true
+
+    # check-serviceaccount-secrets ensures that ServiceAccounts do not use long-lived tokens.
+    check-serviceaccount-secrets:
+      enabled: false
+      mode: Audit
+
+    # disallow-gitrepo-volume prevents the use of the gitRepo volume type.
+    disallow-gitrepo-volume:
+      enabled: true
+      mode: Audit
+
+    # require-ro-rootfs ensures that container root filesystems are mounted as read-only.
+    require-ro-rootfs:
+      enabled: false
+      mode: Audit
+
+    # restrict-binding-clusteradmin prevents creating bindings to the cluster-admin ClusterRole.
+    restrict-binding-clusteradmin:
+      enabled: false
+      mode: Audit
+
+    # restrict-binding-system-groups prevents creating bindings to system groups including system:anonymous, system:unauthenticated, and system:masters.
+    restrict-binding-system-groups:
+      enabled: false
+      mode: Audit
+
+    # restrict-external-ips prevents the use of Services of type ExternalIP.
+    restrict-external-ips:
+      enabled: true
+      mode: Audit
+
+    # restrict-sa-automount-sa-token ensures that ServiceAccounts do not automatically mount ServiceAccount tokens.
+    restrict-sa-automount-sa-token:
+      enabled: false
+      mode: Audit

@@ -1,0 +1,13 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+- path: helm/kyverno-policies/charts/kyverno-policies
+  contents:
+  - path: .
+    git:
+      url: https://github.com/kyverno/kyverno
+      # renovate: datasource=github-tags depName=kyverno/kyverno
+      ref: v1.17.0
+    includePaths:
+      - charts/kyverno-policies/**
+    newRootPath: charts/kyverno-policies

@@ -1,0 +1,27 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-privilege-escalation
+spec:
+  steps:
+  - name: create a bad pod with privilege escalation
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod.yaml
+  - name: create a bad pod without allowPrivilegeEscalation set
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-unset.yaml
+  - name: create a good pod
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml

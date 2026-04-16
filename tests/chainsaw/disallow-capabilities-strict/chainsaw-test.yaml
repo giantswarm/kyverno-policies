@@ -1,0 +1,27 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-capabilities-strict
+spec:
+  steps:
+  - name: create a bad pod without drop ALL
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-no-drop.yaml
+  - name: create a bad pod with disallowed capability
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-add-cap.yaml
+  - name: create a good pod
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml

@@ -1,0 +1,27 @@
+# DO NOT EDIT. Generated with:
+#
+#    devctl
+#
+#    https://github.com/giantswarm/devctl/blob/c2dd604fd787d9aa63ec6c43c817c8596f1356f7/pkg/gen/input/makefile/internal/file/chainsaw-tests-steps-template.yaml.template
+#
+
+# This is a reusable policy template that will be called from the cluster-policy-ready test.
+
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: StepTemplate
+metadata:
+  name: cluster-policy-ready
+spec:
+  try:
+  - assert:
+      template: true
+      resource:
+        apiVersion: kyverno.io/v1
+        kind: ClusterPolicy
+        metadata:
+          name: ($name)
+        status:
+          conditions:
+          - reason: Succeeded
+            status: "True"
+            type: Ready

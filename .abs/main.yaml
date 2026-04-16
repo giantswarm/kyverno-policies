@@ -1,0 +1,4 @@
+replace-chart-version-with-git: true
+destination: build
+generate-metadata: true
+catalog-base-url: https://giantswarm.github.io/control-plane-test-catalog/

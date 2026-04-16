@@ -1,0 +1,27 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-latest-tag
+spec:
+  steps:
+  - name: create a bad pod with latest tag
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-latest.yaml
+  - name: create a bad pod without tag
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-no-tag.yaml
+  - name: create a good pod with specific tag
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml

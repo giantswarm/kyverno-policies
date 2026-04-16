@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod-apparmor-unconfined
+  namespace: default
+  annotations:
+    container.apparmor.security.beta.kubernetes.io/container01: unconfined
+spec:
+  containers:
+  - name: container01
+    image: busybox:1.35
+    args:
+    - sleep
+    - 1d

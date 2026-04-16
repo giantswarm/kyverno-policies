@@ -1,0 +1,23 @@
+apiVersion: v2
+annotations:
+  io.giantswarm.application.audience: all
+  io.giantswarm.application.managed: "true"
+  io.giantswarm.application.restrictions.cluster-singleton: "true"
+  io.giantswarm.application.team: shield
+dependencies:
+  - name: kyverno-policies
+    version: 3.7.0
+description: |
+  Kubernetes Pod Security Standards implemented as Kyverno policies
+engine: gotpl
+home: https://github.com/giantswarm/kyverno-policies
+icon: https://s.giantswarm.io/app-icons/kyverno/1/light.svg
+keywords:
+  - kubernetes
+  - policy-agent
+  - validating-webhook
+  - admission-controller
+name: kyverno-policies
+sources:
+  - https://github.com/giantswarm/kyverno-policies
+version: 0.25.0
