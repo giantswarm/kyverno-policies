@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: debug-access-test
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: unauthorized-debug-access-test
