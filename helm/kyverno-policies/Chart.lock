@@ -1,6 +1,6 @@
 dependencies:
 - name: kyverno-policies
   repository: ""
-  version: 3.7.1
-digest: sha256:1b8c5a8162c9e495bfb37080136f5e9764147b7862ac8e587af09949ca9b6c37
-generated: "2026-04-16T10:42:54.543482795Z"
+  version: 3.7.2
+digest: sha256:af50153c456d242acf15a96305f2f7060548e5b9660359cc26dfd6876f0ef7ba
+generated: "2026-05-04T08:17:48.347154-03:00"

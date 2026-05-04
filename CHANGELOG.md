@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Migrate chart annotations to OCI-compatible format (change `application.giantswarm.io/team` to `io.giantswarm.application.team`, convert `restrictions` to annotations).
-- Updated `kyverno-policies` to upstream version `v1.17.1`.
+- Updated `kyverno-policies` to upstream version `v1.17.2`.
 
 ## [0.25.0] - 2026-02-04
 
