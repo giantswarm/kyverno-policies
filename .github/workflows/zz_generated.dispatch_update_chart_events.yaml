@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/57c68171868158d915a92dd45201bbeadaa17214/pkg/gen/input/workflows/internal/file/dispatch_update_chart_events.yaml.template
+#    https://github.com/giantswarm/devctl/blob/098777d1fe8a37096d310414b3b697f7d1fd8040/pkg/gen/input/workflows/internal/file/dispatch_update_chart_events.yaml.template
 #
 name: Dispatch update-chart events to security-bundle
 
@@ -10,6 +10,8 @@ on:
   push:
     branches:
       - 'main#update-chart'
+  pull_request:
+    types: [closed]
 
 concurrency:
   group: ${{ github.workflow }}
@@ -18,11 +20,19 @@ concurrency:
 permissions: {}
 
 jobs:
-  dispatch-events:
+  dispatch-update-events:
+    if: github.event_name == 'push'
     uses: giantswarm/github-workflows/.github/workflows/dispatch-update-chart-events.yaml@main
     permissions:
       actions: read
       statuses: read
+    with:
+      target_repository: 'security-bundle'
+    secrets: inherit
+
+  dispatch-pr-closed-events:
+    if: github.event_name == 'pull_request' && github.head_ref == 'main#update-chart'
+    uses: giantswarm/github-workflows/.github/workflows/dispatch-update-chart-pr-closed-events.yaml@main
     with:
       target_repository: 'security-bundle'
     secrets: inherit
