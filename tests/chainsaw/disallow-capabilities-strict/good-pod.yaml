@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: good-pod-capabilities-strict
-  namespace: default
 spec:
   containers:
   - name: container01
