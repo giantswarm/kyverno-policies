@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/098777d1fe8a37096d310414b3b697f7d1fd8040/pkg/gen/input/workflows/internal/file/dispatch_update_chart_events.yaml.template
+#    https://github.com/giantswarm/devctl/blob/6cdedff43bd24ea73c49217410d2705ead626ad8/pkg/gen/input/workflows/internal/file/dispatch_update_chart_events.yaml.template
 #
 name: Dispatch update-chart events to security-bundle
 
@@ -25,6 +25,7 @@ jobs:
     uses: giantswarm/github-workflows/.github/workflows/dispatch-update-chart-events.yaml@main
     permissions:
       actions: read
+      contents: read
       statuses: read
     with:
       target_repository: 'security-bundle'
