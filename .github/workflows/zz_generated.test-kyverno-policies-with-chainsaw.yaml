@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/003a90c5364e97a40b4e9983f0cc17e3a6cf01bb/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
+#    https://github.com/giantswarm/devctl/blob/29f755e930b5ec8de619886d96fcf1b65f7b9d2f/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
 #
 
 name: "Test Kyverno Policies with Chainsaw"
@@ -29,7 +29,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - name: Install Chainsaw
         uses: kyverno/action-install-chainsaw@1223ef75bedeb59c4e7b5455463d4316e76dff01 # v0.2.15
       - name: Download kind
