@@ -1,0 +1,21 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: allow-debug-ephemeral-containers
+  namespace: debug-access-test
+  annotations:
+    policy.giantswarm.io/exception-expires-at: "2099-12-31T23:59:59Z"
+spec:
+  match:
+    any:
+      - resources:
+          kinds:
+            - Pod
+          namespaces:
+            - debug-access-test
+          names:
+            - "debug-target-*"
+  exceptions:
+    - policyName: disallow-ephemeral-containers
+      ruleNames:
+        - disallow-ephemeral-containers

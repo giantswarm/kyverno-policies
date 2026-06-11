@@ -162,3 +162,18 @@ spec:
         bindings:
         - name: name
           value: restrict-external-ips
+  # Debug access policies
+  - name: check if policy block-expired-exceptions is ready
+    use:
+      template: ../_steps-templates/cluster-policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: block-expired-exceptions
+  - name: check if policy disallow-ephemeral-containers is ready
+    use:
+      template: ../_steps-templates/cluster-policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: disallow-ephemeral-containers
