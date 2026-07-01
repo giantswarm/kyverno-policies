@@ -1,0 +1,16 @@
+apiVersion: kyverno.io/v2beta1
+kind: PolicyException
+metadata:
+  name: bad-polex-expired
+  annotations:
+    policy.giantswarm.io/exception-expires-at: "2020-01-01T00:00:00Z"
+spec:
+  exceptions:
+  - policyName: disallow-ephemeral-containers
+    ruleNames:
+    - disallow-ephemeral-containers
+  match:
+    any:
+    - resources:
+        kinds:
+        - Pod

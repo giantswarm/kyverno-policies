@@ -1,0 +1,16 @@
+apiVersion: kyverno.io/v2beta1
+kind: PolicyException
+metadata:
+  name: bad-polex-invalid-timestamp
+  annotations:
+    policy.giantswarm.io/exception-expires-at: "not-a-timestamp"
+spec:
+  exceptions:
+  - policyName: disallow-ephemeral-containers
+    ruleNames:
+    - disallow-ephemeral-containers
+  match:
+    any:
+    - resources:
+        kinds:
+        - Pod

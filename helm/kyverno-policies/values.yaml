@@ -88,3 +88,49 @@ supplementalSecurityPolicies:
     restrict-sa-automount-sa-token:
       enabled: false
       mode: Audit
+
+# debugAccessPolicies are a set of policies that are used to allow selective usage of ephemeral containers and interactive sessions.
+# These policies should be used in combination with RBAC limiting the users who are permitted to use `kubectl exec` and `kubectl debug`.
+# This feature should NOT be considered a replacement for RBAC.
+# See the README for more information.
+debugAccessPolicies:
+
+  # allowedDebugContainerImages is a list of image patterns allowed in debug containers.
+  # Supports glob wildcards: '*' matches any sequence of characters.
+  # Examples: "busybox:*" (any busybox tag), "registry.io/tools/*:v1.*" (any v1.x image).
+  allowedDebugContainerImages: &allowedDebugContainerImages []
+
+  # authorizedDebugTargets defines which namespaces or deployments can be debugged using this mechanism.
+  # Empty values will "fail closed" and match no targets.
+  authorizedDebugTargets:
+  - namespaces: []
+    allDeployments: false
+    deployments: []
+    allowedDebugContainerImages: *allowedDebugContainerImages
+
+  policies:
+    # disallow-ephemeral-containers blocks the use of ephemeral containers.
+    disallow-ephemeral-containers:
+      enabled: false
+      mode: Audit
+
+    # disallow-unapproved-debug-access blocks the use of debug access to unauthorized deployments.
+    # This policy is a ValidatingPolicy (policies.kyverno.io/v1) using CEL expressions.
+    # Mode mapping: "Audit" -> Audit, "Enforce" -> Deny (ValidatingPolicy terminology).
+    disallow-unapproved-debug-access:
+      enabled: false
+      mode: Audit
+
+    # block-expired-exceptions prevents deploying PolicyExceptions with expired timestamps.
+    # This policy MUST be co-enabled with purge-expired-exceptions (Helm will fail otherwise).
+    block-expired-exceptions:
+      enabled: false
+      mode: Audit
+
+    # purge-expired-exceptions removes expired temporary PolicyExceptions.
+    # This policy MUST be co-enabled with block-expired-exceptions (Helm will fail otherwise).
+    purge-expired-exceptions:
+      enabled: false
+      mode: Audit
+      cleanupSchedule: "*/27 * * * *"  # Every 27 minutes
+      targetAnnotation: "policy.giantswarm.io/exception-expires-at"

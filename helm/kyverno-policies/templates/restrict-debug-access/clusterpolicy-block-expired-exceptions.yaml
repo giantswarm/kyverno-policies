@@ -1,0 +1,68 @@
+{{- include "debugAccessPolicies.validate" . -}}
+{{ $name := "block-expired-exceptions" }}
+{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
+{{- $annotationKey := (get .Values.debugAccessPolicies.policies "purge-expired-exceptions").targetAnnotation -}}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Block Expired PolicyExceptions
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: PolicyException
+    policies.kyverno.io/description: >-
+      Prevents creation or update of PolicyExceptions with expiry
+      timestamp annotations in the past.
+spec:
+  validationFailureAction: {{ (get .Values.debugAccessPolicies.policies $name).mode }}
+  background: true
+  rules:
+    - name: validate-timestamp-format
+      match:
+        any:
+          - resources:
+              kinds:
+                - "kyverno.io/*/PolicyException"
+                - "policies.kyverno.io/*/PolicyException"
+              operations:
+                - CREATE
+                - UPDATE
+      preconditions:
+        all:
+          - key: "{{ printf `{{ request.object.metadata.annotations.\"%s\" || '' }}` $annotationKey }}"
+            operator: NotEquals
+            value: ""
+      validate:
+        message: "{{ printf `The expiry annotation '%s' must be a valid RFC 3339 timestamp (e.g., '2026-01-15T12:00:00Z'). Got '{{ request.object.metadata.annotations.\"%s\" }}'.` $annotationKey $annotationKey }}"
+        deny:
+          conditions:
+            all:
+              - key: "{{ printf `{{ regex_match('^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$', request.object.metadata.annotations.\"%s\") }}` $annotationKey }}"
+                operator: NotEquals
+                value: true
+    - name: block-expired
+      match:
+        any:
+          - resources:
+              kinds:
+                - "kyverno.io/*/PolicyException"
+                - "policies.kyverno.io/*/PolicyException"
+              operations:
+                - CREATE
+                - UPDATE
+      preconditions:
+        all:
+          - key: "{{ printf `{{ request.object.metadata.annotations.\"%s\" || '' }}` $annotationKey }}"
+            operator: NotEquals
+            value: ""
+      validate:
+        message: "{{ printf `PolicyException is expired: annotation '%s' has value '{{ request.object.metadata.annotations.\"%s\" }}' which is in the past. Remove or update the expiry annotation.` $annotationKey $annotationKey }}"
+        deny:
+          conditions:
+            all:
+              - key: "{{ printf `{{ time_since('', request.object.metadata.annotations.\"%s\", '') }}` $annotationKey }}"
+                operator: GreaterThan
+                value: "0s"
+{{ end }}
