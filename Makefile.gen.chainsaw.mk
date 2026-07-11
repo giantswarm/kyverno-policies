@@ -25,9 +25,7 @@ kind-create: ## create kind cluster if needed
 
 .PHONY: install-kyverno
 install-kyverno:
-	curl -sL https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml \
-		| sed 's/--enablePolicyException=false/--enablePolicyException=true\n            - --exceptionNamespace=*/g' \
-		| kubectl create -f -
+	kubectl create -f https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml
 	# Sometimes the next check executes faster than the deployment show up for the Kube API Server, so we need to wait for a second
 	sleep 5
 	kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -n kyverno --timeout 300s
