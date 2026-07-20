@@ -191,6 +191,9 @@
                                 "enabled": {
                                     "type": "boolean"
                                 },
+                                "failurePolicy": {
+                                    "type": "string"
+                                },
                                 "mode": {
                                     "type": "string"
                                 }

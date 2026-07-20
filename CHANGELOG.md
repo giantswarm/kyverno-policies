@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add optional `failurePolicy` field to the `restrict-external-ips` supplemental policy so it can be set to `Ignore` (fail open). This prevents a transient Kyverno outage from blocking all Service writes cluster-wide while the policy is in `Audit` mode.
+
 ## [0.26.0] - 2026-07-01
 
 ### Added
