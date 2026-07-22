@@ -83,12 +83,8 @@ supplementalSecurityPolicies:
     restrict-external-ips:
       enabled: true
       mode: Audit
-      # failurePolicy controls how the admission webhook behaves when Kyverno is
-      # unreachable. Because this policy matches Services (writes to which include
-      # unrelated controllers such as kube-vip's LoadBalancer bookkeeping), leaving
-      # it at the Kyverno default of "Fail" means a transient Kyverno outage blocks
-      # all Service writes cluster-wide. Set to "Ignore" to fail open. Unset keeps
-      # the Kyverno default ("Fail"). Only meaningful to change while mode is Audit.
+      # "Ignore" fails open if Kyverno is down. Unset keeps
+      # the Kyverno default ("Fail").
       # failurePolicy: Ignore
 
     # restrict-sa-automount-sa-token ensures that ServiceAccounts do not automatically mount ServiceAccount tokens.
