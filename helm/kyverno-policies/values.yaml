@@ -83,6 +83,9 @@ supplementalSecurityPolicies:
     restrict-external-ips:
       enabled: true
       mode: Audit
+      # "Ignore" fails open if Kyverno is down. Unset keeps
+      # the Kyverno default ("Fail").
+      # failurePolicy: Ignore
 
     # restrict-sa-automount-sa-token ensures that ServiceAccounts do not automatically mount ServiceAccount tokens.
     restrict-sa-automount-sa-token:

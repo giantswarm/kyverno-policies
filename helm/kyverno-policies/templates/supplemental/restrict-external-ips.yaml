@@ -17,6 +17,9 @@ metadata:
       See: https://github.com/kyverno/kyverno/issues/1367. This policy validates
       that the `externalIPs` field is not set on a Service.      
 spec:
+  {{- with (get .Values.supplementalSecurityPolicies.policies $name).failurePolicy }}
+  failurePolicy: {{ . }}
+  {{- end }}
   validationFailureAction: {{ (get .Values.supplementalSecurityPolicies.policies $name).mode }}
   background: true
   rules:
