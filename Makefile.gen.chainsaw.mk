@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/e793911d6ad895fcf19c981688a0f7c559d9699b/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
+#    https://github.com/giantswarm/devctl/blob/c272684c8bcae7c3905fc0f13d5db93ec92d6951/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
 #
 
 SHELL:=/usr/bin/env bash
@@ -25,7 +25,10 @@ kind-create: ## create kind cluster if needed
 
 .PHONY: install-kyverno
 install-kyverno:
-	kubectl create -f https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml
+	# Install Kyverno, enable PolicyExceptions, allowed in all namespaces so tests can use them
+	curl -sL https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml \
+		| sed -E 's/^([[:space:]]*)- --enablePolicyException=false$$/\1- --enablePolicyException=true\n\1- --exceptionNamespace=*/' \
+		| kubectl create -f -
 	# Sometimes the next check executes faster than the deployment show up for the Kube API Server, so we need to wait for a second
 	sleep 5
 	kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -n kyverno --timeout 300s
