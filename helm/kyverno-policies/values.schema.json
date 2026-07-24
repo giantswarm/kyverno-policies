@@ -1,11 +1,19 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
     "properties": {
         "bestPracticesPolicies": {
+            "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "policies": {
+                    "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "check-resources-request-and-limits-ratio": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -13,10 +21,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "disallow-latest-tag": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -24,10 +33,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "prevent-bare-pods": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -35,10 +45,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "require-container-requests-and-limits": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -46,10 +57,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "require-emptydir-requests-and-limits": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -57,10 +69,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "require-pod-probes": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -68,24 +81,120 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         }
-                    },
-                    "type": "object"
+                    }
                 }
-            },
-            "type": "object"
+            }
+        },
+        "debugAccessPolicies": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "allowedDebugContainerImages": {
+                    "type": "array"
+                },
+                "authorizedDebugTargets": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "allDeployments": {
+                                "type": "boolean"
+                            },
+                            "allowedDebugContainerImages": {},
+                            "deployments": {
+                                "type": "array"
+                            },
+                            "namespaces": {
+                                "type": "array"
+                            }
+                        }
+                    }
+                },
+                "policies": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "block-expired-exceptions": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "mode": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "disallow-ephemeral-containers": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "mode": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "disallow-unapproved-debug-access": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "mode": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "purge-expired-exceptions": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "cleanupSchedule": {
+                                    "type": "string"
+                                },
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "mode": {
+                                    "type": "string"
+                                },
+                                "targetAnnotation": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "global": {
+            "type": [
+                "object",
+                "null"
+            ],
+            "description": "Global values shared between all subcharts",
+            "$comment": "Added automatically by 'helm schema' to allow this chart to be used as a Helm dependency, as the `additionalProperties` setting would otherwise collide with Helm's special 'global' values key."
         },
         "kyverno-policies": {
+            "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "customLabels": {
+                    "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "application.giantswarm.io/team": {
                             "type": "string"
                         }
-                    },
-                    "type": "object"
+                    }
                 },
                 "podSecurityStandard": {
                     "type": "string"
@@ -93,17 +202,22 @@
                 "policyType": {
                     "type": "string"
                 }
-            },
-            "type": "object"
+            }
         },
         "policyNamePrefix": {
             "type": "string"
         },
         "supplementalSecurityPolicies": {
+            "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "policies": {
+                    "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "add-default-deny-network-policy": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "deleteNetworkPolicyOnKyvernoPolicyDeletion": {
                                     "type": "boolean"
@@ -115,6 +229,8 @@
                                     "type": "boolean"
                                 },
                                 "networkPolicy": {
+                                    "type": "object",
+                                    "additionalProperties": false,
                                     "properties": {
                                         "blockEgress": {
                                             "type": "boolean"
@@ -125,13 +241,13 @@
                                         "policyName": {
                                             "type": "string"
                                         }
-                                    },
-                                    "type": "object"
+                                    }
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "check-serviceaccount-secrets": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -139,10 +255,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "disallow-gitrepo-volume": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -150,10 +267,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "require-ro-rootfs": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -161,10 +279,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "restrict-binding-clusteradmin": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -172,10 +291,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "restrict-binding-system-groups": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -183,24 +303,23 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "restrict-external-ips": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
                                 },
-                                "failurePolicy": {
-                                    "type": "string"
-                                },
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         },
                         "restrict-sa-automount-sa-token": {
+                            "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -208,15 +327,11 @@
                                 "mode": {
                                     "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            }
                         }
-                    },
-                    "type": "object"
+                    }
                 }
-            },
-            "type": "object"
+            }
         }
-    },
-    "type": "object"
+    }
 }
