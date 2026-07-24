@@ -1,0 +1,14 @@
+apiVersion: kyverno.io/v2beta1
+kind: PolicyException
+metadata:
+  name: good-polex-no-annotation
+spec:
+  exceptions:
+  - policyName: disallow-ephemeral-containers
+    ruleNames:
+    - disallow-ephemeral-containers
+  match:
+    any:
+    - resources:
+        kinds:
+        - Pod
