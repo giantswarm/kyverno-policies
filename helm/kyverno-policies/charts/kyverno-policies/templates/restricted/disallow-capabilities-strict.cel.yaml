@@ -29,19 +29,19 @@ spec:
       resources: [pods]
   validations:
     - expression: >-
-        (!has(object.spec.containers) || object.spec.containers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.capabilities) || 
+        (!has(object.spec.containers) || object.spec.containers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.capabilities) ||
           ((!has(c.securityContext.capabilities.drop) || 'ALL' in c.securityContext.capabilities.drop) &&
            (!has(c.securityContext.capabilities.add) || c.securityContext.capabilities.add.all(cap, cap == 'NET_BIND_SERVICE'))))) &&
-        (!has(object.spec.initContainers) || object.spec.initContainers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.capabilities) || 
+        (!has(object.spec.initContainers) || object.spec.initContainers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.capabilities) ||
           ((!has(c.securityContext.capabilities.drop) || 'ALL' in c.securityContext.capabilities.drop) &&
            (!has(c.securityContext.capabilities.add) || c.securityContext.capabilities.add.all(cap, cap == 'NET_BIND_SERVICE'))))) &&
-        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.capabilities) || 
+        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.capabilities) ||
           ((!has(c.securityContext.capabilities.drop) || 'ALL' in c.securityContext.capabilities.drop) &&
            (!has(c.securityContext.capabilities.add) || c.securityContext.capabilities.add.all(cap, cap == 'NET_BIND_SERVICE')))))
       message: >-
@@ -49,4 +49,3 @@ spec:
   {{- $actions := include "kyverno-policies.policyValidationActions" (dict "name" $name "values" .Values) }}
   validationActions: {{ $actions | nindent 4 }}
 {{- end }}
-

@@ -28,28 +28,28 @@ spec:
       resources: [pods]
   validations:
     - expression: >-
-        (!has(object.metadata) || 
+        (!has(object.metadata) ||
          !has(object.metadata.annotations) ||
-         object.metadata.annotations.filter(k, k.startsWith('container.apparmor.security.beta.kubernetes.io/')).all(k, 
+         object.metadata.annotations.filter(k, k.startsWith('container.apparmor.security.beta.kubernetes.io/')).all(k,
            object.metadata.annotations[k] in ['', 'runtime/default', 'localhost/*'])) &&
-        (!has(object.spec.securityContext) || 
-         !has(object.spec.securityContext.appArmorProfile) || 
-         !has(object.spec.securityContext.appArmorProfile.type) || 
+        (!has(object.spec.securityContext) ||
+         !has(object.spec.securityContext.appArmorProfile) ||
+         !has(object.spec.securityContext.appArmorProfile.type) ||
          object.spec.securityContext.appArmorProfile.type in ['RuntimeDefault', 'Localhost']) &&
-        (!has(object.spec.containers) || object.spec.containers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.appArmorProfile) || 
-          !has(c.securityContext.appArmorProfile.type) || 
+        (!has(object.spec.containers) || object.spec.containers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.appArmorProfile) ||
+          !has(c.securityContext.appArmorProfile.type) ||
           c.securityContext.appArmorProfile.type in ['RuntimeDefault', 'Localhost'])) &&
-        (!has(object.spec.initContainers) || object.spec.initContainers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.appArmorProfile) || 
-          !has(c.securityContext.appArmorProfile.type) || 
+        (!has(object.spec.initContainers) || object.spec.initContainers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.appArmorProfile) ||
+          !has(c.securityContext.appArmorProfile.type) ||
           c.securityContext.appArmorProfile.type in ['RuntimeDefault', 'Localhost'])) &&
-        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.appArmorProfile) || 
-          !has(c.securityContext.appArmorProfile.type) || 
+        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.appArmorProfile) ||
+          !has(c.securityContext.appArmorProfile.type) ||
           c.securityContext.appArmorProfile.type in ['RuntimeDefault', 'Localhost']))
       message: >-
         AppArmor profiles must be restricted. The fields
@@ -61,4 +61,3 @@ spec:
   {{- $actions := include "kyverno-policies.policyValidationActions" (dict "name" $name "values" .Values) }}
   validationActions: {{ $actions | nindent 4 }}
 {{- end }}
-

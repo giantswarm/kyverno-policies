@@ -18,7 +18,7 @@ metadata:
       the medium backing the emptyDir volume. This sample ensures that any
       initContainers or containers mounting an emptyDir volume have
       ephemeral-storage requests and limits set. Policy will be skipped if
-      the volume has already a sizeLimit set.      
+      the volume has already a sizeLimit set.
 spec:
   background: true
   validationFailureAction: {{ (get .Values.bestPracticesPolicies.policies $name).mode }}
