@@ -36,24 +36,24 @@ spec:
   {{ end }}
   validations:
     - expression: >-
-        (!has(object.spec.securityContext) || 
-         !has(object.spec.securityContext.seccompProfile) || 
-         !has(object.spec.securityContext.seccompProfile.type) || 
+        (!has(object.spec.securityContext) ||
+         !has(object.spec.securityContext.seccompProfile) ||
+         !has(object.spec.securityContext.seccompProfile.type) ||
          object.spec.securityContext.seccompProfile.type in ['RuntimeDefault', 'Localhost']) &&
-        (!has(object.spec.containers) || object.spec.containers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.seccompProfile) || 
-          !has(c.securityContext.seccompProfile.type) || 
+        (!has(object.spec.containers) || object.spec.containers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.seccompProfile) ||
+          !has(c.securityContext.seccompProfile.type) ||
           c.securityContext.seccompProfile.type in ['RuntimeDefault', 'Localhost'])) &&
-        (!has(object.spec.initContainers) || object.spec.initContainers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.seccompProfile) || 
-          !has(c.securityContext.seccompProfile.type) || 
+        (!has(object.spec.initContainers) || object.spec.initContainers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.seccompProfile) ||
+          !has(c.securityContext.seccompProfile.type) ||
           c.securityContext.seccompProfile.type in ['RuntimeDefault', 'Localhost'])) &&
-        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.seccompProfile) || 
-          !has(c.securityContext.seccompProfile.type) || 
+        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.seccompProfile) ||
+          !has(c.securityContext.seccompProfile.type) ||
           c.securityContext.seccompProfile.type in ['RuntimeDefault', 'Localhost']))
       message: >-
         Use of custom Seccomp profiles is disallowed. The fields
@@ -66,4 +66,3 @@ spec:
   {{- $actions := include "kyverno-policies.policyValidationActions" (dict "name" $name "values" .Values) }}
   validationActions: {{ $actions | nindent 4 }}
 {{- end }}
-

@@ -17,7 +17,7 @@ metadata:
       The cluster-admin ClusterRole allows any action to be performed on any resource
       in the cluster and its granting should be heavily restricted. This
       policy prevents binding to the cluster-admin ClusterRole in
-      RoleBinding or ClusterRoleBinding resources.      
+      RoleBinding or ClusterRoleBinding resources.
 spec:
   validationFailureAction: {{ (get .Values.supplementalSecurityPolicies.policies $name).mode }}
   background: true
@@ -32,6 +32,6 @@ spec:
       validate:
         message: "Binding to cluster-admin is not allowed."
         pattern:
-          roleRef: 
+          roleRef:
             name: "!cluster-admin"
 {{- end }}

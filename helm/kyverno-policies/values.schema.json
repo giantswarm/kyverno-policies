@@ -1,19 +1,16 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {
         "bestPracticesPolicies": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
                 "policies": {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                         "check-resources-request-and-limits-ratio": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -25,7 +22,6 @@
                         },
                         "disallow-latest-tag": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -37,7 +33,6 @@
                         },
                         "prevent-bare-pods": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -49,7 +44,6 @@
                         },
                         "require-container-requests-and-limits": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -61,7 +55,6 @@
                         },
                         "require-emptydir-requests-and-limits": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -73,7 +66,6 @@
                         },
                         "require-pod-probes": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -89,7 +81,6 @@
         },
         "debugAccessPolicies": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
                 "allowedDebugContainerImages": {
                     "type": "array"
@@ -98,7 +89,6 @@
                     "type": "array",
                     "items": {
                         "type": "object",
-                        "additionalProperties": false,
                         "properties": {
                             "allDeployments": {
                                 "type": "boolean"
@@ -115,11 +105,9 @@
                 },
                 "policies": {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                         "block-expired-exceptions": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -131,7 +119,6 @@
                         },
                         "disallow-ephemeral-containers": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -143,7 +130,6 @@
                         },
                         "disallow-unapproved-debug-access": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -155,7 +141,6 @@
                         },
                         "purge-expired-exceptions": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "cleanupSchedule": {
                                     "type": "string"
@@ -175,21 +160,11 @@
                 }
             }
         },
-        "global": {
-            "type": [
-                "object",
-                "null"
-            ],
-            "description": "Global values shared between all subcharts",
-            "$comment": "Added automatically by 'helm schema' to allow this chart to be used as a Helm dependency, as the `additionalProperties` setting would otherwise collide with Helm's special 'global' values key."
-        },
         "kyverno-policies": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
                 "customLabels": {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                         "application.giantswarm.io/team": {
                             "type": "string"
@@ -209,15 +184,12 @@
         },
         "supplementalSecurityPolicies": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
                 "policies": {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                         "add-default-deny-network-policy": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "deleteNetworkPolicyOnKyvernoPolicyDeletion": {
                                     "type": "boolean"
@@ -230,7 +202,6 @@
                                 },
                                 "networkPolicy": {
                                     "type": "object",
-                                    "additionalProperties": false,
                                     "properties": {
                                         "blockEgress": {
                                             "type": "boolean"
@@ -247,7 +218,6 @@
                         },
                         "check-serviceaccount-secrets": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -259,7 +229,6 @@
                         },
                         "disallow-gitrepo-volume": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -271,7 +240,6 @@
                         },
                         "require-ro-rootfs": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -283,7 +251,6 @@
                         },
                         "restrict-binding-clusteradmin": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -295,7 +262,6 @@
                         },
                         "restrict-binding-system-groups": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -307,7 +273,6 @@
                         },
                         "restrict-external-ips": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
@@ -319,7 +284,6 @@
                         },
                         "restrict-sa-automount-sa-token": {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"

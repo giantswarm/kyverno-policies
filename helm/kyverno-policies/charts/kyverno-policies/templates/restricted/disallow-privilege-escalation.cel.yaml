@@ -35,17 +35,17 @@ spec:
   {{ end }}
   validations:
     - expression: >-
-        (!has(object.spec.containers) || object.spec.containers.all(c, 
-          has(c.securityContext) && 
-          has(c.securityContext.allowPrivilegeEscalation) && 
+        (!has(object.spec.containers) || object.spec.containers.all(c,
+          has(c.securityContext) &&
+          has(c.securityContext.allowPrivilegeEscalation) &&
           c.securityContext.allowPrivilegeEscalation == false)) &&
-        (!has(object.spec.initContainers) || object.spec.initContainers.all(c, 
-          has(c.securityContext) && 
-          has(c.securityContext.allowPrivilegeEscalation) && 
+        (!has(object.spec.initContainers) || object.spec.initContainers.all(c,
+          has(c.securityContext) &&
+          has(c.securityContext.allowPrivilegeEscalation) &&
           c.securityContext.allowPrivilegeEscalation == false)) &&
-        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c, 
-          has(c.securityContext) && 
-          has(c.securityContext.allowPrivilegeEscalation) && 
+        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c,
+          has(c.securityContext) &&
+          has(c.securityContext.allowPrivilegeEscalation) &&
           c.securityContext.allowPrivilegeEscalation == false))
       message: >-
         Privilege escalation is disallowed. The fields
@@ -57,4 +57,3 @@ spec:
   {{- $actions := include "kyverno-policies.policyValidationActions" (dict "name" $name "values" .Values) }}
   validationActions: {{ $actions | nindent 4 }}
 {{- end }}
-

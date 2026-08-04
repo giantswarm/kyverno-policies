@@ -37,14 +37,14 @@ spec:
   {{ end }}
   validations:
     - expression: >-
-        !has(object.spec.volumes) || object.spec.volumes.all(v, 
-          has(v.configMap) || 
-          has(v.csi) || 
-          has(v.downwardAPI) || 
-          has(v.emptyDir) || 
-          has(v.ephemeral) || 
-          has(v.persistentVolumeClaim) || 
-          has(v.projected) || 
+        !has(object.spec.volumes) || object.spec.volumes.all(v,
+          has(v.configMap) ||
+          has(v.csi) ||
+          has(v.downwardAPI) ||
+          has(v.emptyDir) ||
+          has(v.ephemeral) ||
+          has(v.persistentVolumeClaim) ||
+          has(v.projected) ||
           has(v.secret))
       message: >-
         Only the following types of volumes may be used: configMap, csi, downwardAPI,
@@ -53,4 +53,3 @@ spec:
   {{- $actions := include "kyverno-policies.policyValidationActions" (dict "name" $name "values" .Values) }}
   validationActions: {{ $actions | nindent 4 }}
 {{- end }}
-

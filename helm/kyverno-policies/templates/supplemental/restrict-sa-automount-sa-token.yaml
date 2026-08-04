@@ -6,7 +6,7 @@ metadata:
   name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
   labels: {{ include "labels.common" . | nindent 4 }}
   annotations:
-    policies.kyverno.io/title: Restrict Auto-Mount of Service Account Tokens in Service Account 
+    policies.kyverno.io/title: Restrict Auto-Mount of Service Account Tokens in Service Account
     policies.kyverno.io/category: Security
     kyverno.io/kyverno-version: 1.11.1
     kyverno.io/kubernetes-version: "1.27"
@@ -17,7 +17,7 @@ metadata:
       The ServiceAccount may be assigned roles allowing Pods to access API resources.
       Blocking this ability is an extension of the least privilege best practice and should
       be followed if Pods do not need to speak to the API server to function.
-      This policy ensures that mounting of these ServiceAccount tokens is blocked.            
+      This policy ensures that mounting of these ServiceAccount tokens is blocked.
 spec:
   validationFailureAction: Audit
   background: true
