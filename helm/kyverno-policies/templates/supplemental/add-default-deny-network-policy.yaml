@@ -17,7 +17,7 @@ metadata:
       default deny all ingress and egress traffic to the Pods in the Namespace. Application
       teams can then configure additional NetworkPolicy resources to allow desired traffic
       to application Pods from select sources. This policy will create a new NetworkPolicy resource
-      named `default-deny` which will deny all traffic anytime a new Namespace is created.      
+      named `default-deny` which will deny all traffic anytime a new Namespace is created.
 spec:
   rules:
   - name: default-deny
@@ -33,7 +33,7 @@ spec:
       name: {{ (get .Values.supplementalSecurityPolicies.policies $name).networkPolicy.policyName }}
       namespace: "{{ `{{` }}request.object.metadata.name{{ `}}` }}"
       orphanDownstreamOnPolicyDelete: {{ (get .Values.supplementalSecurityPolicies.policies $name).deleteNetworkPolicyOnKyvernoPolicyDeletion }}
-      synchronize: true      
+      synchronize: true
       data:
         spec:
           # select all pods in the namespace

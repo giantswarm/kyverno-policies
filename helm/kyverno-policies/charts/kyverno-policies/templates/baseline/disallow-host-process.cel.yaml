@@ -28,24 +28,24 @@ spec:
       resources: [pods]
   validations:
     - expression: >-
-        (!has(object.spec.securityContext) || 
-         !has(object.spec.securityContext.windowsOptions) || 
-         !has(object.spec.securityContext.windowsOptions.hostProcess) || 
+        (!has(object.spec.securityContext) ||
+         !has(object.spec.securityContext.windowsOptions) ||
+         !has(object.spec.securityContext.windowsOptions.hostProcess) ||
          object.spec.securityContext.windowsOptions.hostProcess == false) &&
-        (!has(object.spec.containers) || object.spec.containers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.windowsOptions) || 
-          !has(c.securityContext.windowsOptions.hostProcess) || 
+        (!has(object.spec.containers) || object.spec.containers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.windowsOptions) ||
+          !has(c.securityContext.windowsOptions.hostProcess) ||
           c.securityContext.windowsOptions.hostProcess == false)) &&
-        (!has(object.spec.initContainers) || object.spec.initContainers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.windowsOptions) || 
-          !has(c.securityContext.windowsOptions.hostProcess) || 
+        (!has(object.spec.initContainers) || object.spec.initContainers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.windowsOptions) ||
+          !has(c.securityContext.windowsOptions.hostProcess) ||
           c.securityContext.windowsOptions.hostProcess == false)) &&
-        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c, 
-          !has(c.securityContext) || 
-          !has(c.securityContext.windowsOptions) || 
-          !has(c.securityContext.windowsOptions.hostProcess) || 
+        (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c,
+          !has(c.securityContext) ||
+          !has(c.securityContext.windowsOptions) ||
+          !has(c.securityContext.windowsOptions.hostProcess) ||
           c.securityContext.windowsOptions.hostProcess == false))
       message: >-
         HostProcess containers are disallowed. The fields spec.securityContext.windowsOptions.hostProcess,
@@ -55,4 +55,3 @@ spec:
   {{- $actions := include "kyverno-policies.policyValidationActions" (dict "name" $name "values" .Values) }}
   validationActions: {{ $actions | nindent 4 }}
 {{- end }}
-
