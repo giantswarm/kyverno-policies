@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated `kyverno-policies` to upstream version `v1.18.0`.
+
 ## [0.26.1] - 2026-07-23
 
 ### Added
 
 - Allow overriding the `failurePolicy` of the `restrict-external-ips` supplemental policy.
+
+### Changed
+
+- Updated `kyverno-policies` to upstream version `v1.18.0`.
 
 ## [0.26.0] - 2026-07-01
 
@@ -25,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Migrate chart annotations to OCI-compatible format (change `application.giantswarm.io/team` to `io.giantswarm.application.team`, convert `restrictions` to annotations).
 - Updated `kyverno-policies` to upstream version `v1.17.2`.
+- Updated `kyverno-policies` to upstream version `v1.18.0`.
 
 ## [0.25.0] - 2026-02-04
 
