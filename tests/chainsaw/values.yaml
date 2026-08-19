@@ -20,6 +20,8 @@ bestPracticesPolicies:
 # Supplemental security policies
 supplementalSecurityPolicies:
   policies:
+    audit-event-on-exec:
+      enabled: true
     disallow-gitrepo-volume:
       enabled: true
       mode: Enforce

@@ -148,6 +148,13 @@ spec:
         - name: name
           value: require-emptydir-requests-and-limits
   # Supplemental policies
+  - name: check if policy audit-event-on-exec is ready
+    use:
+      template: ../_steps-templates/cluster-policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: audit-event-on-exec
   - name: check if policy disallow-gitrepo-volume is ready
     use:
       template: ../_steps-templates/cluster-policy-ready.yaml
