@@ -42,6 +42,10 @@ bestPracticesPolicies:
 
 supplementalSecurityPolicies:
   policies:
+    # audit-event-on-exec generates a Kubernetes Event capturing the requesting user and command whenever someone execs into a Pod. Surfaces exec activity as an additional signal alongside the API server audit log.
+    audit-event-on-exec:
+      enabled: false
+
     # add-default-deny-network-policy generates a new NetworkPolicy resource in every newly created Namespace which will deny all traffic.
     add-default-deny-network-policy:
       enabled: false
