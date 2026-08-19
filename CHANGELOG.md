@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+### Added
 
-- Updated `kyverno-policies` to upstream version `v1.18.0`.
+- Add optional `audit-event-on-exec` supplemental policy which generates a Kubernetes Event, capturing user identity and command, whenever someone execs into a Pod.
 
 ## [0.26.1] - 2026-07-23
 
