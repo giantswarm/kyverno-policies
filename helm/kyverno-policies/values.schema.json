@@ -216,6 +216,14 @@
                                 }
                             }
                         },
+                        "audit-event-on-exec": {
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        },
                         "check-serviceaccount-secrets": {
                             "type": "object",
                             "properties": {
