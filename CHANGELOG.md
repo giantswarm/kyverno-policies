@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Fix chart label truncation.
 - Add optional `audit-event-on-exec` supplemental policy which generates a Kubernetes Event, capturing user identity and command, whenever someone execs into a Pod.
 
 ### Changed
