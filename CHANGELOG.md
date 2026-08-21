@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-08-21
+
 ### Added
 
 - Fix chart label truncation.
@@ -404,7 +406,8 @@ This release includes an upstream update. Please refer to the following Release 
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.26.1...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.27.0...HEAD
+[0.27.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.26.1...v0.27.0
 [0.26.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.26.0...v0.26.1
 [0.26.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.24.0...v0.25.0
