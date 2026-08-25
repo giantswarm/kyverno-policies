@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/c272684c8bcae7c3905fc0f13d5db93ec92d6951/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
+#    https://github.com/giantswarm/devctl/blob/3a85a089d2be9c043c903b21ecc2b63226d07627/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
 #
 
 SHELL:=/usr/bin/env bash
@@ -10,11 +10,13 @@ SHELL:=/usr/bin/env bash
 # Kind cluster name to use
 KIND_CLUSTER_NAME ?= chainsaw-kyverno-cluster
 
-# These values should be set by the outer environment / CircleCI environment config.
+# Defaults for local runs; the outer environment / CircleCI environment config overrides them.
+# `VAR: value` is a make *rule*, not an assignment, so these have to be `?=` to be usable
+# as $(KUBERNETES_VERSION) / $(KYVERNO_VERSION) below.
 # repository: kindest/node
-KUBERNETES_VERSION: v1.33.7
+KUBERNETES_VERSION ?= v1.33.7
 # repository: giantswarm/kyverno-crds
-KYVERNO_VERSION: v1.16.0
+KYVERNO_VERSION ?= v1.17.0
 KYVERNO_POLICIES_APP_NAME ?= "kyverno-policies"
 
 ##@ Test
