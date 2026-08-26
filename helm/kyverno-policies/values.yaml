@@ -1,4 +1,4 @@
-kyverno-policies:
+kyverno-policies:  # @schema skipProperties: true; additionalProperties: true
   policyType: ClusterPolicy
   podSecurityStandard: restricted
   # includeOtherPolicies:
