@@ -3,9 +3,6 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-        "baseDomain": {
-            "type": "string"
-        },
         "bestPracticesPolicies": {
             "type": "object",
             "additionalProperties": false,
@@ -89,34 +86,6 @@
                     }
                 }
             }
-        },
-        "bootstrapMode": {
-            "type": "object",
-            "additionalProperties": true
-        },
-        "chartOperator": {
-            "type": "object",
-            "additionalProperties": true
-        },
-        "ciliumNetworkPolicy": {
-            "type": "object",
-            "additionalProperties": true
-        },
-        "cluster": {
-            "type": "object",
-            "additionalProperties": true
-        },
-        "clusterCA": {
-            "type": "string"
-        },
-        "clusterCIDR": {
-            "type": "string"
-        },
-        "clusterDNSIP": {
-            "type": "string"
-        },
-        "clusterID": {
-            "type": "string"
         },
         "debugAccessPolicies": {
             "type": "object",
@@ -206,9 +175,6 @@
                 }
             }
         },
-        "gcpProject": {
-            "type": "string"
-        },
         "global": {
             "type": [
                 "object",
@@ -222,12 +188,6 @@
             "additionalProperties": true
         },
         "policyNamePrefix": {
-            "type": "string"
-        },
-        "provider": {
-            "type": "string"
-        },
-        "subscriptionID": {
             "type": "string"
         },
         "supplementalSecurityPolicies": {

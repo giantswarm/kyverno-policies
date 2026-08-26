@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Allow additional properties for vendored upstream chart values so upstream keys are not rejected by the generated schema.
+- Updated `kyverno-policies` to upstream version `v1.18.0`.
 
 ## [0.27.0] - 2026-08-21
 
