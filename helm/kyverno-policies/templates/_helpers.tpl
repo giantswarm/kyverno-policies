@@ -7,20 +7,10 @@ Expand the name of the chart.
 {{- end -}}
 
 {{/*
-Make a string usable as a label value. CI replaces the chart version with a
-long build string, so cut it to 63 characters and drop any trailing
-character that is not a letter or a digit.
-*/}}
-{{- define "labels.sanitizeValue" -}}
-{{- $value := . | toString | replace "+" "_" | trunc 63 -}}
-{{- regexReplaceAll "[^A-Za-z0-9]+$" $value "" -}}
-{{- end -}}
-
-{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "chart" -}}
-{{- include "labels.sanitizeValue" (printf "%s-%s" .Chart.Name .Chart.Version) -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | trimSuffix "." | trimSuffix "_" -}}
 {{- end -}}
 
 {{/*
@@ -39,7 +29,7 @@ Common labels
 app.kubernetes.io/component: kyverno-policies
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 app.kubernetes.io/part-of: {{ template "name" . }}
-app.kubernetes.io/version: {{ include "labels.sanitizeValue" .Chart.Version | quote }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | default .Chart.Version | replace "+" "_" | quote }}
 application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | default "shield" | quote }}
 helm.sh/chart: {{ include "chart" . | quote }}
 {{- if .Values.customLabels }}

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Cut label values to 63 characters and remove any trailing character that is not a letter or a digit. CI builds replace the chart version with a long build string, which made `app.kubernetes.io/version` too long and the install fail.
+- Take the `app.kubernetes.io/version` label from the chart app version instead of the chart version. Flux adds build metadata to the chart version, which pushed the label past the 63 byte limit and made the install fail. The app version carries the same value without that metadata.
 
 ### Changed
 
