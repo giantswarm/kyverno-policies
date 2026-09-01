@@ -29,7 +29,7 @@ Common labels
 app.kubernetes.io/component: kyverno-policies
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 app.kubernetes.io/part-of: {{ template "name" . }}
-app.kubernetes.io/version: "{{ .Chart.Version | replace "+" "_" }}"
+app.kubernetes.io/version: {{ .Chart.AppVersion | default .Chart.Version | replace "+" "_" | quote }}
 application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | default "shield" | quote }}
 helm.sh/chart: {{ include "chart" . | quote }}
 {{- if .Values.customLabels }}
