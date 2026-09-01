@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Use `Chart.AppVersion` instead of `Chart.Version` for the `app.kubernetes.io/version` label, since `Chart.Version` can exceed the 63-byte Kubernetes label limit on dev builds.
+
 ### Changed
 
 - Allow additional properties for vendored upstream chart values so upstream keys are not rejected by the generated schema.
