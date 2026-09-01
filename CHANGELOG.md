@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Cut label values to 63 characters and remove any trailing character that is not a letter or a digit. CI builds replace the chart version with a long build string, which made `app.kubernetes.io/version` too long and the install fail.
+
 ### Changed
 
 - Allow additional properties for vendored upstream chart values so upstream keys are not rejected by the generated schema.
