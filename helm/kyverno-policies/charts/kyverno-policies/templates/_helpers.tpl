@@ -9,6 +9,14 @@
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{/*
+Sanitize a label value: strip "+", cap at 63 bytes, then strip any run of
+trailing illegal characters left by truncation.
+*/}}
+{{- define "kyverno-policies.labels.sanitizeValue" -}}
+{{- regexReplaceAll "[^A-Za-z0-9]+$" (. | replace "+" "_" | trunc 63) "" -}}
+{{- end -}}
+
 {{/* Helm required labels */}}
 {{- define "kyverno-policies.labels" -}}
 app.kubernetes.io/component: kyverno
@@ -16,7 +24,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/name: {{ template "kyverno-policies.name" . }}
 app.kubernetes.io/part-of: {{ template "kyverno-policies.name" . }}
-app.kubernetes.io/version: "{{ .Chart.AppVersion | replace "+" "_" }}"
+app.kubernetes.io/version: "{{ include "kyverno-policies.labels.sanitizeValue" .Chart.AppVersion }}"
 helm.sh/chart: {{ template "kyverno-policies.chart" . }}
 {{- if .Values.customLabels }}
 {{ toYaml .Values.customLabels }}

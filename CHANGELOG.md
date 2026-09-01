@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Use `Chart.AppVersion` instead of `Chart.Version` for the `app.kubernetes.io/version` label, since `Chart.Version` can exceed the 63-byte Kubernetes label limit on dev builds.
+- Use `Chart.AppVersion` instead of `Chart.Version` for the `app.kubernetes.io/version` label, and truncate to 63 bytes, since either can exceed the Kubernetes label limit on dev builds.
 
 ### Changed
 

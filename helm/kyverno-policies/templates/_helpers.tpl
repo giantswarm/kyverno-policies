@@ -14,6 +14,14 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Sanitize a label value: strip "+", cap at 63 bytes, then strip any run of
+trailing illegal characters left by truncation.
+*/}}
+{{- define "labels.sanitizeValue" -}}
+{{- regexReplaceAll "[^A-Za-z0-9]+$" (. | replace "+" "_" | trunc 63) "" -}}
+{{- end -}}
+
+{{/*
 Selector labels
 */}}
 {{- define "labels.selector" -}}
@@ -29,7 +37,7 @@ Common labels
 app.kubernetes.io/component: kyverno-policies
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 app.kubernetes.io/part-of: {{ template "name" . }}
-app.kubernetes.io/version: "{{ .Chart.AppVersion | replace "+" "_" }}"
+app.kubernetes.io/version: "{{ include "labels.sanitizeValue" .Chart.AppVersion }}"
 application.giantswarm.io/team: {{ index .Chart.Annotations "io.giantswarm.application.team" | default "shield" | quote }}
 helm.sh/chart: {{ include "chart" . | quote }}
 {{- if .Values.customLabels }}
