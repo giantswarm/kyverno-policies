@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/3a85a089d2be9c043c903b21ecc2b63226d07627/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
+#    https://github.com/giantswarm/devctl/blob/b301f8b61ae70428a54773c045c01f38d2bf2ca2/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
 #
 
 name: "Test Kyverno Policies with Chainsaw"
