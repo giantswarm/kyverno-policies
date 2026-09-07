@@ -1,5 +1,5 @@
 kyverno-policies:  # @schema skipProperties: true; additionalProperties: true
-  policyType: ClusterPolicy
+  policyType: ValidatingPolicy
   podSecurityStandard: restricted
   # includeOtherPolicies:
   #   - require-non-root-groups
