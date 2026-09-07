@@ -12,13 +12,13 @@ Kubernetes Pod Security Standards implemented as Kyverno policies
 
 | Repository | Name | Version |
 |------------|------|---------|
-|  | kyverno-policies | 3.7.2 |
+|  | kyverno-policies | 3.8.2 |
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| kyverno-policies.policyType | string | `"ClusterPolicy"` |  |
+| kyverno-policies.policyType | string | `"ValidatingPolicy"` |  |
 | kyverno-policies.podSecurityStandard | string | `"restricted"` |  |
 | kyverno-policies.customLabels."application.giantswarm.io/team" | string | `"shield"` |  |
 | policyNamePrefix | string | `""` |  |
