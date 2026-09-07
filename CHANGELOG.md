@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.1] - 2026-09-07
+
 ### Fixed
 
 - Take the `app.kubernetes.io/version` label from the chart app version instead of the chart version. Flux adds build metadata to the chart version, which pushed the label past the 63 byte limit and made the install fail. The app version carries the same value without that metadata.
@@ -414,7 +416,8 @@ This release includes an upstream update. Please refer to the following Release 
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.27.0...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.27.1...HEAD
+[0.27.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.27.0...v0.27.1
 [0.27.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.26.1...v0.27.0
 [0.26.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.26.0...v0.26.1
 [0.26.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.25.0...v0.26.0
