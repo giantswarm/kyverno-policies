@@ -20,4 +20,4 @@ keywords:
 name: kyverno-policies
 sources:
   - https://github.com/giantswarm/kyverno-policies
-version: 0.27.1
+version: 0.28.0
