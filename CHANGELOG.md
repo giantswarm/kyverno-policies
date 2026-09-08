@@ -7,15 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated `kyverno-policies` to upstream version `v1.19.0`.
+
 ## [0.27.1] - 2026-09-07
-
-### Fixed
-
-- Take the `app.kubernetes.io/version` label from the chart app version instead of the chart version. Flux adds build metadata to the chart version, which pushed the label past the 63 byte limit and made the install fail. The app version carries the same value without that metadata.
 
 ### Changed
 
 - Allow additional properties for vendored upstream chart values so upstream keys are not rejected by the generated schema.
+
+### Fixed
+
+- Take the `app.kubernetes.io/version` label from the chart app version instead of the chart version. Flux adds build metadata to the chart version, which pushed the label past the 63 byte limit and made the install fail. The app version carries the same value without that metadata.
 
 ## [0.27.0] - 2026-08-21
 
