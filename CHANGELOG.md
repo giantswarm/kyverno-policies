@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.0] - 2026-09-08
+
+### Changed
+
+- Updated `kyverno-policies` to upstream version v1.19.0.
+
 ## [0.27.1] - 2026-09-07
 
 ### Fixed
@@ -416,7 +422,8 @@ This release includes an upstream update. Please refer to the following Release 
 
 ## [0.0.1] - 2021-06-02
 
-[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.27.1...HEAD
+[Unreleased]: https://github.com/giantswarm/kyverno-policies/compare/v0.28.0...HEAD
+[0.28.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.27.1...v0.28.0
 [0.27.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.27.0...v0.27.1
 [0.27.0]: https://github.com/giantswarm/kyverno-policies/compare/v0.26.1...v0.27.0
 [0.26.1]: https://github.com/giantswarm/kyverno-policies/compare/v0.26.0...v0.26.1
