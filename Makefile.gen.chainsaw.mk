@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/3a85a089d2be9c043c903b21ecc2b63226d07627/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
+#    https://github.com/giantswarm/devctl/blob/9c16edd66acf3373af93a22f40cdc6f5780c0486/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
 #
 
 SHELL:=/usr/bin/env bash
@@ -17,7 +17,16 @@ KIND_CLUSTER_NAME ?= chainsaw-kyverno-cluster
 KUBERNETES_VERSION ?= v1.33.7
 # repository: giantswarm/kyverno-crds
 KYVERNO_VERSION ?= v1.17.0
-KYVERNO_POLICIES_APP_NAME ?= "kyverno-policies"
+# The chart to install and build: helm/$(KYVERNO_POLICIES_APP_NAME) when that is set and has a
+# Chart.yaml (as in CI), otherwise the one directory under helm/ with a Chart.yaml.
+# KYVERNO_POLICIES_APP_NAME only counts here when set before this file is included (env, command
+# line or Makefile.custom.mk). Set KYVERNO_POLICIES_CHART_DIR if neither picks the right chart.
+ifneq ($(origin KYVERNO_POLICIES_APP_NAME),undefined)
+KYVERNO_POLICIES_APP_CHART := $(patsubst %/Chart.yaml,%,$(wildcard helm/$(KYVERNO_POLICIES_APP_NAME)/Chart.yaml))
+endif
+KYVERNO_POLICIES_CHART_DIR ?= $(or $(KYVERNO_POLICIES_APP_CHART),$(patsubst %/Chart.yaml,%,$(wildcard helm/*/Chart.yaml)))
+# The Helm release name. CI sets it to the repository name.
+KYVERNO_POLICIES_APP_NAME ?= $(notdir $(patsubst %/,%,$(KYVERNO_POLICIES_CHART_DIR)))
 
 ##@ Test
 
@@ -36,9 +45,9 @@ install-kyverno:
 	kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -n kyverno --timeout 300s
 
 .PHONY: install-policies
-install-policies:
+install-policies: check-kyverno-policies-chart
 	touch tests/chainsaw/values.yaml
-	helm upgrade --install $(KYVERNO_POLICIES_APP_NAME) ./helm/$(KYVERNO_POLICIES_APP_NAME) --values ./tests/chainsaw/values.yaml
+	helm upgrade --install $(KYVERNO_POLICIES_APP_NAME) $(KYVERNO_POLICIES_CHART_DIR) --values ./tests/chainsaw/values.yaml
 
 .PHONY: install-extras
 install-extras:
@@ -49,5 +58,12 @@ kind-get-kubeconfig:
 	kind get kubeconfig --name $(KIND_CLUSTER_NAME) > $(PWD)/kube.config
 
 .PHONY: dabs
-dabs: generate
-	dabs.sh --generate-metadata --chart-dir helm/kyverno-policies
+dabs: check-kyverno-policies-chart generate
+	dabs.sh --generate-metadata --chart-dir $(KYVERNO_POLICIES_CHART_DIR)
+
+.PHONY: check-kyverno-policies-chart
+check-kyverno-policies-chart:
+	@if [ "$(words $(KYVERNO_POLICIES_CHART_DIR))" != "1" ] || [ ! -f "$(KYVERNO_POLICIES_CHART_DIR)/Chart.yaml" ]; then \
+		echo "expected one chart directory with a Chart.yaml, KYVERNO_POLICIES_CHART_DIR is '$(KYVERNO_POLICIES_CHART_DIR)'. Set it to the chart directory." >&2; \
+		exit 1; \
+	fi
