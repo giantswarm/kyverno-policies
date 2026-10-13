@@ -16,9 +16,9 @@ metadata:
     policies.kyverno.io/description: >-
       Pods which mount emptyDir volumes may be allowed to potentially overrun
       the medium backing the emptyDir volume. This sample ensures that any
-      initContainers or containers mounting an emptyDir volume have
-      ephemeral-storage requests and limits set. Policy will be skipped if
-      the volume has already a sizeLimit set.
+      initContainers or containers mounting an emptyDir volume without a
+      sizeLimit have ephemeral-storage requests and limits set. A Pod whose
+      emptyDir volumes all carry a sizeLimit passes.
 spec:
   background: true
   validationFailureAction: {{ (get .Values.bestPracticesPolicies.policies $name).mode }}
@@ -33,29 +33,27 @@ spec:
       - name: emptydirnames
         variable:
           jmesPath: request.object.spec.volumes[?contains(keys(@), 'emptyDir') && !contains(keys(emptyDir), 'sizeLimit')].name
+          default: []
       preconditions:
         all:
           - key: "{{ `{{` }}request.object.spec.volumes[?contains(keys(@), 'emptyDir')] || `[]` | length(@) {{ `}}` }}"
             operator: GreaterThanOrEquals
             value: 1
-          - key: "{{ `{{` }} request.operation || 'BACKGROUND'{{ `}}` }}"
-            operator: AnyIn
+          - key: "{{ `{{` }} request.operation || 'BACKGROUND' {{ `}}` }}"
+            operator: AnyNotIn
             value:
-              - CREATE
-              - UPDATE
+              - DELETE
       validate:
-        message: Containers mounting emptyDir volumes must specify requests and limits for ephemeral-storage.
+        message: Containers mounting emptyDir volumes without a sizeLimit must specify requests and limits for ephemeral-storage.
         foreach:
           - list: "request.object.spec.[initContainers, containers][]"
-            preconditions:
-              any:
-              - key: "{{ `{{` }} element.volumeMounts[].name {{ `}}` }}"
-                operator: AnyIn
-                value: "{{ `{{` }} emptydirnames {{ `}}` }}"
-            pattern:
-              resources:
-                requests:
-                  ephemeral-storage: "?*"
-                limits:
-                  ephemeral-storage: "?*"
+            deny:
+              conditions:
+                all:
+                  - key: "{{ `{{` }} element.volumeMounts[].name || `[]` {{ `}}` }}"
+                    operator: AnyIn
+                    value: "{{ `{{` }} emptydirnames {{ `}}` }}"
+                  - key: "{{ `{{` }} element.resources.requests.\"ephemeral-storage\" && element.resources.limits.\"ephemeral-storage\" || '' {{ `}}` }}"
+                    operator: Equals
+                    value: ""
 {{- end }}

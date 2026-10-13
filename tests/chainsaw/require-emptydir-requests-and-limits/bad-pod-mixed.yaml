@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod-emptydir-mixed
+spec:
+  containers:
+  - name: container01
+    image: busybox:1.35
+    args:
+    - sleep
+    - 1d
+    resources:
+      limits:
+        ephemeral-storage: 200Mi
+    volumeMounts:
+    - name: sized
+      mountPath: /sized
+    - name: data
+      mountPath: /data
+  volumes:
+  - name: sized
+    emptyDir:
+      sizeLimit: 100Mi
+  - name: data
+    emptyDir: {}

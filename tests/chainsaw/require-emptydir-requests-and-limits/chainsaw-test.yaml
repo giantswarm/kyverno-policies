@@ -11,6 +11,13 @@ spec:
         - check:
             ($error != null): true
         file: bad-pod.yaml
+  - name: create a bad pod mounting an emptyDir without sizeLimit next to one with sizeLimit
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+        file: bad-pod-mixed.yaml
   - name: create a good pod with emptyDir and limits
     try:
     - create:
@@ -25,3 +32,13 @@ spec:
         - check:
             ($error != null): false
         file: good-pod-sizelimit.yaml
+    - assert:
+        timeout: 2m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            kind: Pod
+            name: good-pod-emptydir-sizelimit
+          (results[?policy=='require-emptydir-requests-and-limits']):
+          - result: pass

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `require-emptydir-requests-and-limits` passes a Pod whose containers mount only emptyDir volumes with a `sizeLimit`, instead of yielding no result, and evaluates in background scans, so a fixed workload's earlier fail is replaced in its policy report.
 - The `helm.sh/chart` label is valid for long chart versions: the 63-character cut trims the whole trailing run of `-`, `.` and `_`.
 
 ### Changed
