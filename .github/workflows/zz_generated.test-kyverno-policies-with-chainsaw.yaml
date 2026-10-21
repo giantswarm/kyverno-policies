@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/eceb03c290d218be2e56d0765b0792ff00c643ed/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
+#    https://github.com/giantswarm/devctl/blob/fd25d140ecb3de0dd18f5204586421bbbe90fc8e/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
 #
 
 name: "Test Kyverno Policies with Chainsaw"
@@ -12,12 +12,12 @@ on:
   workflow_dispatch: {}
 env:
   KYVERNO_POLICIES_APP_NAME: kyverno-policies
-  # repository: kubernetes-sigs/kind
   KIND_CLUSTER_NAME: chainsaw-kyverno-cluster
+  # renovate: datasource=github-releases depName=kubernetes-sigs/kind
   KIND_VERSION: v0.25.0
-  # repository: kindest/node
+  # renovate: datasource=docker depName=kindest/node
   KUBERNETES_VERSION: v1.33.7
-  # repository: giantswarm/kyverno-crds
+  # renovate: datasource=github-releases depName=giantswarm/kyverno-crds
   KYVERNO_VERSION: v1.17.0
   HELM_VERSION: 4
 
