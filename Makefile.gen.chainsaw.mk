@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/9c16edd66acf3373af93a22f40cdc6f5780c0486/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
+#    https://github.com/giantswarm/devctl/blob/fd25d140ecb3de0dd18f5204586421bbbe90fc8e/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
 #
 
 SHELL:=/usr/bin/env bash
@@ -13,9 +13,9 @@ KIND_CLUSTER_NAME ?= chainsaw-kyverno-cluster
 # Defaults for local runs; the outer environment / CircleCI environment config overrides them.
 # `VAR: value` is a make *rule*, not an assignment, so these have to be `?=` to be usable
 # as $(KUBERNETES_VERSION) / $(KYVERNO_VERSION) below.
-# repository: kindest/node
+# renovate: datasource=docker depName=kindest/node
 KUBERNETES_VERSION ?= v1.33.7
-# repository: giantswarm/kyverno-crds
+# renovate: datasource=github-releases depName=giantswarm/kyverno-crds
 KYVERNO_VERSION ?= v1.17.0
 # The chart to install and build: helm/$(KYVERNO_POLICIES_APP_NAME) when that is set and has a
 # Chart.yaml (as in CI), otherwise the one directory under helm/ with a Chart.yaml.
