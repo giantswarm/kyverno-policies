@@ -2,10 +2,10 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: 'chore: cut release v1.19.1 (#17541)...'
-      sha: 40ec788d48bb28d83dbf85538e962a59db9d45c6
+      commitTitle: 'chore: bump chart to 3.9.2 for v1.19.2 (#18145)...'
+      sha: e63308f1e16c05cd009ac4864be6ec25c66b49be
       tags:
-      - kyverno-chart-3.9.1
+      - kyverno-chart-3.9.2
     path: .
   path: helm/kyverno-policies/charts/kyverno-policies
 kind: LockConfig

@@ -2,7 +2,7 @@
 
 Kubernetes Pod Security Standards implemented as Kyverno policies
 
-![Version: 3.9.1](https://img.shields.io/badge/Version-3.9.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.1](https://img.shields.io/badge/AppVersion-v1.19.1-informational?style=flat-square)
+![Version: 3.9.2](https://img.shields.io/badge/Version-3.9.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.19.2](https://img.shields.io/badge/AppVersion-v1.19.2-informational?style=flat-square)
 
 ## About
 
@@ -28,6 +28,7 @@ The following policies are included in each profile.
 
 * disallow-capabilities-strict
 * disallow-privilege-escalation
+* disallow-proc-mount-strict
 * require-run-as-non-root-user
 * require-run-as-nonroot
 * restrict-seccomp-strict
@@ -79,6 +80,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | podSecuritySeverity | string | `"medium"` | Pod Security Standard severity (`low`, `medium`, `high`). |
 | podSecuritySeverityByPolicy | object | `{}` | Define podSecuritySeverity overrides for specific policies. Override the global `podSecuritySeverity` with an individual severity for individual policies. An empty string per-policy entry suppresses the annotation entirely. |
 | podSecurityPolicies | list | `[]` | Policies to include when `podSecurityStandard` is `custom`. |
+| podSecurityUserNamespaces | bool | `false` | Enable the Kubernetes Pod Security Admission relaxation for user namespace pods for ValidatingPolicy templates only. When `true`, the `disallow-proc-mount` (Baseline), `require-run-as-nonroot` and `require-run-as-non-root-user` (Restricted) ValidatingPolicies skip Pods that explicitly set `spec.hostUsers` to `false`. A Pod that omits `hostUsers` or sets it to `true` is always checked. The Restricted `disallow-proc-mount-strict` ValidatingPolicy never relaxes, and neither does `disallow-proc-mount` when the Restricted profile is installed. This setting has no effect on legacy `ClusterPolicy` templates. |
 | includeOtherPolicies | list | `[]` | Additional policies to include from `other`. |
 | includeRestrictedPolicies | list | `[]` | Additional policies to include from `restricted`. |
 | customPolicies | list | `[]` | Additional custom policies to include. |
