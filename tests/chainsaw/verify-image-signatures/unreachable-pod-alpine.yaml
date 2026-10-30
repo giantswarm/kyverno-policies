@@ -1,0 +1,22 @@
+# Matched by the test-unreachable customer verifier (Enforce, failurePolicy
+# Ignore, Rekor at an unresolvable host). alpine carries no cosign signature,
+# so verification fails before Rekor is consulted and the Pod is denied.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: unreachable-pod-alpine
+spec:
+  containers:
+  - name: alpine
+    image: mirror.gcr.io/library/alpine:3.20
+    args:
+    - sleep
+    - 1d
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL

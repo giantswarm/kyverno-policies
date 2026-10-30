@@ -1,0 +1,20 @@
+# A Giant Swarm image tag that carries no cosign signature from the CircleCI
+# identity (probed with the Kyverno CLI on 2026-10-29). The
+# gsoci-circleci-keyless verifier runs in Enforce in tests/chainsaw/values.yaml,
+# so the Pod is denied.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod-unsigned
+spec:
+  containers:
+  - name: chart-operator
+    image: gsoci.azurecr.io/giantswarm/chart-operator:3.3.0
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL

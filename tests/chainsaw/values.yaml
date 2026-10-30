@@ -50,3 +50,32 @@ debugAccessPolicies:
       mode: Enforce
       cleanupSchedule: "*/5 * * * *"
       targetAnnotation: "policy.giantswarm.io/exception-expires-at"
+
+# Image signature verification
+# One verifier per scenario, each matching its own images, so a single install
+# covers Enforce, Audit (background scan) and an unreachable transparency log.
+imageVerification:
+  giantswarm:
+    gsoci-circleci-keyless:
+      mode: Enforce
+  customer:
+  - name: test-audit
+    mode: Audit
+    backgroundScan: true
+    images: ["mirror.gcr.io/library/busybox*"]
+    attestors:
+    - name: circleci
+      keyless:
+        issuer: https://oidc.circleci.com
+        subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/([a-f0-9-]+|nil)$
+      rekorUrl: https://rekor.sigstore.dev
+  - name: test-unreachable
+    mode: Enforce
+    failurePolicy: Ignore
+    images: ["mirror.gcr.io/library/alpine*"]
+    attestors:
+    - name: circleci
+      keyless:
+        issuer: https://oidc.circleci.com
+        subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/([a-f0-9-]+|nil)$
+      rekorUrl: https://rekor.invalid

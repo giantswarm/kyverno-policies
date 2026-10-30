@@ -16,7 +16,7 @@ KIND_CLUSTER_NAME ?= chainsaw-kyverno-cluster
 # renovate: datasource=docker depName=kindest/node
 KUBERNETES_VERSION ?= v1.33.7
 # renovate: datasource=github-releases depName=giantswarm/kyverno-crds
-KYVERNO_VERSION ?= v1.17.0
+KYVERNO_VERSION ?= v1.18.0
 # The chart to install and build: helm/$(KYVERNO_POLICIES_APP_NAME) when that is set and has a
 # Chart.yaml (as in CI), otherwise the one directory under helm/ with a Chart.yaml.
 # KYVERNO_POLICIES_APP_NAME only counts here when set before this file is included (env, command

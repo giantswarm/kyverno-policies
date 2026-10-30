@@ -1,0 +1,110 @@
+# verify-image-signatures runs against the single install of the chart with
+# tests/chainsaw/values.yaml, where each verifier matches its own images:
+#   gsoci-circleci-keyless  Enforce   gsoci.azurecr.io/giantswarm/*
+#   test-audit              Audit     mirror.gcr.io/library/busybox*  (background scan only)
+#   test-unreachable        Enforce   mirror.gcr.io/library/alpine*   (failurePolicy Ignore, Rekor at rekor.invalid)
+# The customer verifiers use Google's Docker Hub mirror because anonymous
+# Docker Hub manifest requests are limited to 100 an hour per IP, which the
+# one-minute background scan and the kubelet pulls exhaust.
+# The kind node needs outbound HTTPS to gsoci.azurecr.io, *.data.azurecr.io,
+# mirror.gcr.io, tuf-repo-cdn.sigstore.dev and rekor.sigstore.dev.
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: verify-image-signatures
+spec:
+  timeouts:
+    # Admission verifies signatures against the registry and Rekor in both the
+    # mutating and the validating webhook (10s timeout each), which exceeds
+    # chainsaw's 5s default. A create whose check fails is retried until this
+    # timeout: with more than one admission-enabled ImageValidatingPolicy,
+    # Kyverno 1.18.0's mutating webhook can hang until its timeout and the Pod
+    # is then denied with "annotations not present on object", even for a
+    # correctly signed image; a later attempt passes.
+    apply: 2m
+  steps:
+  - name: check if policy verify-image-signatures-gsoci-circleci-keyless is ready
+    use:
+      template: ../_steps-templates/image-validating-policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: verify-image-signatures-gsoci-circleci-keyless
+  - name: check if policy verify-image-signatures-test-audit is ready
+    use:
+      template: ../_steps-templates/image-validating-policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: verify-image-signatures-test-audit
+  - name: check if policy verify-image-signatures-test-unreachable is ready
+    use:
+      template: ../_steps-templates/image-validating-policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: verify-image-signatures-test-unreachable
+  - name: create a good pod with a signed Giant Swarm image by tag
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-signed.yaml
+  - name: create a good pod with a signed Giant Swarm image by digest
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-signed-digest.yaml
+  - name: create a good pod with a signed Giant Swarm image and an unmatched nginx sidecar
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: mixed-pod.yaml
+  - name: create a bad pod with an unsigned Giant Swarm image
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, `"Image signature verification failed for verifier 'gsoci-circleci-keyless'"`)): true
+        file: bad-pod-unsigned.yaml
+  - name: create a pod matched by the Audit verifier and wait for its failing background-scan report
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: audit-pod-busybox.yaml
+    - assert:
+        # The harness runs the reports controller with --backgroundScanInterval=1m.
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            apiVersion: v1
+            kind: Pod
+            name: audit-pod-busybox
+          (results[?policy=='verify-image-signatures-test-audit']):
+          - result: fail
+            source: KyvernoImageValidatingPolicy
+            message: "Image signature verification failed for verifier 'test-audit': fewer than 1 of the configured attestors produced a valid cosign signature."
+            properties:
+              process: background scan
+  # alpine carries no cosign signature at all, so verification fails before
+  # the transparency log is consulted: the unreachable Rekor URL never comes
+  # into play and failurePolicy Ignore (which only covers webhook call
+  # failures) does not apply. The Enforce verifier denies the Pod.
+  - name: create a pod matched by the Enforce verifier with an unreachable Rekor URL
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, `"Image signature verification failed for verifier 'test-unreachable'"`)): true
+        file: unreachable-pod-alpine.yaml

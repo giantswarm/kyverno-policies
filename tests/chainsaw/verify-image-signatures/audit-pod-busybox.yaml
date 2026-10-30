@@ -1,0 +1,22 @@
+# Matched by the test-audit customer verifier (Audit, background scan only).
+# busybox carries no Giant Swarm signature, so the Pod is admitted and the
+# background scan reports a failure.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: audit-pod-busybox
+spec:
+  containers:
+  - name: busybox
+    image: mirror.gcr.io/library/busybox:1.36
+    args:
+    - sleep
+    - 1d
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL

@@ -18,7 +18,7 @@ env:
   # renovate: datasource=docker depName=kindest/node
   KUBERNETES_VERSION: v1.33.7
   # renovate: datasource=github-releases depName=giantswarm/kyverno-crds
-  KYVERNO_VERSION: v1.17.0
+  KYVERNO_VERSION: v1.18.0
   HELM_VERSION: 4
 
 permissions: {}
@@ -46,7 +46,7 @@ jobs:
           sudo apt-get update && sudo apt-get install make
       - name: Create kind cluster and install kyverno
         run: |
-          make kind-get-kubeconfig install-kyverno
+          make kind-get-kubeconfig install-kyverno kyverno-fast-background-scan
       - name: Install extra resources
         run: |
           make install-extras

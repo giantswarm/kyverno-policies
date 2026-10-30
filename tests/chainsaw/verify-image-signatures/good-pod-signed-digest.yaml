@@ -1,0 +1,18 @@
+# The image of good-pod-signed.yaml referenced by the digest of its image index
+# (resolved on 2026-10-29 with docker buildx imagetools inspect).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: good-pod-signed-digest
+spec:
+  containers:
+  - name: chart-operator
+    image: gsoci.azurecr.io/giantswarm/chart-operator@sha256:5fb434ec10a84871b7beed2a82ce4002ad014a6ee3f388b1d9c745d54ae87891
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL
