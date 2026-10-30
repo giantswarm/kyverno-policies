@@ -1,10 +1,9 @@
-# Matched by the test-unreachable customer verifier (Enforce, failurePolicy
-# Ignore, Rekor at an unresolvable host). alpine carries no cosign signature,
-# so verification fails before Rekor is consulted and the Pod is denied.
+# Matched by the test-enforce customer verifier (Enforce). alpine carries no
+# cosign signature, so the Pod is denied.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: unreachable-pod-alpine
+  name: enforce-pod-alpine
 spec:
   containers:
   - name: alpine

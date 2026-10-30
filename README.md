@@ -14,7 +14,7 @@ These scripts enable us to easily set up a local testing environment.
 
 ## Image verification
 
-The chart renders one `ImageValidatingPolicy` (`policies.kyverno.io/v1`, Kyverno 1.18 or newer) per enabled verifier, named `verify-image-signatures-<name>`. Each policy checks that the images of matching Pods carry a valid cosign signature from the configured attestors.
+The chart renders one `ImageValidatingPolicy` (`policies.kyverno.io/v1`, Kyverno 1.18 or newer) per enabled verifier, named `<policyNamePrefix>verify-image-signatures-<name>` (`policyNamePrefix` is empty by default). Each policy checks that the images of matching Pods carry a valid cosign signature from the configured attestors.
 
 Verifiers are configured under `imageVerification` in [`helm/kyverno-policies/values.yaml`](helm/kyverno-policies/values.yaml), where the full field list is documented:
 

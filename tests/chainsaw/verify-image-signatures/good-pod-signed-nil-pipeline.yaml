@@ -1,0 +1,19 @@
+# A Giant Swarm image mirrored by retagger: its signing certificate's subject
+# ends in pipeline-definitions/nil, the branch of the default subjectRegExp
+# that accepts `nil` instead of a pipeline-definition UUID.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: good-pod-signed-nil-pipeline
+spec:
+  containers:
+  - name: kubectl
+    image: gsoci.azurecr.io/giantswarm/kubectl:v1.37.2
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL

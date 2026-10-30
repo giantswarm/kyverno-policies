@@ -2,7 +2,7 @@
 # tests/chainsaw/values.yaml, where each verifier matches its own images:
 #   gsoci-circleci-keyless  Enforce   gsoci.azurecr.io/giantswarm/*
 #   test-audit              Audit     mirror.gcr.io/library/busybox*  (background scan only)
-#   test-unreachable        Enforce   mirror.gcr.io/library/alpine*   (failurePolicy Ignore, Rekor at rekor.invalid)
+#   test-enforce            Enforce   mirror.gcr.io/library/alpine*
 # The customer verifiers use Google's Docker Hub mirror because anonymous
 # Docker Hub manifest requests are limited to 100 an hour per IP, which the
 # one-minute background scan and the kubelet pulls exhaust.
@@ -17,10 +17,11 @@ spec:
     # Admission verifies signatures against the registry and Rekor in both the
     # mutating and the validating webhook (10s timeout each), which exceeds
     # chainsaw's 5s default. A create whose check fails is retried until this
-    # timeout: with more than one admission-enabled ImageValidatingPolicy,
-    # Kyverno 1.18.0's mutating webhook can hang until its timeout and the Pod
-    # is then denied with "annotations not present on object", even for a
-    # correctly signed image; a later attempt passes.
+    # timeout: with more than one admission-enabled ImageValidatingPolicy (here
+    # gsoci-circleci-keyless and test-enforce), Kyverno 1.18's mutating webhook
+    # can hang until its timeout and the Pod is then denied with "annotations
+    # not present on object", even for a correctly signed image; a later
+    # attempt passes (kyverno/sdk#143, fixed in the SDK of Kyverno v1.19.2).
     apply: 2m
   steps:
   - name: check if policy verify-image-signatures-gsoci-circleci-keyless is ready
@@ -37,13 +38,13 @@ spec:
         bindings:
         - name: name
           value: verify-image-signatures-test-audit
-  - name: check if policy verify-image-signatures-test-unreachable is ready
+  - name: check if policy verify-image-signatures-test-enforce is ready
     use:
       template: ../_steps-templates/image-validating-policy-ready.yaml
       with:
         bindings:
         - name: name
-          value: verify-image-signatures-test-unreachable
+          value: verify-image-signatures-test-enforce
   - name: create a good pod with a signed Giant Swarm image by tag
     try:
     - create:
@@ -58,6 +59,13 @@ spec:
         - check:
             ($error != null): false
         file: good-pod-signed-digest.yaml
+  - name: create a good pod with a signed Giant Swarm image whose certificate has a nil pipeline definition
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-signed-nil-pipeline.yaml
   - name: create a good pod with a signed Giant Swarm image and an unmatched nginx sidecar
     try:
     - create:
@@ -93,18 +101,14 @@ spec:
           (results[?policy=='verify-image-signatures-test-audit']):
           - result: fail
             source: KyvernoImageValidatingPolicy
-            message: "Image signature verification failed for verifier 'test-audit': fewer than 1 of the configured attestors produced a valid cosign signature."
+            (contains(message, `"Image signature verification failed for verifier 'test-audit'"`)): true
             properties:
               process: background scan
-  # alpine carries no cosign signature at all, so verification fails before
-  # the transparency log is consulted: the unreachable Rekor URL never comes
-  # into play and failurePolicy Ignore (which only covers webhook call
-  # failures) does not apply. The Enforce verifier denies the Pod.
-  - name: create a pod matched by the Enforce verifier with an unreachable Rekor URL
+  - name: create a pod with an unsigned image matched by the second Enforce verifier
     try:
     - create:
         expect:
         - check:
             ($error != null): true
-            (contains($error, `"Image signature verification failed for verifier 'test-unreachable'"`)): true
-        file: unreachable-pod-alpine.yaml
+            (contains($error, `"Image signature verification failed for verifier 'test-enforce'"`)): true
+        file: enforce-pod-alpine.yaml

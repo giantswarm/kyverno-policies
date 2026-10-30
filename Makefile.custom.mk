@@ -4,7 +4,7 @@
 render-checks: ## Assert the rendered verify-image-signatures policies (needs helm and yq).
 	@hack/render-checks.sh
 
-##@ Test
+##@ Chainsaw helpers
 
 .PHONY: kyverno-fast-background-scan
 kyverno-fast-background-scan: ## Make the Kyverno reports controller rescan every minute (upstream: hourly) so chainsaw can assert background-scan PolicyReports.
