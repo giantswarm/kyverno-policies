@@ -92,7 +92,7 @@ YAML
 }
 
 default_name="verify-image-signatures-gsoci-circleci-keyless"
-default_attestors='[{"name":"circleci","cosign":{"keyless":{"identities":[{"issuer":"https://oidc.circleci.com","subjectRegExp":"^https://circleci\\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/[a-f0-9-]+$"}]},"ctlog":{"url":"https://rekor.sigstore.dev","insecureIgnoreTlog":false}}}]'
+default_attestors='[{"name":"circleci","cosign":{"keyless":{"identities":[{"issuer":"https://oidc.circleci.com","subjectRegExp":"^https://circleci\\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/([a-f0-9-]+|nil)$"}]},"ctlog":{"url":"https://rekor.sigstore.dev","insecureIgnoreTlog":false}}}]'
 
 # 1. Defaults ---------------------------------------------------------------
 RENDERED="$(render "")"
@@ -159,7 +159,7 @@ imageVerification:
         - name: circleci
           keyless:
             issuer: https://oidc.circleci.com
-            subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/[a-f0-9-]+\$
+            subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/([a-f0-9-]+|nil)\$
           rekorUrl: https://rekor.sigstore.dev
           ignoreTlog: false
         - name: kms
