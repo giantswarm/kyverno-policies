@@ -4,13 +4,19 @@ This repository tracks the [upstream Kyverno PSS policies](https://github.com/ky
 
 ## Repository structure
 
-We implement an app according to the [general Giant Swarm app platform](https://docs.giantswarm.io/app-platform/) which relies on Helm for application management.
+We implement an app according to the [general Giant Swarm app platform](https://docs.giantswarm.io/overview/fleet-management/app-management/) which relies on Helm for application management.
 
 The `policies` folder contains the policies which are then escaped to be compliant with helm specific syntax.
 We use `[[` and  `]]` delimeters to handle cases where variables should be managed by helm.
 
 The `hack` folder contains scripts which are used during local development and in CI.
 These scripts enable us to easily set up a local testing environment.
+
+## Image verification
+
+The chart renders one `ImageValidatingPolicy` (Kyverno 1.18 or newer) per verifier configured under `imageVerification` in [`values.yaml`](helm/kyverno-policies/values.yaml). Giant Swarm's verifier `gsoci-circleci-keyless` audits `gsoci.azurecr.io/giantswarm/*` by default; customers add their own under `imageVerification.customer`.
+
+`make helm-test` runs the helm-unittest suite in [`helm/kyverno-policies/tests`](helm/kyverno-policies/tests), which asserts the rendered policies for several value sets. The Chainsaw test in [`tests/chainsaw/verify-image-signatures`](tests/chainsaw/verify-image-signatures) needs outbound HTTPS from the kind node and `make kyverno-fast-background-scan` after `make install-kyverno`.
 
 ## Development
 

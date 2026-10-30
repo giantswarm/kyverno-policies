@@ -1,0 +1,85 @@
+# Uses the verifiers from tests/chainsaw/values.yaml: gsoci-circleci-keyless (Enforce) and test-audit (Audit,
+# busybox from mirror.gcr.io, which avoids Docker Hub's anonymous rate limit).
+# The kind node needs HTTPS egress to gsoci.azurecr.io, *.blob.core.windows.net, mirror.gcr.io and Sigstore.
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: verify-image-signatures
+spec:
+  timeouts:
+    # Signature checks in admission fetch from the registry and Rekor, which takes longer than chainsaw's 5s default.
+    apply: 2m
+  steps:
+  - name: check if policy verify-image-signatures-gsoci-circleci-keyless is ready
+    use:
+      template: ../_steps-templates/image-validating-policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: verify-image-signatures-gsoci-circleci-keyless
+  - name: check if policy verify-image-signatures-test-audit is ready
+    use:
+      template: ../_steps-templates/image-validating-policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: verify-image-signatures-test-audit
+  - name: create a good pod with a signed Giant Swarm image by tag
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-signed.yaml
+  - name: create a good pod with a signed Giant Swarm image by digest
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-signed-digest.yaml
+  - name: create a good pod with a signed Giant Swarm image whose certificate has a nil pipeline definition
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-signed-nil-pipeline.yaml
+  - name: create a good pod with a signed Giant Swarm image and an unmatched nginx sidecar
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: mixed-pod.yaml
+  - name: create a bad pod with an unsigned Giant Swarm image
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, `"Image signature verification failed for verifier 'gsoci-circleci-keyless'"`)): true
+        file: bad-pod-unsigned.yaml
+  - name: create a pod matched by the Audit verifier and wait for its failing background-scan report
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: audit-pod-busybox.yaml
+    - assert:
+        # The harness runs the reports controller with --backgroundScanInterval=1m.
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            apiVersion: v1
+            kind: Pod
+            name: audit-pod-busybox
+          (results[?policy=='verify-image-signatures-test-audit']):
+          - result: fail
+            source: KyvernoImageValidatingPolicy
+            (contains(message, `"Image signature verification failed for verifier 'test-audit'"`)): true
+            properties:
+              process: background scan

@@ -1,0 +1,17 @@
+# Giant Swarm image tag without a cosign signature (built before signing started): denied in Enforce.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod-unsigned
+spec:
+  containers:
+  - name: chart-operator
+    image: gsoci.azurecr.io/giantswarm/chart-operator:3.3.0
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL

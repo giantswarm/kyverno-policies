@@ -1,0 +1,118 @@
+{{- include "imageVerification.validate" . -}}
+{{- $iv := .Values.imageVerification -}}
+{{- /* Enabled giantswarm verifiers first, then customer verifiers, which exclude every giantswarm image glob. */ -}}
+{{- $entries := list -}}
+{{- $giantswarmImages := list -}}
+{{- range $key := keys ($iv.giantswarm | default dict) | sortAlpha -}}
+  {{- $v := get $iv.giantswarm $key -}}
+  {{- if ternary $v.enabled true (hasKey $v "enabled") -}}
+    {{- $entries = append $entries (dict "verifier" $v "excludes" list) -}}
+    {{- $giantswarmImages = concat $giantswarmImages $v.images -}}
+  {{- end -}}
+{{- end -}}
+{{- range $v := $iv.customer | default list -}}
+  {{- if ternary $v.enabled true (hasKey $v "enabled") -}}
+    {{- $entries = append $entries (dict "verifier" $v "excludes" $giantswarmImages) -}}
+  {{- end -}}
+{{- end -}}
+{{- range $entry := $entries }}
+---
+{{ include "imageVerification.policy" (dict "root" $ "verifier" $entry.verifier "excludes" $entry.excludes) }}
+{{- end }}
+
+{{- /* imageVerification.policy renders one verifier; takes a dict with root, verifier and excludes. */ -}}
+{{- define "imageVerification.policy" -}}
+{{- $v := .verifier -}}
+{{- $name := $v.name -}}
+{{- $mode := $v.mode | default "Audit" -}}
+{{- $admission := or $v.admission (eq $mode "Enforce") -}}
+{{- $backgroundScan := ternary $v.backgroundScan true (hasKey $v "backgroundScan") -}}
+{{- $excludes := concat .excludes ($v.excludeImages | default list) -}}
+{{- $min := int ($v.minVerifiedAttestors | default 1) -}}
+{{- $credentials := $v.credentials | default dict -}}
+apiVersion: policies.kyverno.io/v1
+kind: ImageValidatingPolicy
+metadata:
+  name: {{ printf "%sverify-image-signatures-%s" .root.Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" .root | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Verify Image Signatures ({{ $name }})
+    policies.kyverno.io/category: Supply Chain Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Verifies that container images matching the configured patterns carry a
+      valid cosign signature from the configured identity.
+spec:
+  validationActions:
+    - {{ if eq $mode "Enforce" }}Deny{{ else }}{{ $mode }}{{ end }}
+  failurePolicy: {{ $v.failurePolicy | default "Ignore" }}
+  evaluation:
+    admission:
+      enabled: {{ $admission }}
+    background:
+      enabled: {{ $backgroundScan }}
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: [v1]
+        resources: [pods]
+        operations: [CREATE, UPDATE]
+  matchImageReferences:
+  {{- if not $excludes }}
+  {{- range $v.images }}
+    - glob: {{ . | toJson }}
+  {{- end }}
+  {{- else }}
+    - expression: >-
+        [{{ range $i, $g := $v.images }}{{ if $i }}, {{ end }}"{{ include "globToRegex" $g }}"{{ end }}].exists(p, ref.matches(p))
+        && ![{{ range $i, $g := $excludes }}{{ if $i }}, {{ end }}"{{ include "globToRegex" $g }}"{{ end }}].exists(p, ref.matches(p))
+  {{- end }}
+  validationConfigurations:
+    mutateDigest: {{ $v.mutateDigest | default false }}
+    verifyDigest: {{ $v.verifyDigest | default false }}
+    required: true
+  {{- if or $credentials.providers $credentials.secrets }}
+  credentials:
+    {{- with $credentials.providers }}
+    providers: {{ toJson . }}
+    {{- end }}
+    {{- with $credentials.secrets }}
+    secrets: {{ toJson . }}
+    {{- end }}
+  {{- end }}
+  attestors:
+  {{- range $a := $v.attestors }}
+    - name: {{ $a.name }}
+      cosign:
+        {{- if $a.keyless }}
+        keyless:
+          identities:
+            - issuer: {{ $a.keyless.issuer | toJson }}
+              {{- if $a.keyless.subject }}
+              subject: {{ $a.keyless.subject | toJson }}
+              {{- else }}
+              subjectRegExp: {{ $a.keyless.subjectRegExp | toJson }}
+              {{- end }}
+        {{- else }}
+        key:
+          data: {{ $a.key.publicKey | toJson }}
+        {{- end }}
+        {{- if or $a.rekorUrl $a.ignoreTlog }}
+        ctlog:
+          {{- with $a.rekorUrl }}
+          url: {{ . | toJson }}
+          {{- end }}
+          insecureIgnoreTlog: {{ $a.ignoreTlog | default false }}
+        {{- end }}
+  {{- end }}
+  validations:
+    {{- /* verifyImageSignatures returns how many of the listed attestors verified the image. */}}
+    - expression: >-
+        (images.containers + images.initContainers + images.ephemeralContainers).map(img,
+        verifyImageSignatures(img, [{{ range $i, $a := $v.attestors }}{{ if $i }}, {{ end }}attestors.{{ $a.name }}{{ end }}])).all(e,
+        e >= {{ $min }})
+      message: >-
+        Image signature verification failed for verifier '{{ $name }}': fewer than {{ $min }} of the
+        configured attestors produced a valid cosign signature.
+{{- end -}}

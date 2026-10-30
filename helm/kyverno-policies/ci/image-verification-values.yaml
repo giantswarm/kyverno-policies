@@ -1,0 +1,15 @@
+# Render fixture: one customer verifier with a throwaway key-based attestor.
+imageVerification:
+  customer:
+    - name: acme
+      images:
+        - "registry.acme.example/prod/*"
+      attestors:
+        - name: ci
+          key:
+            publicKey: |
+              -----BEGIN PUBLIC KEY-----
+              MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4h7OqaHGFIiKU9bHkoIGEtyWx6ZY
+              2cyW9dBFyAqV46pa8zojEovfo18bnQ1FZKB1gA2wvq1+gwvsMhNLIuS+5w==
+              -----END PUBLIC KEY-----
+          ignoreTlog: true
