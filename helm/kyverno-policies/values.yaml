@@ -141,3 +141,77 @@ debugAccessPolicies:
       mode: Audit
       cleanupSchedule: "*/27 * * * *"  # Every 27 minutes
       targetAnnotation: "policy.giantswarm.io/exception-expires-at"
+
+# imageVerification renders one ImageValidatingPolicy (policies.kyverno.io/v1) per enabled
+# verifier, named "<policyNamePrefix>verify-image-signatures-<name>". Each policy checks that
+# the images of matching Pods carry a valid cosign signature from the configured attestors.
+#
+# Both blocks below use the same verifier shape:
+#   name                  ^[a-z0-9-]+$, unique across both blocks, becomes the policy name suffix.
+#   enabled               render the policy (default true).
+#   mode                  Audit | Enforce; Enforce renders validationActions [Deny] (default Audit).
+#   admission             evaluate in the admission webhook; forced true when mode is Enforce (default false).
+#   backgroundScan        evaluate existing Pods on the reports controller's schedule (default true).
+#   failurePolicy         Ignore | Fail; only matters when admission is on (default Ignore).
+#   mutateDigest          replace tags with the verified digest at admission (default false).
+#   verifyDigest          require images to be referenced by digest (default false).
+#   images                globs ('*' matches any sequence) matched against the image reference; at least one.
+#   excludeImages         globs removed from the match (default []).
+#   minVerifiedAttestors  how many attestors must verify; 1 = any of them (default 1).
+#   attestors             at least one. Each has a name (^[a-z0-9]+$, it becomes a CEL identifier) and
+#                         exactly one of:
+#                           keyless: {issuer, subject | subjectRegExp}   Fulcio-issued certificate identity
+#                           key: {publicKey}                             PEM public key
+#                         plus optional rekorUrl and ignoreTlog (true for key-based signatures made
+#                         without a transparency log).
+#   credentials           for private registries: providers is a subset of
+#                         [default, azure, google, amazon, github]; secrets live in the Kyverno namespace.
+imageVerification:
+  # Verifiers shipped by Giant Swarm. Fixed keys; each value has the item shape
+  # of `customer`, and the key must equal its `name`. Tune a field by deep
+  # merge, e.g. giantswarm.gsoci-circleci-keyless.mode or giantswarm.gsoci-circleci-keyless.enabled.
+  giantswarm:
+    gsoci-circleci-keyless:
+      name: gsoci-circleci-keyless  # @schema required: true; pattern: ^[a-z0-9-]+$
+      enabled: true
+      mode: Audit  # @schema enum: [Audit, Enforce]
+      admission: false
+      backgroundScan: true
+      failurePolicy: Ignore  # @schema enum: [Ignore, Fail]
+      mutateDigest: false
+      verifyDigest: false
+      images:  # @schema required: true; minItems: 1; item: string
+        - "gsoci.azurecr.io/giantswarm/*"
+      excludeImages: []  # @schema item: string
+      minVerifiedAttestors: 1  # @schema minimum: 1
+      # @schema required: true; minItems: 1; itemRequired: [name]
+      # @schema itemProperties: {name: {type: string, pattern: "^[a-z0-9]+$"}, keyless: {type: object, required: [issuer], properties: {issuer: {type: string}, subject: {type: string}, subjectRegExp: {type: string}}}, key: {type: object, required: [publicKey], properties: {publicKey: {type: string}}}, rekorUrl: {type: string}, ignoreTlog: {type: boolean}}
+      # @schema allOf: [{type: array, items: {oneOf: [{required: [keyless]}, {required: [key]}]}}]
+      attestors:
+        - name: circleci
+          keyless:
+            issuer: https://oidc.circleci.com
+            subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/[a-f0-9-]+$
+          rekorUrl: https://rekor.sigstore.dev
+          ignoreTlog: false
+        # - name: kms             # a future key-based co-signature that is an *alternative* goes here;
+        #   key:                  # a verifier for a different image set goes under a new giantswarm key
+        #     publicKey: |        # PEM
+        #   ignoreTlog: true
+      credentials:
+        providers: []  # @schema item: string; itemEnum: [default, azure, google, amazon, github]
+        secrets: []  # @schema item: string
+
+  # Verifiers owned by the customer. Same shape as the giantswarm values.
+  # Replaced wholesale on merge. Generated policies exclude the images of
+  # every enabled `giantswarm.*` entry.
+  # @schema itemRef: #/properties/imageVerification/properties/giantswarm/properties/gsoci-circleci-keyless
+  customer: []
+  # - name: acme-prod
+  #   mode: Audit
+  #   images: ["registry.acme.example/prod/*"]
+  #   attestors:
+  #     - name: ci
+  #       keyless: { issuer: ..., subjectRegExp: ... }
+  #   credentials:
+  #     secrets: [acme-registry-pull]

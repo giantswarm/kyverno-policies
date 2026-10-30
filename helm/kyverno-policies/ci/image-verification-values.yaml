@@ -1,0 +1,17 @@
+# Render fixture for the verify-image-signatures policies: the Giant Swarm
+# verifier stays at its defaults and one customer verifier uses a key-based
+# attestor. The public key is a throwaway generated for this fixture only.
+imageVerification:
+  customer:
+    - name: acme
+      images:
+        - "registry.acme.example/prod/*"
+      attestors:
+        - name: ci
+          key:
+            publicKey: |
+              -----BEGIN PUBLIC KEY-----
+              MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4h7OqaHGFIiKU9bHkoIGEtyWx6ZY
+              2cyW9dBFyAqV46pa8zojEovfo18bnQ1FZKB1gA2wvq1+gwvsMhNLIuS+5w==
+              -----END PUBLIC KEY-----
+          ignoreTlog: true

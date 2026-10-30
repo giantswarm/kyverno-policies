@@ -230,6 +230,181 @@
             "type": "object",
             "additionalProperties": true
         },
+        "imageVerification": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "customer": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/properties/imageVerification/properties/giantswarm/properties/gsoci-circleci-keyless"
+                    }
+                },
+                "giantswarm": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "gsoci-circleci-keyless": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "images",
+                                "attestors"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "admission": {
+                                    "type": "boolean"
+                                },
+                                "attestors": {
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "name"
+                                        ],
+                                        "additionalProperties": false,
+                                        "properties": {
+                                            "ignoreTlog": {
+                                                "type": "boolean"
+                                            },
+                                            "key": {
+                                                "type": "object",
+                                                "required": [
+                                                    "publicKey"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "publicKey": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "keyless": {
+                                                "type": "object",
+                                                "required": [
+                                                    "issuer"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "issuer": {
+                                                        "type": "string"
+                                                    },
+                                                    "subject": {
+                                                        "type": "string"
+                                                    },
+                                                    "subjectRegExp": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "pattern": "^[a-z0-9]+$"
+                                            },
+                                            "rekorUrl": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "allOf": [
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "oneOf": [
+                                                    {
+                                                        "required": [
+                                                            "keyless"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "required": [
+                                                            "key"
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "minItems": 1
+                                },
+                                "backgroundScan": {
+                                    "type": "boolean"
+                                },
+                                "credentials": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "providers": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "default",
+                                                    "azure",
+                                                    "google",
+                                                    "amazon",
+                                                    "github"
+                                                ]
+                                            }
+                                        },
+                                        "secrets": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "excludeImages": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "failurePolicy": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Ignore",
+                                        "Fail"
+                                    ]
+                                },
+                                "images": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "minItems": 1
+                                },
+                                "minVerifiedAttestors": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "mode": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Audit",
+                                        "Enforce"
+                                    ]
+                                },
+                                "mutateDigest": {
+                                    "type": "boolean"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "pattern": "^[a-z0-9-]+$"
+                                },
+                                "verifyDigest": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "kyverno-policies": {
             "type": "object",
             "additionalProperties": true

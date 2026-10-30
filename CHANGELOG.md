@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `verify-image-signatures-<name>`: `ImageValidatingPolicy` (`policies.kyverno.io/v1`, requires Kyverno v1.18) that verifies cosign signatures on Pod images, one policy per verifier under `imageVerification`. The Giant Swarm verifier `imageVerification.giantswarm.gsoci-circleci-keyless` checks `gsoci.azurecr.io/giantswarm/*` images for a CircleCI keyless signature in `Audit` mode with background scans only; customers add their own verifiers to `imageVerification.customer`, which automatically exclude the images of enabled Giant Swarm verifiers.
+
 ### Changed
 
 - Updated `kyverno-policies` to upstream version `v1.19.2`.
