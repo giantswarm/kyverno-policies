@@ -8,9 +8,9 @@ kyverno-fast-background-scan: ## Set the Kyverno reports controller to rescan ev
 	kubectl -n kyverno rollout status deployment kyverno-reports-controller --timeout 300s
 
 .PHONY: ensure-cleanup-rbac
-ensure-cleanup-rbac: ## Apply the chart's cleanup-controller ClusterRole first, so the ClusterCleanupPolicy passes the cleanup webhook's permission check.
+ensure-cleanup-rbac: ## Pre-create a copy of the chart's cleanup-controller ClusterRole, so the ClusterCleanupPolicy passes the cleanup webhook's permission check.
 	helm template kyverno-policies helm/kyverno-policies --values ./tests/chainsaw/values.yaml \
-		| yq 'select(.kind == "ClusterRole" and .metadata.name == "kyverno:kyverno-policies:cleanup-policyexceptions")' \
+		| yq 'select(.kind == "ClusterRole" and .metadata.name == "kyverno:kyverno-policies:cleanup-policyexceptions") | .metadata.name += "-bootstrap"' \
 		| kubectl apply -f -
 	@for i in $$(seq 1 30); do \
 		if kubectl auth can-i delete policyexceptions.policies.kyverno.io --as=system:serviceaccount:kyverno:kyverno-cleanup-controller >/dev/null 2>&1; then exit 0; fi; \
