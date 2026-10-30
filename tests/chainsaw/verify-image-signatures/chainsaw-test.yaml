@@ -6,7 +6,7 @@
 # The customer verifiers use Google's Docker Hub mirror because anonymous
 # Docker Hub manifest requests are limited to 100 an hour per IP, which the
 # one-minute background scan and the kubelet pulls exhaust.
-# The kind node needs outbound HTTPS to gsoci.azurecr.io, *.data.azurecr.io,
+# The kind node needs outbound HTTPS to gsoci.azurecr.io, *.blob.core.windows.net,
 # mirror.gcr.io, tuf-repo-cdn.sigstore.dev and rekor.sigstore.dev.
 apiVersion: chainsaw.kyverno.io/v1alpha1
 kind: Test

@@ -147,20 +147,30 @@ debugAccessPolicies:
 # the images of matching Pods carry a valid cosign signature from the configured attestors.
 #
 # Both blocks below use the same verifier shape:
-#   name                  ^[a-z0-9-]+$, unique across both blocks, becomes the policy name suffix.
+#   name                  ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$, unique across both blocks, becomes the policy name
+#                         suffix. The whole policy name "<policyNamePrefix>verify-image-signatures-<name>" must
+#                         not exceed 63 characters (Kyverno puts it into a report label): the fixed part takes
+#                         24, so with an empty prefix a name can have up to 39 characters.
 #   enabled               render the policy (default true).
 #   mode                  Audit | Enforce; Enforce renders validationActions [Deny] (default Audit).
 #   admission             evaluate in the admission webhook; forced true when mode is Enforce (default false).
 #   backgroundScan        evaluate existing Pods on the reports controller's schedule (default true).
 #   failurePolicy         Ignore | Fail; only matters when admission is on (default Ignore).
-#   mutateDigest          replace tags with the verified digest at admission (default false).
-#   verifyDigest          require images to be referenced by digest (default false).
+#   mutateDigest          rendered into spec.validationConfigurations.mutateDigest (default false).
+#   verifyDigest          rendered into spec.validationConfigurations.verifyDigest (default false).
+#                         Kyverno 1.18's ImageValidatingPolicy engine does not act on either flag yet
+#                         (only the legacy ClusterPolicy verifyImages rule does), so setting them neither
+#                         rewrites tags to digests nor requires digest references today.
 #   images                globs matched against the image reference as written in the Pod spec; at least one.
+#                         Matching is on that string as written, so spelling variants (registry:443/...,
+#                         uppercase hosts, Docker Hub short names) do not match a glob written for the
+#                         canonical form.
 #                         Only '*' (any sequence) is supported as a wildcard; entries may contain only
 #                         letters, digits and . _ / : @ - *.
 #   excludeImages         globs removed from the match, same syntax as images (default []).
 #   minVerifiedAttestors  how many attestors must verify; 1 = any of them (default 1).
-#   attestors             at least one. Each has a name (^[a-z0-9]+$, it becomes a CEL identifier) and
+#   attestors             at least one. Each has a name (^[a-z][a-z0-9]*$ and not a CEL reserved word such as
+#                         in, null, true, false or if, because it becomes a CEL identifier) and
 #                         exactly one of:
 #                           keyless: {issuer, subject | subjectRegExp}   Fulcio-issued certificate identity
 #                           key: {publicKey}                             PEM public key
@@ -174,7 +184,7 @@ imageVerification:
   # merge, e.g. giantswarm.gsoci-circleci-keyless.mode or giantswarm.gsoci-circleci-keyless.enabled.
   giantswarm:
     gsoci-circleci-keyless:
-      name: gsoci-circleci-keyless  # @schema required: true; pattern: ^[a-z0-9-]+$
+      name: gsoci-circleci-keyless  # @schema required: true; pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
       enabled: true
       mode: Audit  # @schema enum: [Audit, Enforce]
       admission: false
@@ -187,7 +197,7 @@ imageVerification:
       excludeImages: []  # @schema item: string; itemPattern: ^[A-Za-z0-9._/:@*-]+$
       minVerifiedAttestors: 1  # @schema minimum: 1
       # @schema required: true; minItems: 1; itemRequired: [name]
-      # @schema itemProperties: {name: {type: string, pattern: "^[a-z0-9]+$"}, keyless: {type: object, required: [issuer], properties: {issuer: {type: string}, subject: {type: string}, subjectRegExp: {type: string}}}, key: {type: object, required: [publicKey], properties: {publicKey: {type: string}}}, rekorUrl: {type: string}, ignoreTlog: {type: boolean}}
+      # @schema itemProperties: {name: {type: string, pattern: "^[a-z][a-z0-9]*$"}, keyless: {type: object, required: [issuer], properties: {issuer: {type: string}, subject: {type: string}, subjectRegExp: {type: string}}}, key: {type: object, required: [publicKey], properties: {publicKey: {type: string}}}, rekorUrl: {type: string}, ignoreTlog: {type: boolean}}
       # @schema allOf: [{type: array, items: {oneOf: [{required: [keyless]}, {required: [key]}]}}]
       attestors:
         # Images mirrored by retagger are signed with a `nil` pipeline-definition

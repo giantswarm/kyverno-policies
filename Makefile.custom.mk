@@ -4,6 +4,10 @@
 render-checks: ## Assert the rendered verify-image-signatures policies (needs helm and yq).
 	@hack/render-checks.sh
 
+# The chart-tests workflow runs `make helm-test`; this prerequisite makes it run
+# the render checks too.
+helm-test: render-checks
+
 ##@ Chainsaw helpers
 
 .PHONY: kyverno-fast-background-scan

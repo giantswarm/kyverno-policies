@@ -240,3 +240,47 @@ case "${out}" in
   *) fail "bad glob: helm template failed without the wildcard message: ${out}" ;;
 esac
 ok "glob with {a,b}: helm template fails with 'only * is supported as a wildcard'"
+
+# 10. Policy name length --------------------------------------------------------------
+long_name="acme-production-registry-verifier-eu-west"
+cat >"${tmp}/long-name.yaml" <<YAML
+policyNamePrefix: gs-
+imageVerification:
+  customer:
+    - name: ${long_name}
+      images: ["registry.example/acme/*"]
+      attestors:
+        - name: ci
+          key:
+            publicKey: |
+${indented_key}
+YAML
+if out="$(helm template kp "${chart}" -f "${tmp}/long-name.yaml" 2>&1)"; then
+  fail "long name: helm template succeeded, expected a failure"
+fi
+case "${out}" in
+  *"is 68 characters long, the limit is 63"*) ;;
+  *) fail "long name: helm template failed without the length message: ${out}" ;;
+esac
+ok "policy name gs-verify-image-signatures-${long_name}: helm template fails with 'is 68 characters long, the limit is 63'"
+
+# 11. Attestor name starting with a digit -------------------------------------------------
+cat >"${tmp}/digit-attestor.yaml" <<YAML
+imageVerification:
+  customer:
+    - name: digit
+      images: ["registry.example/digit/*"]
+      attestors:
+        - name: 1ci
+          key:
+            publicKey: |
+${indented_key}
+YAML
+if out="$(helm template kp "${chart}" --skip-schema-validation -f "${tmp}/digit-attestor.yaml" 2>&1)"; then
+  fail "digit attestor: helm template succeeded, expected a failure"
+fi
+case "${out}" in
+  *'name "1ci" must match ^[a-z][a-z0-9]*$'*) ;;
+  *) fail "digit attestor: helm template failed without the attestor name message: ${out}" ;;
+esac
+ok "attestor name 1ci: helm template fails with the CEL identifier message"

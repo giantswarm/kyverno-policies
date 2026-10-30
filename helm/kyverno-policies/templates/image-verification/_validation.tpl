@@ -6,6 +6,7 @@ the cluster). Every verifier in both blocks is checked, enabled or not.
 {{- define "imageVerification.validate" -}}
 {{- $iv := .Values.imageVerification -}}
 {{- $allowedProviders := list "default" "azure" "google" "amazon" "github" -}}
+{{- $celReserved := list "in" "as" "null" "true" "false" "break" "const" "continue" "else" "for" "function" "if" "import" "let" "loop" "package" "namespace" "return" "var" "void" "while" -}}
 {{- $verifiers := list -}}
 {{- range $key := keys ($iv.giantswarm | default dict) | sortAlpha -}}
   {{- $v := get $iv.giantswarm $key -}}
@@ -31,6 +32,13 @@ the cluster). Every verifier in both blocks is checked, enabled or not.
     {{- fail (printf "%s: name %q is already used by %s; verifier names must be unique across imageVerification.giantswarm and imageVerification.customer." $path $v.name (get $names $v.name)) -}}
   {{- end -}}
   {{- $_ := set $names $v.name $path -}}
+  {{- if not (regexMatch "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$" (toString $v.name)) -}}
+    {{- fail (printf "%s: name %q must match ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$." $path (toString $v.name)) -}}
+  {{- end -}}
+  {{- $policyName := printf "%sverify-image-signatures-%s" $.Values.policyNamePrefix $v.name -}}
+  {{- if gt (len $policyName) 63 -}}
+    {{- fail (printf "%s: policy name %q is %d characters long, the limit is 63 (Kyverno uses it in the report label ivpol.kyverno.io/<name>); shorten the name or policyNamePrefix." $path $policyName (len $policyName)) -}}
+  {{- end -}}
   {{- if not $v.images -}}
     {{- fail (printf "%s: images must list at least one image glob." $path) -}}
   {{- end -}}
@@ -57,8 +65,11 @@ the cluster). Every verifier in both blocks is checked, enabled or not.
   {{- $attestorNames := dict -}}
   {{- range $j, $a := $attestors -}}
     {{- $apath := printf "%s.attestors[%d]" $path $j -}}
-    {{- if not (regexMatch "^[a-z0-9]+$" (toString $a.name)) -}}
-      {{- fail (printf "%s: name %q must match ^[a-z0-9]+$ because it becomes a CEL identifier." $apath (toString $a.name)) -}}
+    {{- if not (regexMatch "^[a-z][a-z0-9]*$" (toString $a.name)) -}}
+      {{- fail (printf "%s: name %q must match ^[a-z][a-z0-9]*$ because it becomes a CEL identifier." $apath (toString $a.name)) -}}
+    {{- end -}}
+    {{- if has (toString $a.name) $celReserved -}}
+      {{- fail (printf "%s: name %q is a CEL reserved word and cannot be used as an attestor name." $apath (toString $a.name)) -}}
     {{- end -}}
     {{- if hasKey $attestorNames $a.name -}}
       {{- fail (printf "%s: attestor name %q is used twice in this verifier." $apath $a.name) -}}
