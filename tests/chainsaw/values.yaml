@@ -51,7 +51,9 @@ debugAccessPolicies:
       cleanupSchedule: "*/5 * * * *"
       targetAnnotation: "policy.giantswarm.io/exception-expires-at"
 
-# One image verifier per chainsaw scenario, each matching its own images.
+# One image verifier per chainsaw scenario, each matching its own images. Only one verifier may run in
+# admission (Enforce): Kyverno 1.18 deadlocks when two ImageValidatingPolicies evaluate one request
+# (kyverno/sdk#143, fixed in Kyverno 1.19.2).
 imageVerification:
   giantswarm:
     gsoci-circleci-keyless:
@@ -67,11 +69,3 @@ imageVerification:
         issuer: https://oidc.circleci.com
         subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/([a-f0-9-]+|nil)$
       rekorUrl: https://rekor.sigstore.dev
-  - name: test-enforce
-    mode: Enforce
-    images: ["mirror.gcr.io/library/alpine*"]
-    attestors:
-    - name: circleci
-      keyless:
-        issuer: https://oidc.circleci.com
-        subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/([a-f0-9-]+|nil)$

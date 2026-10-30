@@ -1,5 +1,5 @@
-# Uses the verifiers from tests/chainsaw/values.yaml: gsoci-circleci-keyless (Enforce), test-audit (Audit,
-# busybox) and test-enforce (Enforce, alpine). mirror.gcr.io avoids Docker Hub's anonymous rate limit.
+# Uses the verifiers from tests/chainsaw/values.yaml: gsoci-circleci-keyless (Enforce) and test-audit (Audit,
+# busybox from mirror.gcr.io, which avoids Docker Hub's anonymous rate limit).
 # The kind node needs HTTPS egress to gsoci.azurecr.io, *.blob.core.windows.net, mirror.gcr.io and Sigstore.
 apiVersion: chainsaw.kyverno.io/v1alpha1
 kind: Test
@@ -7,8 +7,7 @@ metadata:
   name: verify-image-signatures
 spec:
   timeouts:
-    # Signature checks in admission take longer than chainsaw's 5s default, and with two admission-enabled
-    # policies Kyverno 1.18 can hang a webhook call and deny a signed Pod once (kyverno/sdk#143, fixed in 1.19.2).
+    # Signature checks in admission fetch from the registry and Rekor, which takes longer than chainsaw's 5s default.
     apply: 2m
   steps:
   - name: check if policy verify-image-signatures-gsoci-circleci-keyless is ready
@@ -25,13 +24,6 @@ spec:
         bindings:
         - name: name
           value: verify-image-signatures-test-audit
-  - name: check if policy verify-image-signatures-test-enforce is ready
-    use:
-      template: ../_steps-templates/image-validating-policy-ready.yaml
-      with:
-        bindings:
-        - name: name
-          value: verify-image-signatures-test-enforce
   - name: create a good pod with a signed Giant Swarm image by tag
     try:
     - create:
@@ -91,11 +83,3 @@ spec:
             (contains(message, `"Image signature verification failed for verifier 'test-audit'"`)): true
             properties:
               process: background scan
-  - name: create a pod with an unsigned image matched by the second Enforce verifier
-    try:
-    - create:
-        expect:
-        - check:
-            ($error != null): true
-            (contains($error, `"Image signature verification failed for verifier 'test-enforce'"`)): true
-        file: enforce-pod-alpine.yaml
