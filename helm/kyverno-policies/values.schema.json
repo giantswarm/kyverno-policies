@@ -361,7 +361,8 @@
                                 "excludeImages": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "pattern": "^[A-Za-z0-9._/:@*-]+$"
                                     }
                                 },
                                 "failurePolicy": {
@@ -374,7 +375,8 @@
                                 "images": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "pattern": "^[A-Za-z0-9._/:@*-]+$"
                                     },
                                     "minItems": 1
                                 },

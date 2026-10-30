@@ -9,6 +9,9 @@ the cluster). Every verifier in both blocks is checked, enabled or not.
 {{- $verifiers := list -}}
 {{- range $key := keys ($iv.giantswarm | default dict) | sortAlpha -}}
   {{- $v := get $iv.giantswarm $key -}}
+  {{- if not $v.name -}}
+    {{- fail (printf "imageVerification.giantswarm.%s: name is required and must equal its key." $key) -}}
+  {{- end -}}
   {{- if ne (toString $v.name) $key -}}
     {{- fail (printf "imageVerification.giantswarm.%s: name %q must equal its key %q." $key (toString $v.name) $key) -}}
   {{- end -}}
@@ -30,6 +33,13 @@ the cluster). Every verifier in both blocks is checked, enabled or not.
   {{- $_ := set $names $v.name $path -}}
   {{- if not $v.images -}}
     {{- fail (printf "%s: images must list at least one image glob." $path) -}}
+  {{- end -}}
+  {{- range $field := list "images" "excludeImages" -}}
+    {{- range $j, $glob := get $v $field | default list -}}
+      {{- if not (regexMatch "^[A-Za-z0-9._/:@*-]+$" (toString $glob)) -}}
+        {{- fail (printf "%s.%s[%d]: glob %q may contain only letters, digits and . _ / : @ - *; only * is supported as a wildcard." $path $field $j (toString $glob)) -}}
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
   {{- $attestors := $v.attestors | default list -}}
   {{- if not $attestors -}}

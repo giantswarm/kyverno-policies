@@ -126,9 +126,9 @@ spec:
     image. Init and ephemeral containers are separate image categories.
     */}}
     - expression: >-
-        (images.containers + images.initContainers + images.ephemeralContainers)
-        .map(img, verifyImageSignatures(img, [{{ range $i, $a := $v.attestors }}{{ if $i }}, {{ end }}attestors.{{ $a.name }}{{ end }}]))
-        .all(e, e >= {{ $min }})
+        (images.containers + images.initContainers + images.ephemeralContainers).map(img,
+        verifyImageSignatures(img, [{{ range $i, $a := $v.attestors }}{{ if $i }}, {{ end }}attestors.{{ $a.name }}{{ end }}])).all(e,
+        e >= {{ $min }})
       message: >-
         Image signature verification failed for verifier '{{ $name }}': fewer than {{ $min }} of the
         configured attestors produced a valid cosign signature.
