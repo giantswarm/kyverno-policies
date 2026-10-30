@@ -1,12 +1,3 @@
-##@ Checks
-
-.PHONY: render-checks
-render-checks: ## Assert the rendered verify-image-signatures policies (needs helm and yq).
-	@hack/render-checks.sh
-
-# Runs the render checks as part of `make helm-test` in CI.
-helm-test: render-checks
-
 ##@ Chainsaw helpers
 
 .PHONY: kyverno-fast-background-scan

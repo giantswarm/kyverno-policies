@@ -16,7 +16,7 @@ These scripts enable us to easily set up a local testing environment.
 
 The chart renders one `ImageValidatingPolicy` (Kyverno 1.18 or newer) per verifier configured under `imageVerification` in [`values.yaml`](helm/kyverno-policies/values.yaml). Giant Swarm's verifier `gsoci-circleci-keyless` audits `gsoci.azurecr.io/giantswarm/*` by default; customers add their own under `imageVerification.customer`.
 
-`make render-checks` asserts the rendered policies for several value sets (needs `helm` and `yq`). The Chainsaw test in [`tests/chainsaw/verify-image-signatures`](tests/chainsaw/verify-image-signatures) needs outbound HTTPS from the kind node and `make kyverno-fast-background-scan` after `make install-kyverno`.
+`make helm-test` runs the helm-unittest suite in [`helm/kyverno-policies/tests`](helm/kyverno-policies/tests), which asserts the rendered policies for several value sets. The Chainsaw test in [`tests/chainsaw/verify-image-signatures`](tests/chainsaw/verify-image-signatures) needs outbound HTTPS from the kind node and `make kyverno-fast-background-scan` after `make install-kyverno`.
 
 ## Development
 
