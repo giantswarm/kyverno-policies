@@ -1,0 +1,15 @@
+# A Pod running a Giant Swarm image from gsoci.azurecr.io. Used to show that a
+# customer verifier leaves Giant Swarm images alone. Do not use it as a
+# "signature verifies" case: kubectl:v1.37.2 is signed by a CircleCI identity
+# whose SAN ends in pipeline-definitions/nil, which the default verifier's
+# subjectRegExp does not match.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gs-kubectl
+  namespace: default
+spec:
+  containers:
+    - name: kubectl
+      image: gsoci.azurecr.io/giantswarm/kubectl:v1.37.2
+      command: ["sleep", "3600"]
