@@ -4,7 +4,7 @@ This repository tracks the [upstream Kyverno PSS policies](https://github.com/ky
 
 ## Repository structure
 
-We implement an app according to the [general Giant Swarm app platform](https://docs.giantswarm.io/app-platform/) which relies on Helm for application management.
+We implement an app according to the [general Giant Swarm app platform](https://docs.giantswarm.io/overview/fleet-management/app-management/) which relies on Helm for application management.
 
 The `policies` folder contains the policies which are then escaped to be compliant with helm specific syntax.
 We use `[[` and  `]]` delimeters to handle cases where variables should be managed by helm.
