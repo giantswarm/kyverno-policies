@@ -1,5 +1,4 @@
-# The image of good-pod-signed.yaml referenced by the digest of its image index
-# (resolved on 2026-10-29 with docker buildx imagetools inspect).
+# The image of good-pod-signed.yaml referenced by digest.
 apiVersion: v1
 kind: Pod
 metadata:

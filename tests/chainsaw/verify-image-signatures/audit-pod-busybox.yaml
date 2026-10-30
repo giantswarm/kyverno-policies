@@ -1,6 +1,4 @@
-# Matched by the test-audit customer verifier (Audit, background scan only).
-# busybox carries no Giant Swarm signature, so the Pod is admitted and the
-# background scan reports a failure.
+# Unsigned image matched by the test-audit verifier: admitted, then reported as a failure.
 apiVersion: v1
 kind: Pod
 metadata:

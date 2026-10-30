@@ -1,11 +1,6 @@
 {{- include "imageVerification.validate" . -}}
 {{- $iv := .Values.imageVerification -}}
-{{- /*
-Build one list of (verifier, excludes) entries: the enabled giantswarm verifiers
-sorted by key with no excludes, then the enabled customer verifiers in list
-order, each excluding the images of every enabled giantswarm verifier so the
-customer's policies never overlap ours.
-*/ -}}
+{{- /* Enabled giantswarm verifiers first, then customer verifiers, which exclude every giantswarm image glob. */ -}}
 {{- $entries := list -}}
 {{- $giantswarmImages := list -}}
 {{- range $key := keys ($iv.giantswarm | default dict) | sortAlpha -}}
@@ -25,12 +20,7 @@ customer's policies never overlap ours.
 {{ include "imageVerification.policy" (dict "root" $ "verifier" $entry.verifier "excludes" $entry.excludes) }}
 {{- end }}
 
-{{- /*
-imageVerification.policy renders the ImageValidatingPolicy of one verifier.
-Input: dict with "root" (the chart context), "verifier" (one entry of either
-block) and "excludes" (image globs to leave out on top of the verifier's own
-excludeImages).
-*/ -}}
+{{- /* imageVerification.policy renders one verifier; takes a dict with root, verifier and excludes. */ -}}
 {{- define "imageVerification.policy" -}}
 {{- $v := .verifier -}}
 {{- $name := $v.name -}}
@@ -68,10 +58,6 @@ spec:
         apiVersions: [v1]
         resources: [pods]
         operations: [CREATE, UPDATE]
-  {{- /*
-  `ref` is the image reference exactly as written in the Pod spec, the same
-  string a glob entry is matched against, so both forms select the same images.
-  */}}
   matchImageReferences:
   {{- if not $excludes }}
   {{- range $v.images }}
@@ -121,10 +107,7 @@ spec:
         {{- end }}
   {{- end }}
   validations:
-    {{- /*
-    verifyImageSignatures returns how many of the listed attestors verified the
-    image. Init and ephemeral containers are separate image categories.
-    */}}
+    {{- /* verifyImageSignatures returns how many of the listed attestors verified the image. */}}
     - expression: >-
         (images.containers + images.initContainers + images.ephemeralContainers).map(img,
         verifyImageSignatures(img, [{{ range $i, $a := $v.attestors }}{{ if $i }}, {{ end }}attestors.{{ $a.name }}{{ end }}])).all(e,

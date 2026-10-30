@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
 #
-# Render checks for the verify-image-signatures ImageValidatingPolicy family.
-#
-# Renders the chart with a series of values files and asserts the result with
-# yq (mikefarah v4). Stops at the first failed assertion. Needs only helm, yq
-# and bash. Values files are written to a temporary directory that is removed
-# on exit. Rendered manifests are passed to yq on stdin, because a snap-packaged
-# yq cannot read files under /tmp.
+# Renders the chart with several value sets and asserts the verify-image-signatures policies.
+# Needs helm and yq (mikefarah v4); stops at the first failed assertion.
 
 set -euo pipefail
 
@@ -17,7 +12,7 @@ schema="${chart}/values.schema.json"
 tmp="$(mktemp -d)"
 trap 'rm -rf "${tmp}"' EXIT
 
-# A throwaway public key, only used to give key-based attestors a valid shape.
+# Throwaway key for key-based attestor fixtures.
 read -r -d '' pubkey <<'KEY' || true
 -----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4h7OqaHGFIiKU9bHkoIGEtyWx6ZY
@@ -35,8 +30,7 @@ ok() {
   echo "ok   $*"
 }
 
-# render <values-file> prints the ImageValidatingPolicy documents of the chart
-# rendered with that values file (empty file name: chart defaults).
+# render <values-file> prints the rendered ImageValidatingPolicy documents (empty: chart defaults).
 render() {
   local out
   if [ -n "${1:-}" ]; then
@@ -47,8 +41,7 @@ render() {
   printf '%s\n' "${out}" | yq 'select(.kind == "ImageValidatingPolicy")'
 }
 
-# q <rendered> <expr> evaluates a yq expression on the rendered policies and
-# prints the result as compact JSON (strings stay quoted).
+# q <rendered> <expr> evaluates a yq expression and prints compact JSON.
 q() {
   printf '%s\n' "$1" | yq -o=json -I=0 "$2"
 }

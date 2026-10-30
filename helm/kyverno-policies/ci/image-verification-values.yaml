@@ -1,6 +1,4 @@
-# Render fixture for the verify-image-signatures policies: the Giant Swarm
-# verifier stays at its defaults and one customer verifier uses a key-based
-# attestor. The public key is a throwaway generated for this fixture only.
+# Render fixture: one customer verifier with a throwaway key-based attestor.
 imageVerification:
   customer:
     - name: acme

@@ -1,27 +1,14 @@
-# verify-image-signatures runs against the single install of the chart with
-# tests/chainsaw/values.yaml, where each verifier matches its own images:
-#   gsoci-circleci-keyless  Enforce   gsoci.azurecr.io/giantswarm/*
-#   test-audit              Audit     mirror.gcr.io/library/busybox*  (background scan only)
-#   test-enforce            Enforce   mirror.gcr.io/library/alpine*
-# The customer verifiers use Google's Docker Hub mirror because anonymous
-# Docker Hub manifest requests are limited to 100 an hour per IP, which the
-# one-minute background scan and the kubelet pulls exhaust.
-# The kind node needs outbound HTTPS to gsoci.azurecr.io, *.blob.core.windows.net,
-# mirror.gcr.io, tuf-repo-cdn.sigstore.dev and rekor.sigstore.dev.
+# Uses the verifiers from tests/chainsaw/values.yaml: gsoci-circleci-keyless (Enforce), test-audit (Audit,
+# busybox) and test-enforce (Enforce, alpine). mirror.gcr.io avoids Docker Hub's anonymous rate limit.
+# The kind node needs HTTPS egress to gsoci.azurecr.io, *.blob.core.windows.net, mirror.gcr.io and Sigstore.
 apiVersion: chainsaw.kyverno.io/v1alpha1
 kind: Test
 metadata:
   name: verify-image-signatures
 spec:
   timeouts:
-    # Admission verifies signatures against the registry and Rekor in both the
-    # mutating and the validating webhook (10s timeout each), which exceeds
-    # chainsaw's 5s default. A create whose check fails is retried until this
-    # timeout: with more than one admission-enabled ImageValidatingPolicy (here
-    # gsoci-circleci-keyless and test-enforce), Kyverno 1.18's mutating webhook
-    # can hang until its timeout and the Pod is then denied with "annotations
-    # not present on object", even for a correctly signed image; a later
-    # attempt passes (kyverno/sdk#143, fixed in the SDK of Kyverno v1.19.2).
+    # Signature checks in admission take longer than chainsaw's 5s default, and with two admission-enabled
+    # policies Kyverno 1.18 can hang a webhook call and deny a signed Pod once (kyverno/sdk#143, fixed in 1.19.2).
     apply: 2m
   steps:
   - name: check if policy verify-image-signatures-gsoci-circleci-keyless is ready

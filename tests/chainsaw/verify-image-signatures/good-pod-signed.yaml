@@ -1,6 +1,4 @@
-# A Giant Swarm image referenced by tag whose cosign signature carries the
-# CircleCI identity the gsoci-circleci-keyless verifier expects (verified with
-# the Kyverno CLI 1.18.2 on 2026-10-29).
+# Signed Giant Swarm image referenced by tag.
 apiVersion: v1
 kind: Pod
 metadata:

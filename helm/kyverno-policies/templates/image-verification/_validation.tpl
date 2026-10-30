@@ -1,8 +1,4 @@
-{{/*
-imageVerification.validate fails the render on verifier configurations that the
-values schema cannot express (or that would only surface as a broken policy in
-the cluster). Every verifier in both blocks is checked, enabled or not.
-*/}}
+{{/* imageVerification.validate fails the render on verifier mistakes the values schema cannot catch. */}}
 {{- define "imageVerification.validate" -}}
 {{- $iv := .Values.imageVerification -}}
 {{- $allowedProviders := list "default" "azure" "google" "amazon" "github" -}}

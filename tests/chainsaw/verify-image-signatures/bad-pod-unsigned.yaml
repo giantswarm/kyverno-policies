@@ -1,7 +1,4 @@
-# A Giant Swarm image tag that carries no cosign signature from the CircleCI
-# identity (probed with the Kyverno CLI on 2026-10-29). The
-# gsoci-circleci-keyless verifier runs in Enforce in tests/chainsaw/values.yaml,
-# so the Pod is denied.
+# Giant Swarm image tag without a cosign signature (built before signing started): denied in Enforce.
 apiVersion: v1
 kind: Pod
 metadata:

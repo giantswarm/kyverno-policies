@@ -1,5 +1,4 @@
-# A signed Giant Swarm image next to an nginx image that no verifier
-# matches: only the matching container is verified, so the Pod is admitted.
+# Signed Giant Swarm image next to an unmatched nginx image: admitted.
 apiVersion: v1
 kind: Pod
 metadata:

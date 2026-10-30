@@ -1,5 +1,4 @@
-# Matched by the test-enforce customer verifier (Enforce). alpine carries no
-# cosign signature, so the Pod is denied.
+# Unsigned image matched by the test-enforce verifier: denied.
 apiVersion: v1
 kind: Pod
 metadata:

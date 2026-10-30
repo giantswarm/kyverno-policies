@@ -1,6 +1,4 @@
-# A Giant Swarm image mirrored by retagger: its signing certificate's subject
-# ends in pipeline-definitions/nil, the branch of the default subjectRegExp
-# that accepts `nil` instead of a pipeline-definition UUID.
+# Retagger-mirrored image, signed with a pipeline-definitions/nil subject.
 apiVersion: v1
 kind: Pod
 metadata:

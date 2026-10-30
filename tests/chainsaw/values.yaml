@@ -51,10 +51,7 @@ debugAccessPolicies:
       cleanupSchedule: "*/5 * * * *"
       targetAnnotation: "policy.giantswarm.io/exception-expires-at"
 
-# Image signature verification
-# One verifier per scenario, each matching its own images, so a single install
-# covers our verifier in Enforce, a customer verifier in Audit (background scan)
-# and a second customer verifier in Enforce.
+# One image verifier per chainsaw scenario, each matching its own images.
 imageVerification:
   giantswarm:
     gsoci-circleci-keyless:
