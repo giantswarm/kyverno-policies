@@ -12,6 +12,19 @@ We use `[[` and  `]]` delimeters to handle cases where variables should be manag
 The `hack` folder contains scripts which are used during local development and in CI.
 These scripts enable us to easily set up a local testing environment.
 
+## Image verification
+
+The chart renders one `ImageValidatingPolicy` (`policies.kyverno.io/v1`, Kyverno 1.18 or newer) per enabled verifier, named `verify-image-signatures-<name>`. Each policy checks that the images of matching Pods carry a valid cosign signature from the configured attestors.
+
+Verifiers are configured under `imageVerification` in [`helm/kyverno-policies/values.yaml`](helm/kyverno-policies/values.yaml), where the full field list is documented:
+
+- `imageVerification.giantswarm` holds the verifiers Giant Swarm ships, under fixed keys. Today that is `gsoci-circleci-keyless`, which verifies `gsoci.azurecr.io/giantswarm/*` against the Giant Swarm CircleCI keyless identity in `Audit` mode. Tune it by deep merge, for example `imageVerification.giantswarm.gsoci-circleci-keyless.mode: Enforce` or `.enabled: false`.
+- `imageVerification.customer` is a list owned by the customer, empty by default, with the same verifier shape. Helm replaces the list as a whole on merge. Customer policies leave out the images of every enabled `giantswarm` verifier.
+
+`make render-checks` renders the chart with several value sets and asserts the generated policies (needs `helm` and `yq`).
+
+The end-to-end Chainsaw test lives in [`tests/chainsaw/verify-image-signatures`](tests/chainsaw/verify-image-signatures). Through verifiers set in `tests/chainsaw/values.yaml` it covers the Giant Swarm verifier in Enforce (signed images by tag and by digest admitted, an unsigned one denied), a customer verifier in Audit (a failing background-scan report) and a second customer verifier in Enforce. It needs outbound HTTPS from the kind node to the registries and to Sigstore, and the Audit case relies on `make kyverno-fast-background-scan` (run it after `make install-kyverno`) so the reports controller scans every minute instead of every hour.
+
 ## Development
 
 ### Prerequisites
