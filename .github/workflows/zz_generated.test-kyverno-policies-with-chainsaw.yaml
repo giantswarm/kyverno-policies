@@ -46,7 +46,7 @@ jobs:
           sudo apt-get update && sudo apt-get install make
       - name: Create kind cluster and install kyverno
         run: |
-          make kind-get-kubeconfig install-kyverno kyverno-fast-background-scan
+          make kind-get-kubeconfig install-kyverno
       - name: Install extra resources
         run: |
           make install-extras

@@ -17,4 +17,4 @@ ensure-cleanup-rbac: ## Pre-create a copy of the chart's cleanup-controller Clus
 		sleep 2; \
 	done; echo "the cleanup controller did not get PolicyException delete permission within 60s" >&2; exit 1
 
-install-policies: ensure-cleanup-rbac
+install-policies: kyverno-fast-background-scan ensure-cleanup-rbac
