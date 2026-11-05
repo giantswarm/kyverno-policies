@@ -40,10 +40,7 @@ install-kyverno:
 	curl -sL https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml \
 		| sed -E 's/^([[:space:]]*)- --enablePolicyException=false$$/\1- --enablePolicyException=true\n\1- --exceptionNamespace=*/' \
 		| kubectl create -f -
-	# Sometimes the next check executes faster than the deployment show up for the Kube API Server, so we need to wait for a second
-	sleep 5
-	kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -n kyverno --timeout 300s
-	# The cleanup controller registers its webhook before its pod is ready, so wait for every controller before policies are installed
+	# Wait for every controller, not only the admission controller: the cleanup controller registers its webhook before its pod is ready
 	kubectl -n kyverno wait --for=condition=available deployment --all --timeout 300s
 
 .PHONY: install-policies
