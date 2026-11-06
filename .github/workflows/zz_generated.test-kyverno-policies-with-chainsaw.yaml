@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/fd25d140ecb3de0dd18f5204586421bbbe90fc8e/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
+#    https://github.com/giantswarm/devctl/blob/dfe2ca9e1dd3c4550a4b36890ccb648d2866ba71/pkg/gen/input/workflows/internal/file/test-kyverno-policies-with-chainsaw.yaml.template
 #
 
 name: "Test Kyverno Policies with Chainsaw"
@@ -35,7 +35,7 @@ jobs:
       - name: Install Chainsaw
         uses: kyverno/action-install-chainsaw@1223ef75bedeb59c4e7b5455463d4316e76dff01 # v0.2.15
       - name: Create kind cluster
-        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
+        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
         with:
           node_image: kindest/node:${{ env.KUBERNETES_VERSION }}
           cluster_name: ${{ env.KIND_CLUSTER_NAME }}

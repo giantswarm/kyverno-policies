@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/fd25d140ecb3de0dd18f5204586421bbbe90fc8e/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
+#    https://github.com/giantswarm/devctl/blob/1cef503c382ea2d2b699fdcfa86087711249f5cd/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
 #
 
 SHELL:=/usr/bin/env bash
