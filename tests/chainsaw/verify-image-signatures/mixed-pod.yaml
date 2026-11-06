@@ -1,0 +1,27 @@
+# Signed Giant Swarm image next to an unmatched nginx image: admitted.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mixed-pod
+spec:
+  containers:
+  - name: chart-operator
+    image: gsoci.azurecr.io/giantswarm/chart-operator:4.2.2
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL
+  - name: nginx
+    image: mirror.gcr.io/library/nginx:1.27.5
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL

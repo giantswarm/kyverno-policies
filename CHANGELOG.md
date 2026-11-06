@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added a new image signature verification policy feature. A default verifier for Giant Swarm images is enabled in Audit mode. Customers can add verifiers for their own images. Giant Swarm images will be automatically excluded from customer image verification policies.
+
 ### Changed
 
 - Updated `kyverno-policies` to upstream version `v1.19.2`.

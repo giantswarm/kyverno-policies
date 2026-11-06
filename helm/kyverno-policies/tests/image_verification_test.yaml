@@ -1,0 +1,199 @@
+suite: verify-image-signatures ImageValidatingPolicies
+templates:
+  - templates/image-verification/imagevalidatingpolicy-verify-image-signatures.yaml
+tests:
+  - it: renders the Giant Swarm verifier in Audit by default
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ImageValidatingPolicy
+      - equal:
+          path: metadata.name
+          value: verify-image-signatures-gsoci-circleci-keyless
+      - equal:
+          path: spec.validationActions
+          value: [Audit]
+      - equal:
+          path: spec.evaluation.admission.enabled
+          value: false
+      - equal:
+          path: spec.evaluation.background.enabled
+          value: true
+      - equal:
+          path: spec.failurePolicy
+          value: Ignore
+      - equal:
+          path: spec.validationConfigurations.mutateDigest
+          value: false
+      - equal:
+          path: spec.matchImageReferences
+          value:
+            - glob: gsoci.azurecr.io/giantswarm/*
+      - equal:
+          path: spec.attestors[0].name
+          value: circleci
+      - lengthEqual:
+          path: spec.attestors
+          count: 1
+      - matchRegex:
+          path: spec.validations[0].expression
+          pattern: 'verifyImageSignatures\(img, \[attestors\.circleci\]\)\)\.all\(e, e >= 1\)$'
+
+  - it: renders a customer verifier that excludes the Giant Swarm images
+    set:
+      imageVerification.customer:
+        - name: acme
+          images: ["*/*"]
+          attestors:
+            - name: ci
+              key:
+                publicKey: &key |
+                  -----BEGIN PUBLIC KEY-----
+                  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4h7OqaHGFIiKU9bHkoIGEtyWx6ZY
+                  2cyW9dBFyAqV46pa8zojEovfo18bnQ1FZKB1gA2wvq1+gwvsMhNLIuS+5w==
+                  -----END PUBLIC KEY-----
+              ignoreTlog: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: verify-image-signatures-acme
+        matchRegex:
+          path: spec.matchImageReferences[0].expression
+          pattern: '^\["\^\.\*/\.\*\$"\]\.exists\(p, ref\.matches\(p\)\) && !\["\^gsoci\\\\\.azurecr\\\\\.io/giantswarm/\.\*\$"\]\.exists\(p, ref\.matches\(p\)\)$'
+      - documentSelector:
+          path: metadata.name
+          value: verify-image-signatures-acme
+        matchRegex:
+          path: spec.attestors[0].cosign.key.data
+          pattern: BEGIN PUBLIC KEY
+      - documentSelector:
+          path: metadata.name
+          value: verify-image-signatures-acme
+        notExists:
+          path: spec.attestors[0].cosign.keyless
+      - documentSelector:
+          path: metadata.name
+          value: verify-image-signatures-acme
+        equal:
+          path: spec.attestors[0].cosign.ctlog.insecureIgnoreTlog
+          value: true
+
+  - it: lets a customer verifier cover everything when the Giant Swarm verifier is disabled
+    set:
+      imageVerification.giantswarm.gsoci-circleci-keyless.enabled: false
+      imageVerification.customer:
+        - name: acme
+          images: ["*/*"]
+          attestors:
+            - name: ci
+              key:
+                publicKey: *key
+              ignoreTlog: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: verify-image-signatures-acme
+      - equal:
+          path: spec.matchImageReferences
+          value:
+            - glob: "*/*"
+
+  - it: turns admission on and denies in Enforce mode without touching the attestors
+    set:
+      imageVerification.giantswarm.gsoci-circleci-keyless.mode: Enforce
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.validationActions
+          value: [Deny]
+      - equal:
+          path: spec.evaluation.admission.enabled
+          value: true
+      - equal:
+          path: spec.failurePolicy
+          value: Ignore
+      - equal:
+          path: spec.attestors
+          value:
+            - name: circleci
+              cosign:
+                keyless:
+                  identities:
+                    - issuer: https://oidc.circleci.com
+                      subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/([a-f0-9-]+|nil)$
+                ctlog:
+                  url: https://rekor.sigstore.dev
+                  insecureIgnoreTlog: false
+
+  - it: requires the configured number of attestors in the CEL check
+    set:
+      imageVerification.giantswarm.gsoci-circleci-keyless.minVerifiedAttestors: 2
+      imageVerification.giantswarm.gsoci-circleci-keyless.attestors:
+        - name: circleci
+          keyless:
+            issuer: https://oidc.circleci.com
+            subjectRegExp: ^https://circleci\.com/api/v2/projects/[a-f0-9-]+/pipeline-definitions/([a-f0-9-]+|nil)$
+          rekorUrl: https://rekor.sigstore.dev
+        - name: kms
+          key:
+            publicKey: *key
+          ignoreTlog: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.attestors[1].name
+          value: kms
+      - matchRegex:
+          path: spec.validations[0].expression
+          pattern: '\[attestors\.circleci, attestors\.kms\]\)\)\.all\(e, e >= 2\)$'
+
+  - it: applies policyNamePrefix to every policy
+    set:
+      policyNamePrefix: gs-
+      imageVerification.customer:
+        - name: my-corp
+          images: ["registry.example/my-corp/*"]
+          attestors:
+            - name: ci
+              key:
+                publicKey: *key
+              ignoreTlog: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: gs-verify-image-signatures-gsoci-circleci-keyless
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: gs-verify-image-signatures-my-corp
+
+  - it: fails when a Giant Swarm verifier's name differs from its key
+    set:
+      imageVerification.giantswarm.gsoci-circleci-keyless.name: other
+    asserts:
+      - failedTemplate:
+          errorPattern: name "other" must equal its key "gsoci-circleci-keyless"
+
+  - it: fails when the rendered policy name exceeds 63 characters
+    set:
+      policyNamePrefix: gs-
+      imageVerification.customer:
+        - name: acme-production-registry-verifier-eu-west
+          images: ["registry.example/acme/*"]
+          attestors:
+            - name: ci
+              key:
+                publicKey: *key
+    asserts:
+      - failedTemplate:
+          errorPattern: is 68 characters long, the limit is 63

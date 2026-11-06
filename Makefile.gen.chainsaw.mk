@@ -16,7 +16,7 @@ KIND_CLUSTER_NAME ?= chainsaw-kyverno-cluster
 # renovate: datasource=docker depName=kindest/node
 KUBERNETES_VERSION ?= v1.33.7
 # renovate: datasource=github-releases depName=giantswarm/kyverno-crds
-KYVERNO_VERSION ?= v1.17.0
+KYVERNO_VERSION ?= v1.18.0
 # The chart to install and build: helm/$(KYVERNO_POLICIES_APP_NAME) when that is set and has a
 # Chart.yaml (as in CI), otherwise the one directory under helm/ with a Chart.yaml.
 # KYVERNO_POLICIES_APP_NAME only counts here when set before this file is included (env, command
@@ -40,9 +40,8 @@ install-kyverno:
 	curl -sL https://github.com/kyverno/kyverno/releases/download/$(KYVERNO_VERSION)/install.yaml \
 		| sed -E 's/^([[:space:]]*)- --enablePolicyException=false$$/\1- --enablePolicyException=true\n\1- --exceptionNamespace=*/' \
 		| kubectl create -f -
-	# Sometimes the next check executes faster than the deployment show up for the Kube API Server, so we need to wait for a second
-	sleep 5
-	kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=kyverno -l app.kubernetes.io/component=admission-controller -n kyverno --timeout 300s
+	# Wait for every controller, not only the admission controller: the cleanup controller registers its webhook before its pod is ready
+	kubectl -n kyverno wait --for=condition=available deployment --all --timeout 300s
 
 .PHONY: install-policies
 install-policies: check-kyverno-policies-chart
