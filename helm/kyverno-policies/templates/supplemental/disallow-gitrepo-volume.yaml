@@ -1,5 +1,5 @@
 {{- $name := "disallow-gitrepo-volume" }}
-{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled }}
+{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled (ne (include "useValidatingPolicy" .) "true") }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:

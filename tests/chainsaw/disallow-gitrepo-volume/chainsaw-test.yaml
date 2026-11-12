@@ -10,6 +10,7 @@ spec:
         expect:
         - check:
             ($error != null): true
+            (contains($error, 'The gitRepo volume type is deprecated and has known vulnerabilities.')): true
         file: bad-pod.yaml
   - name: create a good pod without gitRepo volume
     try:

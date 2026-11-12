@@ -1,0 +1,231 @@
+suite: debug access policies switch between legacy and CEL policy types
+templates:
+  - templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.yaml
+  - templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.cel.yaml
+  - templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.yaml
+  - templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+  - templates/restrict-debug-access/clustercleanuppolicy-exceptions.yaml
+  - templates/restrict-debug-access/clustercleanuppolicy-exceptions.cel.yaml
+tests:
+  - it: renders nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders ClusterPolicies and a ClusterCleanupPolicy by default
+    set:
+      debugAccessPolicies.policies.disallow-ephemeral-containers.enabled: true
+      debugAccessPolicies.policies.disallow-ephemeral-containers.mode: Audit
+      debugAccessPolicies.policies.block-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.block-expired-exceptions.mode: Audit
+      debugAccessPolicies.policies.purge-expired-exceptions.enabled: true
+    asserts:
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.yaml
+        isKind:
+          of: ClusterPolicy
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.yaml
+        equal:
+          path: spec.validationFailureAction
+          value: Audit
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.cel.yaml
+        hasDocuments:
+          count: 0
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.yaml
+        isKind:
+          of: ClusterPolicy
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.yaml
+        equal:
+          path: spec.validationFailureAction
+          value: Audit
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+        hasDocuments:
+          count: 0
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.yaml
+        hasDocuments:
+          count: 2
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.yaml
+        documentIndex: 0
+        isKind:
+          of: ClusterCleanupPolicy
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.yaml
+        documentIndex: 1
+        isKind:
+          of: ClusterRole
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.cel.yaml
+        hasDocuments:
+          count: 0
+
+  - it: maps Enforce to validationFailureAction Enforce on the ClusterPolicies
+    set:
+      debugAccessPolicies.policies.disallow-ephemeral-containers.enabled: true
+      debugAccessPolicies.policies.disallow-ephemeral-containers.mode: Enforce
+      debugAccessPolicies.policies.block-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.block-expired-exceptions.mode: Enforce
+      debugAccessPolicies.policies.purge-expired-exceptions.enabled: true
+    asserts:
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.yaml
+        equal:
+          path: spec.validationFailureAction
+          value: Enforce
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.yaml
+        equal:
+          path: spec.validationFailureAction
+          value: Enforce
+
+  - it: renders ValidatingPolicies with validationActions Audit
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      debugAccessPolicies.policies.disallow-ephemeral-containers.enabled: true
+      debugAccessPolicies.policies.disallow-ephemeral-containers.mode: Audit
+      debugAccessPolicies.policies.block-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.block-expired-exceptions.mode: Audit
+      debugAccessPolicies.policies.purge-expired-exceptions.enabled: true
+    asserts:
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.yaml
+        hasDocuments:
+          count: 0
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.cel.yaml
+        isKind:
+          of: ValidatingPolicy
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.cel.yaml
+        isAPIVersion:
+          of: policies.kyverno.io/v1
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.cel.yaml
+        equal:
+          path: metadata.name
+          value: disallow-ephemeral-containers
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.cel.yaml
+        equal:
+          path: spec.validationActions
+          value: [Audit]
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.cel.yaml
+        equal:
+          path: spec.matchConstraints.resourceRules[0].resources
+          value: [pods, pods/ephemeralcontainers]
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.yaml
+        hasDocuments:
+          count: 0
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+        isKind:
+          of: ValidatingPolicy
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+        equal:
+          path: metadata.name
+          value: block-expired-exceptions
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+        equal:
+          path: spec.validationActions
+          value: [Audit]
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+        equal:
+          path: spec.matchConstraints.resourceRules[0].apiGroups
+          value: [kyverno.io, policies.kyverno.io]
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+        lengthEqual:
+          path: spec.validations
+          count: 2
+      # purge-expired-exceptions has its own policyType and stays a ClusterCleanupPolicy.
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.yaml
+        documentIndex: 0
+        isKind:
+          of: ClusterCleanupPolicy
+
+  - it: maps Enforce to validationActions Deny on the ValidatingPolicies
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      debugAccessPolicies.policies.disallow-ephemeral-containers.enabled: true
+      debugAccessPolicies.policies.disallow-ephemeral-containers.mode: Enforce
+      debugAccessPolicies.policies.block-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.block-expired-exceptions.mode: Enforce
+      debugAccessPolicies.policies.purge-expired-exceptions.enabled: true
+    asserts:
+      - template: templates/restrict-debug-access/clusterpolicy-disallow-ephemeral-containers.cel.yaml
+        equal:
+          path: spec.validationActions
+          value: [Deny]
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+        equal:
+          path: spec.validationActions
+          value: [Deny]
+
+  - it: reads the expiry annotation from targetAnnotation in the ValidatingPolicy
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      debugAccessPolicies.policies.block-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.purge-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.purge-expired-exceptions.targetAnnotation: example.com/expires
+    asserts:
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.cel.yaml
+        equal:
+          path: spec.matchConditions[0].expression
+          value: "object.metadata.?annotations[?'example.com/expires'].orValue('') != ''"
+
+  - it: renders a DeletingPolicy and keeps the cleanup ClusterRole
+    set:
+      debugAccessPolicies.policies.block-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.purge-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.purge-expired-exceptions.policyType: DeletingPolicy
+      debugAccessPolicies.policies.purge-expired-exceptions.cleanupSchedule: "*/5 * * * *"
+      debugAccessPolicies.policies.purge-expired-exceptions.targetAnnotation: example.com/expires
+    asserts:
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.yaml
+        hasDocuments:
+          count: 1
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.yaml
+        isKind:
+          of: ClusterRole
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.yaml
+        equal:
+          path: metadata.labels
+          value:
+            rbac.kyverno.io/aggregate-to-cleanup-controller: "true"
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.cel.yaml
+        isKind:
+          of: DeletingPolicy
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.cel.yaml
+        isAPIVersion:
+          of: policies.kyverno.io/v1
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.cel.yaml
+        equal:
+          path: metadata.name
+          value: purge-expired-exceptions
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.cel.yaml
+        equal:
+          path: spec.schedule
+          value: "*/5 * * * *"
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.cel.yaml
+        equal:
+          path: spec.matchConstraints.resourceRules
+          value:
+            - apiGroups: [kyverno.io]
+              apiVersions: [v2]
+              resources: [policyexceptions]
+            - apiGroups: [policies.kyverno.io]
+              apiVersions: [v1]
+              resources: [policyexceptions]
+      - template: templates/restrict-debug-access/clustercleanuppolicy-exceptions.cel.yaml
+        equal:
+          path: spec.variables[0].expression
+          value: "object.metadata.?annotations[?'example.com/expires'].orValue('')"
+      # The validating policies follow kyverno-policies.policyType, not this value.
+      - template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.yaml
+        isKind:
+          of: ClusterPolicy
+
+  - it: fails when block-expired-exceptions is enabled without purge-expired-exceptions
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      debugAccessPolicies.policies.block-expired-exceptions.enabled: true
+    template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "'block-expired-exceptions' is enabled but 'purge-expired-exceptions' is not"
+
+  - it: fails when purge-expired-exceptions is enabled without block-expired-exceptions
+    set:
+      debugAccessPolicies.policies.purge-expired-exceptions.enabled: true
+      debugAccessPolicies.policies.purge-expired-exceptions.policyType: DeletingPolicy
+    template: templates/restrict-debug-access/clusterpolicy-block-expired-exceptions.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "'purge-expired-exceptions' is enabled but 'block-expired-exceptions' is not"

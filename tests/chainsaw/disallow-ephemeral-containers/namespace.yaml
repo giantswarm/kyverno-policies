@@ -1,0 +1,6 @@
+# Authorized in tests/chainsaw/values.yaml for disallow-unapproved-debug-access, so that only
+# disallow-ephemeral-containers decides the kubectl debug requests in this test.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: disallow-ephemeral-containers-test

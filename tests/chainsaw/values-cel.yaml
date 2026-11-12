@@ -1,0 +1,20 @@
+# Overlay on values.yaml that renders every policy with the CEL policy types. CI installs
+# values.yaml alone (ClusterPolicy); run the suite in CEL mode locally with:
+#   helm upgrade --install kyverno-policies helm/kyverno-policies \
+#     -f tests/chainsaw/values.yaml -f tests/chainsaw/values-cel.yaml
+# and skip check-policy-is-ready, which asserts ClusterPolicy readiness.
+
+kyverno-policies:
+  policyType: ValidatingPolicy
+
+supplementalSecurityPolicies:
+  policies:
+    audit-event-on-exec:
+      policyType: GeneratingPolicy
+    add-default-deny-network-policy:
+      policyType: GeneratingPolicy
+
+debugAccessPolicies:
+  policies:
+    purge-expired-exceptions:
+      policyType: DeletingPolicy

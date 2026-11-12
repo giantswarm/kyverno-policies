@@ -1,0 +1,36 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: check-resources-request-and-limits-ratio
+spec:
+  steps:
+  - name: create a bad pod with a memory limit above 2.5x its request
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'Limits may not exceed 2.5x the requests.')): true
+        file: bad-pod.yaml
+  - name: create a bad deployment with a memory limit above 2.5x its request
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'Limits may not exceed 2.5x the requests.')): true
+        file: bad-deployment.yaml
+  - name: create a good pod with a memory limit of exactly 2.5x its request
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml
+  - name: create a good pod with only a memory limit, which the API server copies to the request
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod-limits-only.yaml

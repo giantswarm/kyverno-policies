@@ -1,0 +1,35 @@
+{{- $name := "require-ro-rootfs" }}
+{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled (eq (include "useValidatingPolicy" .) "true") }}
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Require Read-Only Root Filesystem
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      A read-only root file system helps to enforce an immutable infrastructure strategy;
+      the container only needs to write on the mounted volume that persists the state.
+      An immutable root filesystem can also prevent malicious binaries from writing to the
+      host system. This policy validates that containers define a securityContext
+      with `readOnlyRootFilesystem: true`.
+spec:
+  validationActions: {{ include "validationActions" (get .Values.supplementalSecurityPolicies.policies $name).mode | nindent 4 }}
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: [v1]
+      operations: [CREATE, UPDATE]
+      resources: [pods]
+  validations:
+    # Like the ClusterPolicy, this checks spec.containers only, not initContainers or ephemeralContainers.
+    - expression: >-
+        object.spec.containers.all(c, c.?securityContext.?readOnlyRootFilesystem.orValue(false) == true)
+      message: "Root filesystem must be read-only."
+{{- end }}

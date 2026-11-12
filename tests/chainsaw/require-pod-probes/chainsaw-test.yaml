@@ -1,0 +1,58 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: require-pod-probes
+spec:
+  # require-pod-probes runs in Audit: in Enforce it would deny the probe-less Pods of every other test.
+  steps:
+  - name: create a bad pod without probes
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: bad-pod.yaml
+    - assert:
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            kind: Pod
+            name: bad-pod-no-probes
+          (results[?policy=='require-pod-probes']):
+          - result: fail
+  - name: create a bad deployment without probes
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: bad-deployment.yaml
+    - assert:
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            kind: Deployment
+            name: bad-deployment-no-probes
+          (results[?policy=='require-pod-probes']):
+          - result: fail
+  - name: create a good pod with a liveness probe
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml
+    - assert:
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            kind: Pod
+            name: good-pod-probes
+          (results[?policy=='require-pod-probes']):
+          - result: pass

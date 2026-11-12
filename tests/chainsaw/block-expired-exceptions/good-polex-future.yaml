@@ -14,3 +14,6 @@ spec:
     - resources:
         kinds:
         - Pod
+        # Matches nothing: the exception must not exempt Pods in other tests while it exists.
+        namespaces:
+        - block-expired-exceptions-no-match

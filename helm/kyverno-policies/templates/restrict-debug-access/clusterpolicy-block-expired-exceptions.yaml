@@ -1,6 +1,6 @@
 {{- include "debugAccessPolicies.validate" . -}}
 {{ $name := "block-expired-exceptions" }}
-{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
+{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled (ne (include "useValidatingPolicy" .) "true") }}
 {{- $annotationKey := (get .Values.debugAccessPolicies.policies "purge-expired-exceptions").targetAnnotation -}}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy

@@ -1,0 +1,71 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: purge-expired-exceptions
+spec:
+  steps:
+  # block-expired-exceptions denies an already-expired timestamp at admission, so the
+  # exceptions are created with one that expires 30 seconds later.
+  - name: create PolicyExceptions that expire in 30 seconds, and ones that do not
+    try:
+    - script:
+        content: |
+          set -eu
+          EXPIRES_AT=$(date -u -d '+30 seconds' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+30S +%Y-%m-%dT%H:%M:%SZ)
+          # The exceptions reference a policy that does not exist, so they exempt nothing.
+          kubectl create -n "$NAMESPACE" -f - <<YAML
+          apiVersion: kyverno.io/v2
+          kind: PolicyException
+          metadata:
+            name: expiring-kyverno
+            annotations:
+              policy.giantswarm.io/exception-expires-at: "$EXPIRES_AT"
+          spec:
+            exceptions:
+            - policyName: purge-expired-exceptions-test
+              ruleNames:
+              - purge-expired-exceptions-test
+            match:
+              any:
+              - resources:
+                  kinds:
+                  - ConfigMap
+          ---
+          apiVersion: policies.kyverno.io/v1
+          kind: PolicyException
+          metadata:
+            name: expiring-policies
+            annotations:
+              policy.giantswarm.io/exception-expires-at: "$EXPIRES_AT"
+          spec:
+            policyRefs:
+            - name: purge-expired-exceptions-test
+              kind: ValidatingPolicy
+            matchConditions:
+            - name: no-match
+              expression: "false"
+          YAML
+    - create:
+        file: policyexceptions-kept.yaml
+  # The cleanup schedule in tests/chainsaw/values.yaml is */5: up to five minutes until the
+  # first run after expiry, plus margin.
+  - name: wait until the expired PolicyExceptions are deleted
+    try:
+    - error:
+        timeout: 3m
+        resource:
+          apiVersion: kyverno.io/v2
+          kind: PolicyException
+          metadata:
+            name: expiring-kyverno
+    - error:
+        timeout: 1m
+        resource:
+          apiVersion: policies.kyverno.io/v1
+          kind: PolicyException
+          metadata:
+            name: expiring-policies
+  - name: check that the other PolicyExceptions are kept
+    try:
+    - assert:
+        file: policyexceptions-kept.yaml
