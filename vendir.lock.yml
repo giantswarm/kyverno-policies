@@ -2,10 +2,11 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: 'chore: bump chart to 3.9.2 for v1.19.2 (#18145)...'
-      sha: e63308f1e16c05cd009ac4864be6ec25c66b49be
+      commitTitle: 'fix: dont run resource version migration for the old policy apis
+        (#18573) (#18574)...'
+      sha: f666af06e9bd310c7e730f1523c0430e90371a89
       tags:
-      - kyverno-chart-3.9.2
+      - v1.20.0
     path: .
   path: helm/kyverno-policies/charts/kyverno-policies
 kind: LockConfig
