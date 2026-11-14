@@ -1,0 +1,37 @@
+{{- $name := "prevent-bare-pods" }}
+{{- if and (hasKey .Values.bestPracticesPolicies.policies $name) (get .Values.bestPracticesPolicies.policies $name).enabled (eq (include "useValidatingPolicy" .) "true") }}
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Prevent Bare Pods
+    policies.kyverno.io/category: Workload Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Pods not created by workload controllers such as Deployments
+      have no self-healing or scaling abilities and are unsuitable for production.
+      This policy prevents such "bare" Pods from being created unless they originate
+      from a higher-level workload controller of some sort.
+spec:
+  validationActions: {{ include "validationActions" (get .Values.bestPracticesPolicies.policies $name).mode | nindent 4 }}
+  evaluation:
+    background:
+      enabled: true
+  # Pod controllers never carry ownerReferences in their Pod template, so no autogen.
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: [v1]
+      operations: [CREATE, UPDATE]
+      resources: [pods]
+  validations:
+    - expression: >-
+        has(object.metadata.ownerReferences)
+      message: "Bare Pods are not allowed. They must be created by Pod controllers."
+{{- end }}

@@ -7,77 +7,77 @@ spec:
   # Baseline policies
   - name: check if policy disallow-capabilities is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-capabilities
   - name: check if policy disallow-host-namespaces is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-host-namespaces
   - name: check if policy disallow-host-path is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-host-path
   - name: check if policy disallow-host-ports is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-host-ports
   - name: check if policy disallow-host-process is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-host-process
   - name: check if policy disallow-privileged-containers is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-privileged-containers
   - name: check if policy disallow-proc-mount is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-proc-mount
   - name: check if policy disallow-selinux is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-selinux
   - name: check if policy restrict-apparmor-profiles is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: restrict-apparmor-profiles
   - name: check if policy restrict-seccomp is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: restrict-seccomp
   - name: check if policy restrict-sysctls is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
@@ -85,42 +85,42 @@ spec:
   # Restricted policies
   - name: check if policy disallow-capabilities-strict is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-capabilities-strict
   - name: check if policy disallow-privilege-escalation is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-privilege-escalation
   - name: check if policy require-run-as-non-root-user is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: require-run-as-non-root-user
   - name: check if policy require-run-as-nonroot is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: require-run-as-nonroot
   - name: check if policy restrict-seccomp-strict is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: restrict-seccomp-strict
   - name: check if policy restrict-volume-types is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
@@ -128,21 +128,42 @@ spec:
   # Best practices policies
   - name: check if policy disallow-latest-tag is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-latest-tag
+  - name: check if policy check-resources-request-and-limits-ratio is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: check-resources-request-and-limits-ratio
+  - name: check if policy require-container-requests-and-limits is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: require-container-requests-and-limits
+  - name: check if policy require-pod-probes is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: require-pod-probes
   - name: check if policy prevent-bare-pods is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: prevent-bare-pods
   - name: check if policy require-emptydir-requests-and-limits is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
@@ -150,36 +171,85 @@ spec:
   # Supplemental policies
   - name: check if policy audit-event-on-exec is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: audit-event-on-exec
+  - name: check if policy add-default-deny-network-policy is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: add-default-deny-network-policy
   - name: check if policy disallow-gitrepo-volume is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: disallow-gitrepo-volume
   - name: check if policy restrict-external-ips is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: restrict-external-ips
+  - name: check if policy check-serviceaccount-secrets is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: check-serviceaccount-secrets
+  - name: check if policy require-ro-rootfs is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: require-ro-rootfs
+  - name: check if policy restrict-binding-clusteradmin is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: restrict-binding-clusteradmin
+  - name: check if policy restrict-binding-system-groups is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: restrict-binding-system-groups
+  - name: check if policy restrict-sa-automount-sa-token is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: restrict-sa-automount-sa-token
   # Debug access policies
   - name: check if policy block-expired-exceptions is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name
           value: block-expired-exceptions
+  - name: check if policy purge-expired-exceptions is ready
+    use:
+      template: ../_steps-templates/policy-ready.yaml
+      with:
+        bindings:
+        - name: name
+          value: purge-expired-exceptions
   - name: check if policy disallow-ephemeral-containers is ready
     use:
-      template: ../_steps-templates/cluster-policy-ready.yaml
+      template: ../_steps-templates/policy-ready.yaml
       with:
         bindings:
         - name: name

@@ -1,0 +1,33 @@
+{{- $name := "restrict-sa-automount-sa-token" }}
+{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled (eq (include "useValidatingPolicy" .) "true") }}
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Restrict Auto-Mount of Service Account Tokens in Service Account
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Secret,ServiceAccount
+    policies.kyverno.io/description: >-
+      Kubernetes automatically mounts ServiceAccount credentials in each ServiceAccount.
+      The ServiceAccount may be assigned roles allowing Pods to access API resources.
+      Blocking this ability is an extension of the least privilege best practice and should
+      be followed if Pods do not need to speak to the API server to function.
+      This policy ensures that mounting of these ServiceAccount tokens is blocked.
+spec:
+  validationActions: {{ include "validationActions" (get .Values.supplementalSecurityPolicies.policies $name).mode | nindent 4 }}
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: [v1]
+      operations: [CREATE, UPDATE]
+      resources: [serviceaccounts]
+  validations:
+    - expression: "object.?automountServiceAccountToken.orValue(true) == false"
+      message: "ServiceAccounts must set automountServiceAccountToken to false."
+{{- end }}

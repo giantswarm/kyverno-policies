@@ -1,0 +1,34 @@
+{{- $name := "disallow-gitrepo-volume" }}
+{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled (eq (include "useValidatingPolicy" .) "true") }}
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Disallow gitRepo Volume Type
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod,Volume
+    policies.kyverno.io/description: >-
+      The gitRepo volume type is deprecated and has known vulnerabilities. Pods needing to clone a
+      repository should use an init container to populate a local volume instead. See the Kubernetes
+      documentation for more information.
+spec:
+  validationActions: {{ include "validationActions" (get .Values.supplementalSecurityPolicies.policies $name).mode | nindent 4 }}
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: [v1]
+      operations: [CREATE, UPDATE]
+      resources: [pods]
+  validations:
+    - expression: >-
+        !object.spec.?volumes.orValue([]).exists(v, has(v.gitRepo))
+      message: >-
+        The gitRepo volume type is deprecated and has known vulnerabilities. Consider using an init
+        container to populate a local volume instead. See the Kubernetes documentation for more information.
+{{- end }}

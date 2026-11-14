@@ -10,6 +10,7 @@ spec:
         expect:
         - check:
             ($error != null): true
+            (contains($error, 'Containers mounting emptyDir volumes without a sizeLimit must specify requests and limits for ephemeral-storage.')): true
         file: bad-pod.yaml
   - name: create a bad pod mounting an emptyDir without sizeLimit next to one with sizeLimit
     try:
@@ -17,6 +18,7 @@ spec:
         expect:
         - check:
             ($error != null): true
+            (contains($error, 'Containers mounting emptyDir volumes without a sizeLimit must specify requests and limits for ephemeral-storage.')): true
         file: bad-pod-mixed.yaml
   - name: create a good pod with emptyDir and limits
     try:

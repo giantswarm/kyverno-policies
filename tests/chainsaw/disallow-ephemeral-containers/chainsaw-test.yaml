@@ -4,6 +4,8 @@ metadata:
   name: disallow-ephemeral-containers
 spec:
   steps:
+  # The API server itself rejects ephemeralContainers on Pod create, so the next step passes
+  # with or without the policy. The kubectl debug steps below exercise the policy.
   - name: create a pod with ephemeral containers
     try:
     - create:
@@ -18,3 +20,42 @@ spec:
         - check:
             ($error != null): false
         file: good-pod.yaml
+  - name: deploy a debug target
+    try:
+    - create:
+        file: namespace.yaml
+    - create:
+        file: deployment.yaml
+    - script:
+        timeout: 120s
+        content: |
+          kubectl rollout status deployment/debug-target -n disallow-ephemeral-containers-test --timeout=90s
+  - name: attempt kubectl debug without a policyexception
+    try:
+    - script:
+        content: |
+          POD=$(kubectl get pods -l app=debug-target -n disallow-ephemeral-containers-test -o jsonpath='{.items[0].metadata.name}')
+          kubectl debug "$POD" -n disallow-ephemeral-containers-test --image=busybox:1.35 --target=main --attach=false --profile=restricted 2>&1
+        check:
+          ($error != null): true
+          (contains($stdout, 'Ephemeral (debug) containers are not permitted.')): true
+  - name: attempt kubectl debug with a policyexception
+    try:
+    - create:
+        file: policyexceptions.yaml
+    - script:
+        timeout: 10s
+        content: |
+          sleep 5
+    - script:
+        content: |
+          POD=$(kubectl get pods -l app=debug-target -n disallow-ephemeral-containers-test -o jsonpath='{.items[0].metadata.name}')
+          kubectl debug "$POD" -n disallow-ephemeral-containers-test --image=busybox:1.35 --target=main --attach=false --profile=restricted 2>&1
+        check:
+          ($error != null): false
+  - name: cleanup namespace
+    try:
+    - script:
+        timeout: 120s
+        content: |
+          kubectl delete namespace disallow-ephemeral-containers-test --ignore-not-found

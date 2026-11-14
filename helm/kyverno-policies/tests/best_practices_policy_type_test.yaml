@@ -1,0 +1,187 @@
+suite: best-practices policies switch between ClusterPolicy and ValidatingPolicy
+templates:
+  - templates/best-practices/check-resources-request-and-limits-ratio.yaml
+  - templates/best-practices/check-resources-request-and-limits-ratio.cel.yaml
+  - templates/best-practices/disallow-latest-tag.yaml
+  - templates/best-practices/disallow-latest-tag.cel.yaml
+  - templates/best-practices/prevent-bare-pods.yaml
+  - templates/best-practices/prevent-bare-pods.cel.yaml
+  - templates/best-practices/require-container-requests-limits.yaml
+  - templates/best-practices/require-container-requests-limits.cel.yaml
+  - templates/best-practices/require-emptydir-requests-and-limits.yaml
+  - templates/best-practices/require-emptydir-requests-and-limits.cel.yaml
+  - templates/best-practices/require-pod-probes.yaml
+  - templates/best-practices/require-pod-probes.cel.yaml
+tests:
+  - it: renders only the ClusterPolicies by default
+    set: &enableAll
+      bestPracticesPolicies.policies.check-resources-request-and-limits-ratio.enabled: true
+      bestPracticesPolicies.policies.require-container-requests-and-limits.enabled: true
+      bestPracticesPolicies.policies.require-pod-probes.enabled: true
+    templates:
+      - templates/best-practices/check-resources-request-and-limits-ratio.yaml
+      - templates/best-practices/disallow-latest-tag.yaml
+      - templates/best-practices/prevent-bare-pods.yaml
+      - templates/best-practices/require-container-requests-limits.yaml
+      - templates/best-practices/require-emptydir-requests-and-limits.yaml
+      - templates/best-practices/require-pod-probes.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClusterPolicy
+      - equal:
+          path: apiVersion
+          value: kyverno.io/v1
+      - equal:
+          path: spec.validationFailureAction
+          value: Audit
+
+  - it: renders no ValidatingPolicy by default
+    set: *enableAll
+    templates:
+      - templates/best-practices/check-resources-request-and-limits-ratio.cel.yaml
+      - templates/best-practices/disallow-latest-tag.cel.yaml
+      - templates/best-practices/prevent-bare-pods.cel.yaml
+      - templates/best-practices/require-container-requests-limits.cel.yaml
+      - templates/best-practices/require-emptydir-requests-and-limits.cel.yaml
+      - templates/best-practices/require-pod-probes.cel.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders no ClusterPolicy with policyType ValidatingPolicy
+    set:
+      <<: *enableAll
+      kyverno-policies.policyType: ValidatingPolicy
+    templates:
+      - templates/best-practices/check-resources-request-and-limits-ratio.yaml
+      - templates/best-practices/disallow-latest-tag.yaml
+      - templates/best-practices/prevent-bare-pods.yaml
+      - templates/best-practices/require-container-requests-limits.yaml
+      - templates/best-practices/require-emptydir-requests-and-limits.yaml
+      - templates/best-practices/require-pod-probes.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders the ValidatingPolicies in Audit with policyType ValidatingPolicy
+    set:
+      <<: *enableAll
+      kyverno-policies.policyType: ValidatingPolicy
+    templates:
+      - templates/best-practices/check-resources-request-and-limits-ratio.cel.yaml
+      - templates/best-practices/disallow-latest-tag.cel.yaml
+      - templates/best-practices/prevent-bare-pods.cel.yaml
+      - templates/best-practices/require-container-requests-limits.cel.yaml
+      - templates/best-practices/require-emptydir-requests-and-limits.cel.yaml
+      - templates/best-practices/require-pod-probes.cel.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ValidatingPolicy
+      - equal:
+          path: apiVersion
+          value: policies.kyverno.io/v1
+      - equal:
+          path: spec.validationActions
+          value: [Audit]
+      - equal:
+          path: spec.matchConstraints.resourceRules
+          value:
+            - apiGroups: [""]
+              apiVersions: [v1]
+              operations: [CREATE, UPDATE]
+              resources: [pods]
+      - notExists:
+          path: metadata.annotations["kyverno.io/kyverno-version"]
+      - notExists:
+          path: metadata.annotations["policies.kyverno.io/minversion"]
+
+  - it: denies in Enforce mode with policyType ValidatingPolicy
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      bestPracticesPolicies.policies.check-resources-request-and-limits-ratio: &enforce
+        enabled: true
+        mode: Enforce
+      bestPracticesPolicies.policies.disallow-latest-tag: *enforce
+      bestPracticesPolicies.policies.prevent-bare-pods: *enforce
+      bestPracticesPolicies.policies.require-container-requests-and-limits: *enforce
+      bestPracticesPolicies.policies.require-emptydir-requests-and-limits: *enforce
+      bestPracticesPolicies.policies.require-pod-probes: *enforce
+    templates:
+      - templates/best-practices/check-resources-request-and-limits-ratio.cel.yaml
+      - templates/best-practices/disallow-latest-tag.cel.yaml
+      - templates/best-practices/prevent-bare-pods.cel.yaml
+      - templates/best-practices/require-container-requests-limits.cel.yaml
+      - templates/best-practices/require-emptydir-requests-and-limits.cel.yaml
+      - templates/best-practices/require-pod-probes.cel.yaml
+    asserts:
+      - equal:
+          path: spec.validationActions
+          value: [Deny]
+
+  - it: renders nothing when the policies are disabled
+    set:
+      bestPracticesPolicies.policies.disallow-latest-tag.enabled: false
+      bestPracticesPolicies.policies.prevent-bare-pods.enabled: false
+      bestPracticesPolicies.policies.require-emptydir-requests-and-limits.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders nothing in CEL mode when the policies are disabled
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      bestPracticesPolicies.policies.disallow-latest-tag.enabled: false
+      bestPracticesPolicies.policies.prevent-bare-pods.enabled: false
+      bestPracticesPolicies.policies.require-emptydir-requests-and-limits.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: prefixes the ValidatingPolicy name
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      policyNamePrefix: gs-
+    template: templates/best-practices/disallow-latest-tag.cel.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: gs-disallow-latest-tag
+
+  - it: makes the prevent-bare-pods ClusterPolicy follow mode Audit
+    template: templates/best-practices/prevent-bare-pods.yaml
+    asserts:
+      - equal:
+          path: spec.validationFailureAction
+          value: Audit
+
+  - it: makes the prevent-bare-pods ClusterPolicy follow mode Enforce
+    set:
+      bestPracticesPolicies.policies.prevent-bare-pods.mode: Enforce
+    template: templates/best-practices/prevent-bare-pods.yaml
+    asserts:
+      - equal:
+          path: spec.validationFailureAction
+          value: Enforce
+
+  - it: turns autogen off for the prevent-bare-pods ValidatingPolicy
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+    template: templates/best-practices/prevent-bare-pods.cel.yaml
+    asserts:
+      - equal:
+          path: spec.autogen.podControllers.controllers
+          value: []
+
+  - it: limits require-pod-probes autogen to the legacy controllers
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      bestPracticesPolicies.policies.require-pod-probes.enabled: true
+    template: templates/best-practices/require-pod-probes.cel.yaml
+    asserts:
+      - equal:
+          path: spec.autogen.podControllers.controllers
+          value: [daemonsets, deployments, statefulsets]

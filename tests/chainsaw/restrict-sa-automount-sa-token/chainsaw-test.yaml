@@ -1,0 +1,45 @@
+# Runs in Audit: in Enforce the policy would deny the default ServiceAccount that every new
+# namespace gets, so it asserts the PolicyReport results instead of a denial.
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restrict-sa-automount-sa-token
+spec:
+  steps:
+  - name: create a bad serviceaccount that automounts its token and wait for its failing report
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: bad-serviceaccount.yaml
+    - assert:
+        # The harness runs the reports controller with --backgroundScanInterval=1m.
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            apiVersion: v1
+            kind: ServiceAccount
+            name: bad-sa-automount
+          (results[?policy=='restrict-sa-automount-sa-token']):
+          - result: fail
+  - name: create a good serviceaccount that does not automount its token and wait for its passing report
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-serviceaccount.yaml
+    - assert:
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            apiVersion: v1
+            kind: ServiceAccount
+            name: good-sa-no-automount
+          (results[?policy=='restrict-sa-automount-sa-token']):
+          - result: pass

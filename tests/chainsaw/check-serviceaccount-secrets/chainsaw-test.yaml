@@ -1,0 +1,21 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: check-serviceaccount-secrets
+spec:
+  steps:
+  - name: create a bad serviceaccount referencing a secret
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'Long-lived API tokens are not allowed.')): true
+        file: bad-serviceaccount.yaml
+  - name: create a good serviceaccount without secrets
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-serviceaccount.yaml

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bad-deployment-rw-rootfs
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: bad-deployment-rw-rootfs
+  template:
+    metadata:
+      labels:
+        app: bad-deployment-rw-rootfs
+    spec:
+      containers:
+      - name: container01
+        image: busybox:1.35
+        args:
+        - sleep
+        - 1d
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+            - ALL

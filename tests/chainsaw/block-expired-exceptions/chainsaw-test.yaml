@@ -32,3 +32,18 @@ spec:
         - check:
             ($error != null): false
         file: good-polex-no-annotation.yaml
+  - name: create a policies.kyverno.io PolicyException with an expired timestamp
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'PolicyException is expired')): true
+        file: bad-polex-expired-cel.yaml
+  - name: create a policies.kyverno.io PolicyException with a future timestamp
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-polex-future-cel.yaml

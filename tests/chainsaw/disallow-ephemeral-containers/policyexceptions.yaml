@@ -1,0 +1,36 @@
+# One exception per policy type: kyverno.io exceptions apply to the ClusterPolicy,
+# policies.kyverno.io exceptions to the ValidatingPolicy. Each is inert for the other type.
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: allow-ephemeral-containers-clusterpolicy
+  namespace: disallow-ephemeral-containers-test
+spec:
+  match:
+    any:
+      - resources:
+          kinds:
+            - Pod
+          namespaces:
+            - disallow-ephemeral-containers-test
+          names:
+            - "debug-target-*"
+  exceptions:
+    - policyName: disallow-ephemeral-containers
+      ruleNames:
+        - disallow-ephemeral-containers
+---
+apiVersion: policies.kyverno.io/v1
+kind: PolicyException
+metadata:
+  name: allow-ephemeral-containers-validatingpolicy
+  namespace: disallow-ephemeral-containers-test
+spec:
+  policyRefs:
+    - name: disallow-ephemeral-containers
+      kind: ValidatingPolicy
+  matchConditions:
+    - name: debug-target-pods
+      expression: >-
+        object.metadata.namespace == 'disallow-ephemeral-containers-test'
+        && object.metadata.name.startsWith('debug-target-')

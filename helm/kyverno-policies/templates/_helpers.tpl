@@ -50,3 +50,30 @@ Example: "busybox:*"           -> "^busybox:.*$"
 {{- $s = replace "*" ".*" $s -}}
 {{- printf "^%s$" $s -}}
 {{- end -}}
+
+{{/*
+useValidatingPolicy returns "true" when the Giant Swarm validating policies render as
+ValidatingPolicy (policies.kyverno.io/v1) instead of ClusterPolicy. They follow the vendored
+subchart's switch, kyverno-policies.policyType, so one value moves the Pod Security Standards
+policies and ours together. Generating and cleanup policies have their own per-policy policyType.
+*/}}
+{{- define "useValidatingPolicy" -}}
+{{- if eq (index .Values "kyverno-policies" "policyType" | default "ClusterPolicy") "ValidatingPolicy" -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+validationActions maps a policy mode to ValidatingPolicy validationActions:
+Enforce -> [Deny], anything else -> [Audit].
+Usage: validationActions: {{ include "validationActions" $mode | nindent 4 }}
+*/}}
+{{- define "validationActions" -}}
+{{- if eq . "Enforce" -}}
+{{- list "Deny" | toYaml -}}
+{{- else -}}
+{{- list "Audit" | toYaml -}}
+{{- end -}}
+{{- end -}}

@@ -10,6 +10,7 @@ spec:
         expect:
         - check:
             ($error != null): true
+            (contains($error, 'externalIPs are not allowed.')): true
         file: bad-service.yaml
   - name: create a good service without externalIPs
     try:

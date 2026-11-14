@@ -1,4 +1,6 @@
 kyverno-policies:  # @schema skipProperties: true; additionalProperties: true
+  # ClusterPolicy or ValidatingPolicy. Also switches this chart's own validating policies; the
+  # generating and cleanup policies below have their own policyType.
   policyType: ClusterPolicy
   podSecurityStandard: restricted
   # includeOtherPolicies:
@@ -45,10 +47,16 @@ supplementalSecurityPolicies:
     # audit-event-on-exec generates a Kubernetes Event capturing the requesting user and command whenever someone execs into a Pod. Surfaces exec activity as an additional signal alongside the API server audit log.
     audit-event-on-exec:
       enabled: false
+      # ClusterPolicy (kyverno.io/v1) or GeneratingPolicy (policies.kyverno.io/v1).
+      # GeneratingPolicy also grants Kyverno's reports controller get/list/watch on pods/exec, which
+      # it needs to report the policy ready. Before Kubernetes 1.35 that grant allows exec into any Pod.
+      policyType: ClusterPolicy  # @schema enum: [ClusterPolicy, GeneratingPolicy]
 
     # add-default-deny-network-policy generates a new NetworkPolicy resource in every newly created Namespace which will deny all traffic.
     add-default-deny-network-policy:
       enabled: false
+      # ClusterPolicy (kyverno.io/v1) or GeneratingPolicy (policies.kyverno.io/v1).
+      policyType: ClusterPolicy  # @schema enum: [ClusterPolicy, GeneratingPolicy]
       # Whether to keep or delete all generated Network Policies when the Kyverno generate policy is deleted.
       deleteNetworkPolicyOnKyvernoPolicyDeletion: false
       # Whether to generate Network Policies in Namespaces that already exist when the Kyverno Policy is deployed.
@@ -139,6 +147,8 @@ debugAccessPolicies:
     purge-expired-exceptions:
       enabled: false
       mode: Audit
+      # ClusterCleanupPolicy (kyverno.io/v2) or DeletingPolicy (policies.kyverno.io/v1).
+      policyType: ClusterCleanupPolicy  # @schema enum: [ClusterCleanupPolicy, DeletingPolicy]
       cleanupSchedule: "*/27 * * * *"  # Every 27 minutes
       targetAnnotation: "policy.giantswarm.io/exception-expires-at"
 
