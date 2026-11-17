@@ -176,7 +176,9 @@ imageVerification:
           rekorUrl: https://rekor.sigstore.dev
           ignoreTlog: false
       credentials:  # For private registries; secrets are Secret names in the Kyverno namespace.
-        providers: []  # @schema item: string; itemEnum: [default, azure, google, amazon, github]
+        # gsoci is public, so pull anonymously. With no providers Kyverno uses all its global credential
+        # helpers, and the azure one fails the policy for *.azurecr.io images when Azure has no identity for it.
+        providers: [default]  # @schema item: string; itemEnum: [default, azure, google, amazon, github]
         secrets: []  # @schema item: string
 
   # Verifiers owned by the customer, same shape as above; Helm replaces this list as a whole on merge.
