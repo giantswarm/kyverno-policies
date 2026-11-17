@@ -2,7 +2,7 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/8372f921f33417df2a13b544418705e15737152b/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
+#    https://github.com/giantswarm/devctl/blob/c3636f4c2a6e8e59ecca196a472a22295ccfba5e/pkg/gen/input/makefile/internal/file/Makefile.gen.chainsaw.mk.template
 #
 
 SHELL:=/usr/bin/env bash
@@ -42,6 +42,13 @@ install-kyverno:
 		| kubectl create -f -
 	# Wait for every controller, not only the admission controller: the cleanup controller registers its webhook before its pod is ready
 	kubectl -n kyverno wait --for=condition=available deployment --all --timeout 300s
+	# An available admission controller can still refuse connections for a few seconds: wait until its policy webhook answers a server-side dry run
+	for i in $$(seq 1 30); do \
+		echo '{"apiVersion":"kyverno.io/v1","kind":"ClusterPolicy","metadata":{"name":"webhook-ready-probe"},"spec":{"rules":[{"name":"probe","match":{"any":[{"resources":{"kinds":["ConfigMap"]}}]},"validate":{"message":"probe","pattern":{"metadata":{"name":"?*"}}}}]}}' \
+			| kubectl apply --dry-run=server -f - >/dev/null && exit 0; \
+		sleep 2; \
+	done; \
+	echo "Kyverno policy webhook did not answer within 60s" >&2; exit 1
 
 .PHONY: install-policies
 install-policies: check-kyverno-policies-chart
