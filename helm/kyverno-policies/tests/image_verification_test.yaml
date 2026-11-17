@@ -39,6 +39,10 @@ tests:
       - matchRegex:
           path: spec.validations[0].expression
           pattern: 'verifyImageSignatures\(img, \[attestors\.circleci\]\)\)\.all\(e, e >= 1\)$'
+      - equal:
+          path: spec.credentials
+          value:
+            providers: [default]
 
   - it: renders a customer verifier that excludes the Giant Swarm images
     set:
