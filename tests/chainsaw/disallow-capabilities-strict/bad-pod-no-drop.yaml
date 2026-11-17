@@ -1,3 +1,4 @@
+# Passes every other restricted policy; only the missing capabilities.drop makes it bad.
 apiVersion: v1
 kind: Pod
 metadata:
@@ -12,3 +13,5 @@ spec:
     securityContext:
       allowPrivilegeEscalation: false
       runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault

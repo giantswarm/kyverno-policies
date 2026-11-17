@@ -10,7 +10,16 @@ spec:
         expect:
         - check:
             ($error != null): true
+            (contains($error, 'must drop `ALL` capabilities')): true
         file: bad-pod-no-drop.yaml
+  - name: create a bad pod that adds a capability without drop ALL
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'must drop `ALL` capabilities')): true
+        file: bad-pod-add-without-drop.yaml
   - name: create a bad pod with disallowed capability
     try:
     - create:
