@@ -19,3 +19,22 @@ spec:
     - policyName: disallow-ephemeral-containers
       ruleNames:
         - disallow-ephemeral-containers
+---
+# The same exception for the ValidatingPolicy version (kyverno-policies.policyType: ValidatingPolicy):
+# kyverno.io PolicyExceptions only apply to ClusterPolicies.
+apiVersion: policies.kyverno.io/v1
+kind: PolicyException
+metadata:
+  name: allow-debug-ephemeral-containers-vpol
+  namespace: debug-access-test
+  annotations:
+    policy.giantswarm.io/exception-expires-at: "2099-12-31T23:59:59Z"
+spec:
+  policyRefs:
+  - name: disallow-ephemeral-containers
+    kind: ValidatingPolicy
+  matchConditions:
+  - name: debug-target-pods
+    expression: >-
+      object.metadata.namespace == 'debug-access-test'
+      && object.metadata.name.startsWith('debug-target-')

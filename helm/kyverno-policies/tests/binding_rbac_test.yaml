@@ -1,0 +1,34 @@
+suite: reports-controller read access for the CEL binding policies
+templates:
+  - templates/supplemental/clusterrole-bindings.cel.yaml
+tests:
+  - it: renders nothing with the default policyType
+    set:
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: renders nothing in ValidatingPolicy mode when both binding policies are off
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: grants the reports controller read access to bindings in ValidatingPolicy mode
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClusterRole
+      - equal:
+          path: metadata.labels["rbac.kyverno.io/aggregate-to-reports-controller"]
+          value: "true"
+      - equal:
+          path: rules
+          value:
+            - apiGroups: [rbac.authorization.k8s.io]
+              resources: [rolebindings, clusterrolebindings]
+              verbs: [get, list, watch]

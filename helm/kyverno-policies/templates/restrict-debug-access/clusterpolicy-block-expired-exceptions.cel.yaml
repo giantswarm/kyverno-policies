@@ -1,0 +1,45 @@
+{{ $name := "block-expired-exceptions" }}
+{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled (eq (include "useValidatingPolicy" .) "true") }}
+{{- $annotationKey := (get .Values.debugAccessPolicies.policies "purge-expired-exceptions").targetAnnotation -}}
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Block Expired PolicyExceptions
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: PolicyException
+    policies.kyverno.io/description: >-
+      Prevents creation or update of PolicyExceptions with expiry
+      timestamp annotations in the past.
+spec:
+  validationActions: {{ include "validationActions" (get .Values.debugAccessPolicies.policies $name).mode | nindent 4 }}
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [kyverno.io, policies.kyverno.io]
+        apiVersions: ['*']
+        operations: [CREATE, UPDATE]
+        resources: [policyexceptions]
+  matchConditions:
+    - name: has-expiry-annotation
+      expression: "object.metadata.?annotations[?'{{ $annotationKey }}'].orValue('') != ''"
+  variables:
+    - name: expiresAt
+      expression: "object.metadata.annotations['{{ $annotationKey }}']"
+    - name: isRFC3339
+      expression: >-
+        variables.expiresAt.matches('{{ include "debugAccessPolicies.rfc3339Regex" . }}')
+  validations:
+    - expression: variables.isRFC3339
+      messageExpression: >-
+        "The expiry annotation '{{ $annotationKey }}' must be a valid RFC 3339 timestamp (e.g., '2026-01-15T12:00:00Z'). Got '" + variables.expiresAt + "'."
+    # time_since() > 0s in the ClusterPolicy: the timestamp is strictly before now.
+    - expression: "!variables.isRFC3339 || timestamp(variables.expiresAt) >= time.now()"
+      messageExpression: >-
+        "PolicyException is expired: annotation '{{ $annotationKey }}' has value '" + variables.expiresAt + "' which is in the past. Remove or update the expiry annotation."
+{{ end }}

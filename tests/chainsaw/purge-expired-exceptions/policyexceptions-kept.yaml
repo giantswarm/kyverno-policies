@@ -1,0 +1,46 @@
+# The exceptions reference policies that do not exist, so they exempt nothing.
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: kept-future-kyverno
+  annotations:
+    policy.giantswarm.io/exception-expires-at: "2099-12-31T23:59:59Z"
+spec:
+  exceptions:
+  - policyName: purge-expired-exceptions-test
+    ruleNames:
+    - purge-expired-exceptions-test
+  match:
+    any:
+    - resources:
+        kinds:
+        - ConfigMap
+---
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: kept-no-annotation-kyverno
+spec:
+  exceptions:
+  - policyName: purge-expired-exceptions-test
+    ruleNames:
+    - purge-expired-exceptions-test
+  match:
+    any:
+    - resources:
+        kinds:
+        - ConfigMap
+---
+apiVersion: policies.kyverno.io/v1
+kind: PolicyException
+metadata:
+  name: kept-future-policies
+  annotations:
+    policy.giantswarm.io/exception-expires-at: "2099-12-31T23:59:59Z"
+spec:
+  policyRefs:
+  - name: purge-expired-exceptions-test
+    kind: ValidatingPolicy
+  matchConditions:
+  - name: no-match
+    expression: "false"

@@ -1,5 +1,5 @@
 {{- $name := "restrict-sa-automount-sa-token" }}
-{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled }}
+{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled (ne (include "useValidatingPolicy" .) "true") }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -19,7 +19,7 @@ metadata:
       be followed if Pods do not need to speak to the API server to function.
       This policy ensures that mounting of these ServiceAccount tokens is blocked.
 spec:
-  validationFailureAction: Audit
+  validationFailureAction: {{ (get .Values.supplementalSecurityPolicies.policies $name).mode }}
   background: true
   rules:
   - name: validate-sa-automountServiceAccountToken

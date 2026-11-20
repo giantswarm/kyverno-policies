@@ -7,12 +7,22 @@ kyverno-policies:
 # Best practices policies
 bestPracticesPolicies:
   policies:
+    check-resources-request-and-limits-ratio:
+      enabled: true
+      mode: Enforce
     disallow-latest-tag:
       enabled: true
       mode: Enforce
+    # Audit: in Enforce these would deny nearly every other test's Pods; their tests assert the PolicyReport.
     prevent-bare-pods:
       enabled: true
-      mode: Enforce
+      mode: Audit
+    require-container-requests-and-limits:
+      enabled: true
+      mode: Audit
+    require-pod-probes:
+      enabled: true
+      mode: Audit
     require-emptydir-requests-and-limits:
       enabled: true
       mode: Enforce
@@ -22,17 +32,39 @@ supplementalSecurityPolicies:
   policies:
     audit-event-on-exec:
       enabled: true
+    add-default-deny-network-policy:
+      enabled: true
     disallow-gitrepo-volume:
       enabled: true
       mode: Enforce
     restrict-external-ips:
       enabled: true
       mode: Enforce
+    check-serviceaccount-secrets:
+      enabled: true
+      mode: Enforce
+    restrict-binding-clusteradmin:
+      enabled: true
+      mode: Enforce
+    restrict-binding-system-groups:
+      enabled: true
+      mode: Enforce
+    # Audit: in Enforce it would deny other tests' Pods; its test asserts the PolicyReport.
+    require-ro-rootfs:
+      enabled: true
+      mode: Audit
+    # Audit: in Enforce it would deny every namespace's default ServiceAccount.
+    restrict-sa-automount-sa-token:
+      enabled: true
+      mode: Audit
 
 # Debug access policies
 debugAccessPolicies:
   authorizedDebugTargets:
   - namespaces: ["debug-access-test"]
+    allDeployments: true
+    allowedDebugContainerImages: ["busybox:*"]
+  - namespaces: ["disallow-ephemeral-containers-test"]
     allDeployments: true
     allowedDebugContainerImages: ["busybox:*"]
   policies:
@@ -48,7 +80,7 @@ debugAccessPolicies:
     purge-expired-exceptions:
       enabled: true
       mode: Enforce
-      cleanupSchedule: "*/5 * * * *"
+      cleanupSchedule: "* * * * *"
       targetAnnotation: "policy.giantswarm.io/exception-expires-at"
 
 # One image verifier per chainsaw scenario, each matching its own images. Only one verifier may run in

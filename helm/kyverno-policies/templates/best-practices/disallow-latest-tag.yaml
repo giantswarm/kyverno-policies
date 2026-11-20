@@ -1,5 +1,5 @@
 {{- $name := "disallow-latest-tag" }}
-{{- if and (hasKey .Values.bestPracticesPolicies.policies $name) (get .Values.bestPracticesPolicies.policies $name).enabled }}
+{{- if and (hasKey .Values.bestPracticesPolicies.policies $name) (get .Values.bestPracticesPolicies.policies $name).enabled (ne (include "useValidatingPolicy" .) "true") }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:

@@ -1,0 +1,42 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: require-container-requests-and-limits
+spec:
+  # require-container-requests-and-limits runs in Audit: in Enforce it would deny the Pods of every
+  # other test, which set no resources.
+  steps:
+  - name: create a bad pod without requests and limits
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: bad-pod.yaml
+    - assert:
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            kind: Pod
+            name: bad-pod-no-resources
+          (results[?policy=='require-container-requests-and-limits']):
+          - result: fail
+  - name: create a good pod with cpu and memory requests and a memory limit
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-pod.yaml
+    - assert:
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            kind: Pod
+            name: good-pod-resources
+          (results[?policy=='require-container-requests-and-limits']):
+          - result: pass

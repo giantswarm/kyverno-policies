@@ -197,6 +197,13 @@
                                 "mode": {
                                     "type": "string"
                                 },
+                                "policyType": {
+                                    "type": "string",
+                                    "enum": [
+                                        "ClusterCleanupPolicy",
+                                        "DeletingPolicy"
+                                    ]
+                                },
                                 "targetAnnotation": {
                                     "type": "string"
                                 }
@@ -458,6 +465,13 @@
                                             "type": "string"
                                         }
                                     }
+                                },
+                                "policyType": {
+                                    "type": "string",
+                                    "enum": [
+                                        "ClusterPolicy",
+                                        "GeneratingPolicy"
+                                    ]
                                 }
                             }
                         },
@@ -467,6 +481,13 @@
                             "properties": {
                                 "enabled": {
                                     "type": "boolean"
+                                },
+                                "policyType": {
+                                    "type": "string",
+                                    "enum": [
+                                        "ClusterPolicy",
+                                        "GeneratingPolicy"
+                                    ]
                                 }
                             }
                         },

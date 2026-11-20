@@ -1,0 +1,46 @@
+{{- $name := "require-emptydir-requests-and-limits" }}
+{{- if and (hasKey .Values.bestPracticesPolicies.policies $name) (get .Values.bestPracticesPolicies.policies $name).enabled (eq (include "useValidatingPolicy" .) "true") }}
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Require Requests and Limits for emptyDir
+    policies.kyverno.io/category: Cost and Resource Optimization
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Pods which mount emptyDir volumes may be allowed to potentially overrun
+      the medium backing the emptyDir volume. This sample ensures that any
+      initContainers or containers mounting an emptyDir volume without a
+      sizeLimit have ephemeral-storage requests and limits set. A Pod whose
+      emptyDir volumes all carry a sizeLimit passes.
+spec:
+  validationActions: {{ include "validationActions" (get .Values.bestPracticesPolicies.policies $name).mode | nindent 4 }}
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: [v1]
+      operations: [CREATE, UPDATE]
+      resources: [pods]
+  variables:
+    - name: emptyDirNames
+      expression: >-
+        object.spec.?volumes.orValue([])
+          .filter(v, has(v.emptyDir) && !has(v.emptyDir.sizeLimit))
+          .map(v, v.name)
+    - name: ctnrs
+      expression: >-
+        object.spec.?initContainers.orValue([]) + object.spec.containers
+  validations:
+    - expression: >-
+        variables.ctnrs.all(c,
+          !c.?volumeMounts.orValue([]).exists(m, m.name in variables.emptyDirNames) ||
+          (c.?resources.?requests[?'ephemeral-storage'].orValue('') != '' &&
+           c.?resources.?limits[?'ephemeral-storage'].orValue('') != ''))
+      message: Containers mounting emptyDir volumes without a sizeLimit must specify requests and limits for ephemeral-storage.
+{{- end }}

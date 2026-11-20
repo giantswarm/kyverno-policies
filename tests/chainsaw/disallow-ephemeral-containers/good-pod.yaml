@@ -3,6 +3,8 @@ kind: Pod
 metadata:
   name: good-pod-no-ephemeral
 spec:
+  # sh ignores SIGTERM, so without this the delete waits out the 30s grace period and the cleanup times out.
+  terminationGracePeriodSeconds: 0
   containers:
   - name: main
     image: busybox:1.35

@@ -1,0 +1,37 @@
+{{ $name := "purge-expired-exceptions" }}
+{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled (eq (get .Values.debugAccessPolicies.policies $name).policyType "DeletingPolicy") }}
+{{- $annotationKey := (get .Values.debugAccessPolicies.policies $name).targetAnnotation -}}
+apiVersion: policies.kyverno.io/v1
+kind: DeletingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Purge Expired PolicyExceptions
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: PolicyException
+    policies.kyverno.io/description: Cleans up expired temporary PolicyExceptions.
+spec:
+  schedule: "{{ (get .Values.debugAccessPolicies.policies $name).cleanupSchedule }}"
+  # The cleanup controller lists each group/version/resource literally, so no '*' versions.
+  # Listing one served version of a group returns every PolicyException of that group.
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [kyverno.io]
+        apiVersions: [v2]
+        resources: [policyexceptions]
+      - apiGroups: [policies.kyverno.io]
+        apiVersions: [v1]
+        resources: [policyexceptions]
+  variables:
+    - name: expiresAt
+      expression: "object.metadata.?annotations[?'{{ $annotationKey }}'].orValue('')"
+  conditions:
+    # One expression, so timestamp() only sees well-formed values. A malformed value keeps the
+    # resource, as time_since() failing does in the ClusterCleanupPolicy.
+    - name: is-expired
+      expression: >-
+        variables.expiresAt.matches('{{ include "debugAccessPolicies.rfc3339Regex" . }}')
+        && timestamp(variables.expiresAt) < time.now()
+{{ end }}

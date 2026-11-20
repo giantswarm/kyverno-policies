@@ -3,14 +3,25 @@ kind: Test
 metadata:
   name: prevent-bare-pods
 spec:
+  # prevent-bare-pods runs in Audit: in Enforce it would deny the bare Pods of every other test.
   steps:
   - name: create a bad bare pod without owner
     try:
     - create:
         expect:
         - check:
-            ($error != null): true
+            ($error != null): false
         file: bad-pod.yaml
+    - assert:
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            kind: Pod
+            name: bad-bare-pod
+          (results[?policy=='prevent-bare-pods']):
+          - result: fail
   - name: create a good pod via deployment
     try:
     - create:
@@ -18,3 +29,13 @@ spec:
         - check:
             ($error != null): false
         file: good-deployment.yaml
+    - assert:
+        timeout: 3m
+        resource:
+          apiVersion: wgpolicyk8s.io/v1alpha2
+          kind: PolicyReport
+          scope:
+            kind: Pod
+            (starts_with(name, 'good-deployment-')): true
+          (results[?policy=='prevent-bare-pods']):
+          - result: pass

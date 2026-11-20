@@ -1,0 +1,206 @@
+suite: generating policies switch between ClusterPolicy and GeneratingPolicy
+templates:
+  - templates/supplemental/add-default-deny-network-policy.yaml
+  - templates/supplemental/add-default-deny-network-policy.cel.yaml
+  - templates/supplemental/audit-event-on-exec.yaml
+  - templates/supplemental/audit-event-on-exec.cel.yaml
+tests:
+  - it: renders nothing while the policies are disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders add-default-deny-network-policy as a ClusterPolicy by default
+    template: templates/supplemental/add-default-deny-network-policy.yaml
+    set:
+      supplementalSecurityPolicies.policies.add-default-deny-network-policy.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClusterPolicy
+      - equal:
+          path: spec.rules[0].generate.orphanDownstreamOnPolicyDelete
+          value: false
+      - equal:
+          path: spec.rules[0].generate.generateExisting
+          value: false
+
+  - it: does not render the GeneratingPolicy for add-default-deny-network-policy by default
+    template: templates/supplemental/add-default-deny-network-policy.cel.yaml
+    set:
+      supplementalSecurityPolicies.policies.add-default-deny-network-policy.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: does not render the ClusterPolicy for add-default-deny-network-policy as a GeneratingPolicy
+    template: templates/supplemental/add-default-deny-network-policy.yaml
+    set:
+      supplementalSecurityPolicies.policies.add-default-deny-network-policy:
+        enabled: true
+        policyType: GeneratingPolicy
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders add-default-deny-network-policy as a GeneratingPolicy with the default values
+    template: templates/supplemental/add-default-deny-network-policy.cel.yaml
+    set:
+      policyNamePrefix: gs-
+      supplementalSecurityPolicies.policies.add-default-deny-network-policy:
+        enabled: true
+        policyType: GeneratingPolicy
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GeneratingPolicy
+      - isAPIVersion:
+          of: policies.kyverno.io/v1
+      - equal:
+          path: metadata.name
+          value: gs-add-default-deny-network-policy
+      - equal:
+          path: spec.evaluation
+          value:
+            generateExisting:
+              enabled: false
+            orphanDownstreamOnPolicyDelete:
+              enabled: false
+            synchronize:
+              enabled: true
+      - equal:
+          path: spec.matchConstraints.resourceRules
+          value:
+            - apiGroups: [""]
+              apiVersions: ["v1"]
+              operations: ["CREATE", "UPDATE"]
+              resources: ["namespaces"]
+      - matchRegex:
+          path: spec.variables[1].expression
+          pattern: '"name": "default-deny",'
+      - matchRegex:
+          path: spec.variables[1].expression
+          pattern: '"policyTypes": dyn\(\["Ingress","Egress"\]\)'
+      - equal:
+          path: spec.generate[0].expression
+          value: generator.Apply(variables.targetNs, variables.downstream)
+
+  - it: maps every add-default-deny-network-policy value onto the GeneratingPolicy
+    template: templates/supplemental/add-default-deny-network-policy.cel.yaml
+    set:
+      supplementalSecurityPolicies.policies.add-default-deny-network-policy:
+        enabled: true
+        policyType: GeneratingPolicy
+        deleteNetworkPolicyOnKyvernoPolicyDeletion: true
+        generateForExistingNamespaces: true
+        networkPolicy:
+          policyName: deny-all
+          blockIngress: false
+          blockEgress: true
+    asserts:
+      - equal:
+          path: spec.evaluation.generateExisting.enabled
+          value: true
+      - equal:
+          path: spec.evaluation.orphanDownstreamOnPolicyDelete.enabled
+          value: true
+      - matchRegex:
+          path: spec.variables[1].expression
+          pattern: '"name": "deny-all",'
+      - matchRegex:
+          path: spec.variables[1].expression
+          pattern: '"policyTypes": dyn\(\["Egress"\]\)'
+
+  - it: renders an empty policyTypes list when neither direction is blocked
+    template: templates/supplemental/add-default-deny-network-policy.cel.yaml
+    set:
+      supplementalSecurityPolicies.policies.add-default-deny-network-policy:
+        enabled: true
+        policyType: GeneratingPolicy
+        networkPolicy:
+          blockIngress: false
+          blockEgress: false
+    asserts:
+      - matchRegex:
+          path: spec.variables[1].expression
+          pattern: '"policyTypes": dyn\(\[\]\)'
+
+  - it: renders audit-event-on-exec as a ClusterPolicy by default
+    template: templates/supplemental/audit-event-on-exec.yaml
+    set:
+      supplementalSecurityPolicies.policies.audit-event-on-exec.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClusterPolicy
+
+  - it: does not render the GeneratingPolicy for audit-event-on-exec by default
+    template: templates/supplemental/audit-event-on-exec.cel.yaml
+    set:
+      supplementalSecurityPolicies.policies.audit-event-on-exec.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: does not render the ClusterPolicy for audit-event-on-exec as a GeneratingPolicy
+    template: templates/supplemental/audit-event-on-exec.yaml
+    set:
+      supplementalSecurityPolicies.policies.audit-event-on-exec:
+        enabled: true
+        policyType: GeneratingPolicy
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders audit-event-on-exec as a GeneratingPolicy on CONNECT to pods/exec, plus reports-controller read access
+    template: templates/supplemental/audit-event-on-exec.cel.yaml
+    set:
+      policyNamePrefix: gs-
+      supplementalSecurityPolicies.policies.audit-event-on-exec:
+        enabled: true
+        policyType: GeneratingPolicy
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 1
+        isKind:
+          of: ClusterRole
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["rbac.kyverno.io/aggregate-to-reports-controller"]
+          value: "true"
+      - documentIndex: 1
+        equal:
+          path: rules
+          value:
+            - apiGroups: [""]
+              resources: [pods/exec]
+              verbs: [get, list, watch]
+      - documentIndex: 0
+        isKind:
+          of: GeneratingPolicy
+      - documentIndex: 0
+        isAPIVersion:
+          of: policies.kyverno.io/v1
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: gs-audit-event-on-exec
+      - documentIndex: 0
+        equal:
+          path: spec.matchConstraints.resourceRules
+          value:
+            - apiGroups: [""]
+              apiVersions: ["v1"]
+              operations: ["CONNECT"]
+              resources: ["pods/exec"]
+      - documentIndex: 0
+        notExists:
+          path: spec.evaluation
+      - documentIndex: 0
+        equal:
+          path: spec.generate[0].expression
+          value: generator.Apply(request.namespace, variables.event)
