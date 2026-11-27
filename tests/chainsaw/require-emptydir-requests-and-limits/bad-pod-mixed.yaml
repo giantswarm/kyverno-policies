@@ -9,8 +9,16 @@ spec:
     args:
     - sleep
     - 1d
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL
     resources:
-      limits:
+      requests:
         ephemeral-storage: 200Mi
     volumeMounts:
     - name: sized

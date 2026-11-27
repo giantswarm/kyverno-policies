@@ -9,6 +9,14 @@ spec:
     args:
     - sleep
     - 1d
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+        - ALL
     volumeMounts:
     - name: data
       mountPath: /data

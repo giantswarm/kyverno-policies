@@ -1,0 +1,37 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restrict-binding-system-groups
+spec:
+  steps:
+  - name: create a bad rolebinding to system:anonymous
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'Binding to system:anonymous is not allowed.')): true
+        file: bad-rolebinding-anonymous.yaml
+  - name: create a bad rolebinding to system:unauthenticated
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'Binding to system:unauthenticated is not allowed.')): true
+        file: bad-rolebinding-unauthenticated.yaml
+  - name: create a bad rolebinding to system:masters
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'Binding to system:masters is not allowed.')): true
+        file: bad-rolebinding-masters.yaml
+  - name: create a good rolebinding to a regular user
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-rolebinding.yaml

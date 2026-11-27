@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bad-deployment-no-probes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bad-deployment-no-probes
+  template:
+    metadata:
+      labels:
+        app: bad-deployment-no-probes
+    spec:
+      containers:
+      - name: container01
+        image: busybox:1.35
+        args:
+        - sleep
+        - 1d
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+            - ALL

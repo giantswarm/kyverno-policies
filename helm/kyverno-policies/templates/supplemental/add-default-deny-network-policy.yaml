@@ -1,5 +1,5 @@
 {{- $name := "add-default-deny-network-policy" }}
-{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled }}
+{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled (ne (get .Values.supplementalSecurityPolicies.policies $name).policyType "GeneratingPolicy") }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:

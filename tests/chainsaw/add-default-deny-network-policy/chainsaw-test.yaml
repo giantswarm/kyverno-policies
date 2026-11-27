@@ -1,0 +1,14 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: add-default-deny-network-policy
+spec:
+  steps:
+  - name: create a namespace
+    try:
+    - create:
+        file: namespace.yaml
+  - name: assert the default-deny NetworkPolicy was generated in it
+    try:
+    - assert:
+        file: networkpolicy.yaml

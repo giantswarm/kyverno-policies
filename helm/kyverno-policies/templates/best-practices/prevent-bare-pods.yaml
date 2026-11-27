@@ -1,5 +1,5 @@
 {{- $name := "prevent-bare-pods" }}
-{{- if and (hasKey .Values.bestPracticesPolicies.policies $name) (get .Values.bestPracticesPolicies.policies $name).enabled }}
+{{- if and (hasKey .Values.bestPracticesPolicies.policies $name) (get .Values.bestPracticesPolicies.policies $name).enabled (ne (include "useValidatingPolicy" .) "true") }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -20,7 +20,7 @@ metadata:
       This policy prevents such "bare" Pods from being created unless they originate
       from a higher-level workload controller of some sort.
 spec:
-  validationFailureAction: Audit
+  validationFailureAction: {{ (get .Values.bestPracticesPolicies.policies $name).mode }}
   background: true
   rules:
   - name: bare-pods

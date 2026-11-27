@@ -1,0 +1,21 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restrict-binding-clusteradmin
+spec:
+  steps:
+  - name: create a bad rolebinding to cluster-admin
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): true
+            (contains($error, 'Binding to cluster-admin is not allowed.')): true
+        file: bad-rolebinding.yaml
+  - name: create a good rolebinding to view
+    try:
+    - create:
+        expect:
+        - check:
+            ($error != null): false
+        file: good-rolebinding.yaml

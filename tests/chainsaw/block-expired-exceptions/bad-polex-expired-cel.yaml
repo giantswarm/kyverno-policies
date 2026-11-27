@@ -1,0 +1,14 @@
+apiVersion: policies.kyverno.io/v1
+kind: PolicyException
+metadata:
+  name: bad-polex-expired-cel
+  annotations:
+    policy.giantswarm.io/exception-expires-at: "2020-01-01T00:00:00Z"
+spec:
+  policyRefs:
+  - name: disallow-ephemeral-containers
+    kind: ValidatingPolicy
+  # Matches nothing: the exception must not exempt Pods in other tests while it exists.
+  matchConditions:
+  - name: no-match
+    expression: "false"

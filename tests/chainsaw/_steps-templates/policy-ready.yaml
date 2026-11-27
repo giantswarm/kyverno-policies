@@ -1,0 +1,34 @@
+# Waits until the policy named $name reports ready, whichever kind it was rendered as: a legacy
+# ClusterPolicy/ClusterCleanupPolicy, or a CEL ValidatingPolicy/GeneratingPolicy/DeletingPolicy.
+# Lets one test run against both settings of policyType. Hand-written, unlike cluster-policy-ready.yaml.
+
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: StepTemplate
+metadata:
+  name: policy-ready
+spec:
+  try:
+  - script:
+      env:
+      - name: NAME
+        value: ($name)
+      timeout: 2m
+      content: |
+        set -eu
+        if kubectl get clusterpolicies.kyverno.io "$NAME" >/dev/null 2>&1; then
+          exec kubectl wait "clusterpolicies.kyverno.io/$NAME" --for=condition=Ready --timeout=110s
+        fi
+        # Kyverno 1.19 sets no readiness on cleanup policies of either kind (only lastExecutionTime),
+        # so they only have to exist.
+        for kind in clustercleanuppolicies.kyverno.io deletingpolicies.policies.kyverno.io; do
+          if kubectl get "$kind" "$NAME" >/dev/null 2>&1; then
+            exit 0
+          fi
+        done
+        for kind in validatingpolicies generatingpolicies; do
+          if kubectl get "$kind.policies.kyverno.io" "$NAME" >/dev/null 2>&1; then
+            exec kubectl wait "$kind.policies.kyverno.io/$NAME" --for=jsonpath='{.status.conditionStatus.ready}'=true --timeout=110s
+          fi
+        done
+        echo "no policy named $NAME" >&2
+        exit 1

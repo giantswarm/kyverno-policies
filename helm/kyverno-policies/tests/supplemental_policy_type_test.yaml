@@ -1,0 +1,267 @@
+suite: supplemental policies switch between ClusterPolicy and ValidatingPolicy
+templates:
+  - templates/supplemental/check-serviceaccount-secrets.yaml
+  - templates/supplemental/check-serviceaccount-secrets.cel.yaml
+  - templates/supplemental/disallow-gitrepo-volume.yaml
+  - templates/supplemental/disallow-gitrepo-volume.cel.yaml
+  - templates/supplemental/require-read-only-root-filesystem.yaml
+  - templates/supplemental/require-read-only-root-filesystem.cel.yaml
+  - templates/supplemental/restrict-binding-clusteradmin.yaml
+  - templates/supplemental/restrict-binding-clusteradmin.cel.yaml
+  - templates/supplemental/restrict-binding-system-groups.yaml
+  - templates/supplemental/restrict-binding-system-groups.cel.yaml
+  - templates/supplemental/restrict-external-ips.yaml
+  - templates/supplemental/restrict-external-ips.cel.yaml
+  - templates/supplemental/restrict-sa-automount-sa-token.yaml
+  - templates/supplemental/restrict-sa-automount-sa-token.cel.yaml
+tests:
+  - it: renders ClusterPolicies with validationFailureAction Audit by default
+    templates:
+      - templates/supplemental/check-serviceaccount-secrets.yaml
+      - templates/supplemental/disallow-gitrepo-volume.yaml
+      - templates/supplemental/require-read-only-root-filesystem.yaml
+      - templates/supplemental/restrict-binding-clusteradmin.yaml
+      - templates/supplemental/restrict-binding-system-groups.yaml
+      - templates/supplemental/restrict-external-ips.yaml
+      - templates/supplemental/restrict-sa-automount-sa-token.yaml
+    set:
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.enabled: true
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.mode: Audit
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.enabled: true
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.mode: Audit
+      supplementalSecurityPolicies.policies.require-ro-rootfs.enabled: true
+      supplementalSecurityPolicies.policies.require-ro-rootfs.mode: Audit
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.mode: Audit
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.mode: Audit
+      supplementalSecurityPolicies.policies.restrict-external-ips.enabled: true
+      supplementalSecurityPolicies.policies.restrict-external-ips.mode: Audit
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.enabled: true
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.mode: Audit
+    asserts:
+      - isKind:
+          of: ClusterPolicy
+      - equal:
+          path: spec.validationFailureAction
+          value: Audit
+
+  - it: renders ClusterPolicies with validationFailureAction Enforce by default
+    templates:
+      - templates/supplemental/check-serviceaccount-secrets.yaml
+      - templates/supplemental/disallow-gitrepo-volume.yaml
+      - templates/supplemental/require-read-only-root-filesystem.yaml
+      - templates/supplemental/restrict-binding-clusteradmin.yaml
+      - templates/supplemental/restrict-binding-system-groups.yaml
+      - templates/supplemental/restrict-external-ips.yaml
+      - templates/supplemental/restrict-sa-automount-sa-token.yaml
+    set:
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.enabled: true
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.mode: Enforce
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.enabled: true
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.mode: Enforce
+      supplementalSecurityPolicies.policies.require-ro-rootfs.enabled: true
+      supplementalSecurityPolicies.policies.require-ro-rootfs.mode: Enforce
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.mode: Enforce
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.mode: Enforce
+      supplementalSecurityPolicies.policies.restrict-external-ips.enabled: true
+      supplementalSecurityPolicies.policies.restrict-external-ips.mode: Enforce
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.enabled: true
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.mode: Enforce
+    asserts:
+      - isKind:
+          of: ClusterPolicy
+      - equal:
+          path: spec.validationFailureAction
+          value: Enforce
+
+  - it: renders no ValidatingPolicy by default
+    templates:
+      - templates/supplemental/check-serviceaccount-secrets.cel.yaml
+      - templates/supplemental/disallow-gitrepo-volume.cel.yaml
+      - templates/supplemental/require-read-only-root-filesystem.cel.yaml
+      - templates/supplemental/restrict-binding-clusteradmin.cel.yaml
+      - templates/supplemental/restrict-binding-system-groups.cel.yaml
+      - templates/supplemental/restrict-external-ips.cel.yaml
+      - templates/supplemental/restrict-sa-automount-sa-token.cel.yaml
+    set:
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.enabled: true
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.enabled: true
+      supplementalSecurityPolicies.policies.require-ro-rootfs.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: true
+      supplementalSecurityPolicies.policies.restrict-external-ips.enabled: true
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders ValidatingPolicies with validationActions [Audit] in Audit mode
+    templates:
+      - templates/supplemental/check-serviceaccount-secrets.cel.yaml
+      - templates/supplemental/disallow-gitrepo-volume.cel.yaml
+      - templates/supplemental/require-read-only-root-filesystem.cel.yaml
+      - templates/supplemental/restrict-binding-clusteradmin.cel.yaml
+      - templates/supplemental/restrict-binding-system-groups.cel.yaml
+      - templates/supplemental/restrict-external-ips.cel.yaml
+      - templates/supplemental/restrict-sa-automount-sa-token.cel.yaml
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.enabled: true
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.mode: Audit
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.enabled: true
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.mode: Audit
+      supplementalSecurityPolicies.policies.require-ro-rootfs.enabled: true
+      supplementalSecurityPolicies.policies.require-ro-rootfs.mode: Audit
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.mode: Audit
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.mode: Audit
+      supplementalSecurityPolicies.policies.restrict-external-ips.enabled: true
+      supplementalSecurityPolicies.policies.restrict-external-ips.mode: Audit
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.enabled: true
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.mode: Audit
+    asserts:
+      - isKind:
+          of: ValidatingPolicy
+      - isAPIVersion:
+          of: policies.kyverno.io/v1
+      - equal:
+          path: spec.validationActions
+          value: [Audit]
+      - equal:
+          path: spec.evaluation.background.enabled
+          value: true
+
+  - it: renders ValidatingPolicies with validationActions [Deny] in Enforce mode
+    templates:
+      - templates/supplemental/check-serviceaccount-secrets.cel.yaml
+      - templates/supplemental/disallow-gitrepo-volume.cel.yaml
+      - templates/supplemental/require-read-only-root-filesystem.cel.yaml
+      - templates/supplemental/restrict-binding-clusteradmin.cel.yaml
+      - templates/supplemental/restrict-binding-system-groups.cel.yaml
+      - templates/supplemental/restrict-external-ips.cel.yaml
+      - templates/supplemental/restrict-sa-automount-sa-token.cel.yaml
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.enabled: true
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.mode: Enforce
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.enabled: true
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.mode: Enforce
+      supplementalSecurityPolicies.policies.require-ro-rootfs.enabled: true
+      supplementalSecurityPolicies.policies.require-ro-rootfs.mode: Enforce
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.mode: Enforce
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.mode: Enforce
+      supplementalSecurityPolicies.policies.restrict-external-ips.enabled: true
+      supplementalSecurityPolicies.policies.restrict-external-ips.mode: Enforce
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.enabled: true
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.mode: Enforce
+    asserts:
+      - isKind:
+          of: ValidatingPolicy
+      - isAPIVersion:
+          of: policies.kyverno.io/v1
+      - equal:
+          path: spec.validationActions
+          value: [Deny]
+      - equal:
+          path: spec.evaluation.background.enabled
+          value: true
+
+  - it: renders no ClusterPolicy when policyType is ValidatingPolicy
+    templates:
+      - templates/supplemental/check-serviceaccount-secrets.yaml
+      - templates/supplemental/disallow-gitrepo-volume.yaml
+      - templates/supplemental/require-read-only-root-filesystem.yaml
+      - templates/supplemental/restrict-binding-clusteradmin.yaml
+      - templates/supplemental/restrict-binding-system-groups.yaml
+      - templates/supplemental/restrict-external-ips.yaml
+      - templates/supplemental/restrict-sa-automount-sa-token.yaml
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.enabled: true
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.enabled: true
+      supplementalSecurityPolicies.policies.require-ro-rootfs.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: true
+      supplementalSecurityPolicies.policies.restrict-external-ips.enabled: true
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: keeps the policy names in both modes
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.enabled: true
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.enabled: true
+      supplementalSecurityPolicies.policies.require-ro-rootfs.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: true
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: true
+      supplementalSecurityPolicies.policies.restrict-external-ips.enabled: true
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.enabled: true
+    asserts:
+      - template: templates/supplemental/check-serviceaccount-secrets.cel.yaml
+        equal:
+          path: metadata.name
+          value: check-serviceaccount-secrets
+      - template: templates/supplemental/disallow-gitrepo-volume.cel.yaml
+        equal:
+          path: metadata.name
+          value: disallow-gitrepo-volume
+      - template: templates/supplemental/require-read-only-root-filesystem.cel.yaml
+        equal:
+          path: metadata.name
+          value: require-ro-rootfs
+      - template: templates/supplemental/restrict-binding-clusteradmin.cel.yaml
+        equal:
+          path: metadata.name
+          value: restrict-binding-clusteradmin
+      - template: templates/supplemental/restrict-binding-system-groups.cel.yaml
+        equal:
+          path: metadata.name
+          value: restrict-binding-system-groups
+      - template: templates/supplemental/restrict-external-ips.cel.yaml
+        equal:
+          path: metadata.name
+          value: restrict-external-ips
+      - template: templates/supplemental/restrict-sa-automount-sa-token.cel.yaml
+        equal:
+          path: metadata.name
+          value: restrict-sa-automount-sa-token
+
+  - it: renders nothing for disabled policies
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      supplementalSecurityPolicies.policies.check-serviceaccount-secrets.enabled: false
+      supplementalSecurityPolicies.policies.disallow-gitrepo-volume.enabled: false
+      supplementalSecurityPolicies.policies.require-ro-rootfs.enabled: false
+      supplementalSecurityPolicies.policies.restrict-binding-clusteradmin.enabled: false
+      supplementalSecurityPolicies.policies.restrict-binding-system-groups.enabled: false
+      supplementalSecurityPolicies.policies.restrict-external-ips.enabled: false
+      supplementalSecurityPolicies.policies.restrict-sa-automount-sa-token.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: leaves failurePolicy unset on restrict-external-ips by default
+    template: templates/supplemental/restrict-external-ips.cel.yaml
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+    asserts:
+      - notExists:
+          path: spec.failurePolicy
+
+  - it: prefixes the ValidatingPolicy name with policyNamePrefix
+    template: templates/supplemental/disallow-gitrepo-volume.cel.yaml
+    set:
+      kyverno-policies.policyType: ValidatingPolicy
+      policyNamePrefix: gs-
+    asserts:
+      - equal:
+          path: metadata.name
+          value: gs-disallow-gitrepo-volume

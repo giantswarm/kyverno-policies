@@ -1,5 +1,5 @@
 {{ $name := "disallow-ephemeral-containers" }}
-{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled }}
+{{ if and (hasKey .Values.debugAccessPolicies.policies $name) (get .Values.debugAccessPolicies.policies $name).enabled (ne (include "useValidatingPolicy" .) "true") }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:

@@ -35,6 +35,22 @@ To generate the policies in the `helm` folder structure:
 make generate
 ```
 
+## Policy types
+
+Every Giant Swarm policy in this chart exists both as a legacy `kyverno.io` policy and as a CEL policy (`policies.kyverno.io/v1`, tested with Kyverno 1.19.2). The legacy types are the default.
+
+- The validating policies follow `kyverno-policies.policyType`, the same switch that selects the upstream Pod Security Standards policies: `ClusterPolicy` (default) or `ValidatingPolicy`.
+- The generating and cleanup policies have their own `policyType`: `audit-event-on-exec` and `add-default-deny-network-policy` take `ClusterPolicy` or `GeneratingPolicy`, and `purge-expired-exceptions` takes `ClusterCleanupPolicy` or `DeletingPolicy`.
+- `mode: Audit|Enforce` works for both types. A ValidatingPolicy gets `validationActions: [Audit]` or `[Deny]`.
+
+Before switching, note:
+
+- `kyverno.io` PolicyExceptions only apply to ClusterPolicies. A CEL policy needs a `policies.kyverno.io/v1` PolicyException with `policyRefs: [{name: <policy>, kind: ValidatingPolicy}]`.
+- Switching `add-default-deny-network-policy` replaces one policy with the other. On Kyverno 1.19.2 with the default values, switching from ClusterPolicy to GeneratingPolicy kept the NetworkPolicies already generated, but switching back deleted them. Set `generateForExistingNamespaces: true` to have the new policy recreate them.
+- A GeneratingPolicy always registers its webhook with `failurePolicy: Ignore`, so while Kyverno is down namespaces and execs go through without the generated object.
+- A ValidatingPolicy that matches `pods` is not evaluated at admission for `kubectl debug` (`pods/ephemeralcontainers`), only by the background scan. This includes the upstream Pod Security Standards policies: on Kyverno 1.19.2 a debug container without a `securityContext` is denied in ClusterPolicy mode and admitted in ValidatingPolicy mode. `disallow-ephemeral-containers` and `disallow-unapproved-debug-access` match the subresource explicitly, so they still apply.
+- Autogen for Pod controllers in CEL policies does not cover ReplicationControllers.
+
 ## Testing
 
 Tests are implemented using [Chainsaw](https://kyverno.github.io/chainsaw/), a declarative testing framework for Kubernetes.
@@ -46,10 +62,11 @@ Tests are located in `tests/chainsaw/` with the following structure:
 ```
 tests/chainsaw/
 ├── _steps-templates/           # Reusable test step templates
-│   └── cluster-policy-ready.yaml
+│   └── policy-ready.yaml       # Waits for a policy of either type to be ready
 ├── check-policy-ready/         # Test that verifies all policies are ready
 │   └── chainsaw-test.yaml
-├── values.yaml                 # Helm values for test configuration
+├── values.yaml                 # Helm values for test configuration (legacy policy types, used by CI)
+├── values-cel.yaml             # Overlay that switches every policy to its CEL type
 └── <policy-name>/              # Individual policy tests
     ├── chainsaw-test.yaml      # Test definition
     ├── good-pod.yaml           # Resource that should be allowed
@@ -72,6 +89,12 @@ make install-policies
 3. Run all Chainsaw tests:
 ```bash
 chainsaw test --test-dir tests/chainsaw/
+```
+
+Tests are type-agnostic. To run them against the CEL policies, install with the overlay as well. CI runs the legacy types only. In CEL mode `restrict-apparmor-profiles` fails, because the vendored upstream CEL policy compares `localhost/*` literally:
+```bash
+helm upgrade --install kyverno-policies helm/kyverno-policies \
+  --values tests/chainsaw/values.yaml --values tests/chainsaw/values-cel.yaml
 ```
 
 To run a specific test:
@@ -117,7 +140,7 @@ The test uses `create` to attempt resource creation and checks:
 
 ### Test configuration
 
-The `tests/chainsaw/values.yaml` file configures policies for testing. Policies should be set to `Enforce` mode to verify blocking behavior:
+The `tests/chainsaw/values.yaml` file configures policies for testing. Policies should be set to `Enforce` mode to verify blocking behavior. A policy that would deny other tests' resources in `Enforce` (for example `require-pod-probes` or `prevent-bare-pods`) runs in `Audit`, and its test asserts the `PolicyReport` result instead:
 
 ```yaml
 kyverno-policies:

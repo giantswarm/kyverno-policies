@@ -1,0 +1,86 @@
+{{- $name := "audit-event-on-exec" }}
+{{- if and (hasKey .Values.supplementalSecurityPolicies.policies $name) (get .Values.supplementalSecurityPolicies.policies $name).enabled (eq (get .Values.supplementalSecurityPolicies.policies $name).policyType "GeneratingPolicy") }}
+apiVersion: policies.kyverno.io/v1
+kind: GeneratingPolicy
+metadata:
+  name: {{ printf "%s%s" .Values.policyNamePrefix $name }}
+  labels: {{ include "labels.common" . | nindent 4 }}
+  annotations:
+    policies.kyverno.io/title: Audit Event on Pod Exec
+    policies.kyverno.io/category: Other
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Kubernetes Events are limited in that the circumstances under which they
+      are created cannot be changed. This policy generates a custom Event
+      whenever a user execs into a Pod, capturing the requesting user's
+      identity and the command that was run. This surfaces exec activity
+      through the Events API as an additional signal alongside the API
+      server audit log.
+spec:
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CONNECT"]
+      resources: ["pods/exec"]
+  variables:
+  # object is the PodExecOptions of the CONNECT request; the Pod itself is looked up for its UID.
+  - name: parentPodUID
+    expression: >-
+      resource.Get("v1", "pods", request.namespace, request.name).?metadata.?uid.orValue("")
+  - name: now
+    expression: string(time.now())
+  - name: event
+    expression: >-
+      [
+        {
+          "apiVersion": dyn("v1"),
+          "kind": dyn("Event"),
+          "metadata": dyn({
+            "name": "exec." + random("[a-z0-9]{6}"),
+            "namespace": request.namespace
+          }),
+          "firstTimestamp": dyn(variables.now),
+          "involvedObject": dyn({
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "name": request.name,
+            "namespace": request.namespace,
+            "uid": variables.parentPodUID
+          }),
+          "lastTimestamp": dyn(variables.now),
+          "message": dyn("An exec was performed by " + json.marshal(request.userInfo) + " running commands " + json.marshal(object.?command.orValue([]))),
+          "reason": dyn("Exec"),
+          "source": dyn({
+            "component": "kyverno"
+          }),
+          "type": dyn("Warning")
+        }
+      ]
+  generate:
+  - expression: generator.Apply(request.namespace, variables.event)
+---
+{{- /*
+A GeneratingPolicy is only ready once Kyverno's reports controller can get, list and watch every
+resource it matches, here pods/exec. Before Kubernetes 1.35 (AuthorizePodWebsocketUpgradeCreatePermission)
+get on pods/exec is enough to open an exec over a WebSocket, so on older clusters this grants the
+reports controller exec into any Pod.
+*/}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:kyverno-policies:audit-event-on-exec:pods-exec
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    rbac.kyverno.io/aggregate-to-reports-controller: "true"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods/exec
+    verbs:
+      - get
+      - list
+      - watch
+{{- end }}

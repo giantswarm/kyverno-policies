@@ -10,6 +10,7 @@ spec:
         expect:
         - check:
             ($error != null): true
+            (contains($error, 'Using a mutable image tag')): true
         file: bad-pod-latest.yaml
   - name: create a bad pod without tag
     try:
@@ -17,6 +18,7 @@ spec:
         expect:
         - check:
             ($error != null): true
+            (contains($error, 'An image tag is required.')): true
         file: bad-pod-no-tag.yaml
   - name: create a good pod with specific tag
     try:
